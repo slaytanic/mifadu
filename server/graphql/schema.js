@@ -108,6 +108,12 @@ const typeDefs = `
   }
 
   input UserInput {
+    firstName: String
+    lastName: String
+    completedProfile: Boolean
+    acceptedTerms: Boolean
+    receiveNews: Boolean
+    idNumber: String
     email: String
   }
 
@@ -116,6 +122,9 @@ const typeDefs = `
     firstName: String
     lastName: String
     completedProfile: Boolean
+    acceptedTerms: Boolean
+    receiveNews: Boolean
+    idNumber: String
     email: String
     updatedAt: DateTime
     createdAt: DateTime

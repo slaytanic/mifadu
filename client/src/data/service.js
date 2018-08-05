@@ -17,10 +17,19 @@ export function logoutUser() {
 export function loginUser(email, password) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'mutation($email: String, $password: String) { loginUser(email: $email, password: $password) { email } }',
+      'mutation($email: String, $password: String) { loginUser(email: $email, password: $password) { id } }',
     variables: {
       email,
       password,
+    },
+  });
+}
+
+export function createUser(input) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'mutation($input: UserInput) { createUser(input: $input) { id } }',
+    variables: {
+      input,
     },
   });
 }

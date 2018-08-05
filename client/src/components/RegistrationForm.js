@@ -11,7 +11,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 
-import { getSubjects, getWorkshops } from '../data/service';
+import ErrorList from './ErrorList';
+
+import { getSubjects, getWorkshops, createUser } from '../data/service';
 
 const styles = theme => ({
   container: {
@@ -67,12 +69,42 @@ class RegistrationForm extends Component {
     subjects: [],
     workshops: [],
     externalProvider: false,
+    errors: [],
   };
 
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
+      errors: this.state.errors.filter(error => error.name != name),
     });
+  };
+
+  toggleCheckbox = name => () => {
+    this.setState({
+      [name]: !this.state[name],
+    });
+  };
+
+  handleRegister = () => {
+    console.log(this.state);
+    const errors = [];
+    if (this.state.password != this.state.passwordConfirmation) {
+      errors.push({
+        name: 'passwordConfirmation',
+        message: 'La confirmación de la clave no coincide',
+      });
+    }
+    this.setState({ errors });
+    console.log(this.state);
+  };
+
+  hasError = name => () => {
+    console.log(name);
+    const error = this.state.errors.find(error => error.name === name);
+    if (error) {
+      console.log(error.message);
+    }
+    return error ? error.message : '';
   };
 
   constructor(props) {
@@ -100,6 +132,9 @@ class RegistrationForm extends Component {
     return (
       <form className={classes.container} noValidate autoComplete="off">
         <Grid container>
+          <Grid item xs="12">
+            <ErrorList errors={this.state.errors} />
+          </Grid>
           <Grid item xs="12">
             <TextField
               required
@@ -132,7 +167,7 @@ class RegistrationForm extends Component {
               helperText={
                 this.state.externalProvider
                   ? 'No se puede cambiar ya que viene de un proovedor externo'
-                  : 'Ser&aacute; usado como usuario del sitio web'
+                  : 'Será usado como usuario del sitio web'
               }
               margin="normal"
             />
@@ -144,6 +179,7 @@ class RegistrationForm extends Component {
                 id="password"
                 label="Clave"
                 className={classes.textField}
+                onChange={this.handleChange('password')}
                 type="password"
                 margin="normal"
               />
@@ -152,12 +188,16 @@ class RegistrationForm extends Component {
                 id="password-confirmation"
                 label="Confirmar clave"
                 className={classes.textField}
+                onChange={this.handleChange('passwordConfirmation')}
+                error={this.state.errors.find(
+                  error => error.name === 'passwordConfirmation',
+                )}
                 type="password"
                 margin="normal"
               />
             </Grid>
           )}
-          <Grid item xs="12">
+          {/* <Grid item xs="12">
             <TextField
               required
               id="user-type"
@@ -266,15 +306,14 @@ class RegistrationForm extends Component {
               }}
               margin="normal"
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs="12">
             <FormControlLabel
-              label="Acepto recibir informacion y novedades de MIFADU"
+              label="Acepto recibir informaci&oacute;n y novedades de MIFADU"
               control={
                 <Checkbox
                   checked={this.state.receiveNews}
-                  onChange={this.handleChange('receiveNews')}
-                  value="true"
+                  onChange={this.toggleCheckbox('receiveNews')}
                 />
               }
             />
@@ -285,8 +324,7 @@ class RegistrationForm extends Component {
               control={
                 <Checkbox
                   checked={this.state.acceptedTerms}
-                  onChange={this.handleChange('acceptedTerms')}
-                  value="true"
+                  onChange={this.toggleCheckbox('acceptedTerms')}
                 />
               }
             />
