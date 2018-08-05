@@ -5,6 +5,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const graphqlHTTP = require('express-graphql');
 const mongoose = require('mongoose');
+const cookieSession = require('cookie-session');
+// const passport = require('passport');
+
+const passport = require('./passport');
 
 const config = require('./config');
 const graphqlSchema = require('./graphql/schema');
@@ -48,13 +52,49 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(
-  '/graphql',
-  graphqlHTTP({
-    schema: graphqlSchema,
-    graphiql: true,
+  cookieSession({
+    name: 'mifadu',
+    secret: config.appSecret,
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  }),
+);
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/graphql', (req, res, next) => graphqlHTTP({
+  schema: graphqlSchema,
+  graphiql: true,
+  context: { req, res, next },
+})(req, res, next));
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: 'https://www.googleapis.com/auth/userinfo.email',
+  }),
+);
+
+app.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect('/');
+  },
+);
+
+app.get(
+  '/auth/facebook',
+  passport.authenticate('facebook', { scope: ['email'] }),
+);
+
+app.get(
+  '/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/login',
   }),
 );
 

@@ -9,6 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Button from '@material-ui/core/Button';
 
 import { getSubjects, getWorkshops } from '../data/service';
 
@@ -55,12 +56,17 @@ const cities = {
 
 class RegistrationForm extends Component {
   state = {
-    name: 'Cat in the Hat',
-    age: '',
-    multiline: 'Controlled',
-    currency: 'EUR',
+    firstName: '',
+    lastName: '',
+    idNumber: '',
+    email: '',
+    password: '',
+    passwordConfirmation: '',
+    acceptedTerms: false,
+    receiveNews: false,
     subjects: [],
     workshops: [],
+    externalProvider: false,
   };
 
   handleChange = name => event => {
@@ -68,6 +74,13 @@ class RegistrationForm extends Component {
       [name]: event.target.value,
     });
   };
+
+  constructor(props) {
+    super(props);
+    if (props.user) {
+      this.state = { ...this.state, ...props.user, externalProvider: true };
+    }
+  }
 
   componentDidMount() {
     getSubjects().then(res => {
@@ -110,33 +123,40 @@ class RegistrationForm extends Component {
           <Grid item xs="12">
             <TextField
               required
-              id="e-mail"
+              id="email"
               label="e-mail"
+              disabled={this.state.externalProvider}
               className={classes.doubleWidthField}
-              value={this.state.eMail}
-              onChange={this.handleChange('eMail')}
-              helperText="Ser&aacute; usado como usuario del sitio web"
+              value={this.state.email}
+              onChange={this.handleChange('email')}
+              helperText={
+                this.state.externalProvider
+                  ? 'No se puede cambiar ya que viene de un proovedor externo'
+                  : 'Ser&aacute; usado como usuario del sitio web'
+              }
               margin="normal"
             />
           </Grid>
-          <Grid item xs="12">
-            <TextField
-              required
-              id="password"
-              label="Clave"
-              className={classes.textField}
-              type="password"
-              margin="normal"
-            />
-            <TextField
-              required
-              id="password-confirmation"
-              label="Confirmar clave"
-              className={classes.textField}
-              type="password"
-              margin="normal"
-            />
-          </Grid>
+          {!this.state.externalProvider && (
+            <Grid item xs="12">
+              <TextField
+                required
+                id="password"
+                label="Clave"
+                className={classes.textField}
+                type="password"
+                margin="normal"
+              />
+              <TextField
+                required
+                id="password-confirmation"
+                label="Confirmar clave"
+                className={classes.textField}
+                type="password"
+                margin="normal"
+              />
+            </Grid>
+          )}
           <Grid item xs="12">
             <TextField
               required
@@ -270,6 +290,16 @@ class RegistrationForm extends Component {
                 />
               }
             />
+          </Grid>
+          <Grid item xs="12">
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={this.handleRegister}
+            >
+              Registrarme
+            </Button>
           </Grid>
         </Grid>
       </form>

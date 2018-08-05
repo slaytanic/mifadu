@@ -28,7 +28,7 @@ class RegisterPage extends Component {
         <Grid item xs={12}>
           {/* <Paper className={classes.root} elevation={1}> */}
           <Typography variant="headline" component="h3">
-            Registrarse en MIFADU
+            Registrarse en MiFADU
           </Typography>
           <Typography component="p">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -44,7 +44,7 @@ class RegisterPage extends Component {
               <Typography variant="headline" component="h3">
                 Registro
               </Typography>
-              <RegistrationForm />
+              <RegistrationForm user={this.props.user} />
             </CardContent>
           </Card>
         </Grid>

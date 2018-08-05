@@ -6,7 +6,7 @@ const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
 const { tag, tags } = require('./queries/tag');
 const { university, universitys } = require('./queries/university');
-const { user, users } = require('./queries/user');
+const { user, users, me } = require('./queries/user');
 const { workshop, workshops } = require('./queries/workshop');
 
 const {
@@ -26,7 +26,13 @@ const {
   updateUniversity,
   deleteUniversity,
 } = require('./mutations/university');
-const { createUser, updateUser, deleteUser } = require('./mutations/user');
+const {
+  createUser,
+  updateUser,
+  deleteUser,
+  loginUser,
+  logoutUser,
+} = require('./mutations/user');
 const {
   createWorkshop,
   updateWorkshop,
@@ -107,6 +113,10 @@ const typeDefs = `
 
   type User {
     id: ID!
+    firstName: String
+    lastName: String
+    completedProfile: Boolean
+    email: String
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -140,6 +150,7 @@ const typeDefs = `
 
     user(id: ID!): User
     users: [User]
+    me: User
     
     workshop(id: ID!): Workshop
     workshops: [Workshop]
@@ -169,6 +180,8 @@ const typeDefs = `
     createUser(input: UserInput!): User
     updateUser(id: ID!, input: UserInput!): User
     deleteUser(id: ID!): User
+    loginUser(email: String!, password: String!): User
+    logoutUser: Boolean
 
     createWorkshop(input: WorkshopInput!): Workshop
     updateWorkshop(id: ID!, input: WorkshopInput!): Workshop
@@ -196,6 +209,7 @@ const resolvers = {
 
     user,
     users,
+    me,
 
     workshop,
     workshops,
@@ -224,6 +238,8 @@ const resolvers = {
     createUser,
     updateUser,
     deleteUser,
+    loginUser,
+    logoutUser,
 
     createWorkshop,
     updateWorkshop,

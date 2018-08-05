@@ -8,5 +8,10 @@ function users(obj, args, context) {
   return User.find({});
 }
 
+function me(obj, args, { req }) {
+  return req.user;
+}
+
 module.exports.user = user;
 module.exports.users = users;
+module.exports.me = me;
