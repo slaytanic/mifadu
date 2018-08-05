@@ -12,8 +12,31 @@ const graphqlSchema = require('./graphql/schema');
 // const indexRouter = require('./routes/index');
 // const usersRouter = require('./routes/users');
 
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
 mongoose.connect(config.mongoDbUrl);
+
+mongoose.connection.on('connected', () => {
+  console.info(`Mongoose default connection open to ${config.mongoDbUrl}`);
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error(`Mongoose default connection error: ${err}`);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('Mongoose default connection disconnected');
+});
+
+process.on('SIGINT', () => {
+  mongoose.connection.close(() => {
+    console.info(
+      'Mongoose default connection disconnected through app termination',
+    );
+    process.exit(0);
+  });
+});
+
+require('./db/seeds')();
 
 const app = express();
 
@@ -34,6 +57,12 @@ app.use(
     graphiql: true,
   }),
 );
+
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);

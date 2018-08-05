@@ -69,10 +69,13 @@ const typeDefs = `
 
   input SubjectInput {
     name: String
+    code: String
   }
 
   type Subject {
     id: ID!
+    code: String
+    name: String
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -114,6 +117,7 @@ const typeDefs = `
 
   type Workshop {
     id: ID!
+    name: String
     updatedAt: DateTime
     createdAt: DateTime
   }

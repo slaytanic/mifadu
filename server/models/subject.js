@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const subjectSchema = new Schema(
   {
     name: String,
+    code: String,
   },
   { timestamps: true },
 );

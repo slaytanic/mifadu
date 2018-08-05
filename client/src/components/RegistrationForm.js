@@ -10,6 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+import { getSubjects, getWorkshops } from '../data/service';
+
 const styles = theme => ({
   container: {
     display: 'flex',
@@ -57,6 +59,8 @@ class RegistrationForm extends Component {
     age: '',
     multiline: 'Controlled',
     currency: 'EUR',
+    subjects: [],
+    workshops: [],
   };
 
   handleChange = name => event => {
@@ -64,6 +68,18 @@ class RegistrationForm extends Component {
       [name]: event.target.value,
     });
   };
+
+  componentDidMount() {
+    getSubjects().then(res => {
+      const { subjects } = res.data.data;
+      this.setState({ subjects });
+    });
+
+    getWorkshops().then(res => {
+      const { workshops } = res.data.data;
+      this.setState({ workshops });
+    });
+  }
 
   render() {
     const { classes } = this.props;
