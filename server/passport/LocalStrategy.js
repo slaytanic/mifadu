@@ -10,9 +10,15 @@ module.exports = new LocalStrategy((username, password, done) => {
     if (!user) {
       return done(null, false, { message: 'Incorrect username.' });
     }
-    // if (!user.validPassword(password)) {
-    //   return done(null, false, { message: 'Incorrect password.' });
-    // }
-    return done(null, user);
+    return user.validPassword(password, (passwordErr, res) => {
+      if (passwordErr) {
+        return done(passwordErr);
+      }
+
+      if (res) {
+        return done(null, user);
+      }
+      return done(null, false, { message: 'Incorrect password.' });
+    });
   });
 });
