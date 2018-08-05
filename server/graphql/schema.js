@@ -1,10 +1,42 @@
 const { makeExecutableSchema } = require('graphql-tools');
 const { GraphQLDateTime } = require('graphql-iso-date');
 
+const { assignment, assignments } = require('./queries/assignment');
+const { chair, chairs } = require('./queries/chair');
+const { subject, subjects } = require('./queries/subject');
+const { tag, tags } = require('./queries/tag');
+const { university, universitys } = require('./queries/university');
+const { user, users } = require('./queries/user');
+const { workshop, workshops } = require('./queries/workshop');
+
+const {
+  createAssignment,
+  updateAssignment,
+  deleteAssignment,
+} = require('./mutations/assignment');
+const { createChair, updateChair, deleteChair } = require('./mutations/chair');
+const {
+  createSubject,
+  updateSubject,
+  deleteSubject,
+} = require('./mutations/subject');
+const { createTag, updateTag, deleteTag } = require('./mutations/tag');
+const {
+  createUniversity,
+  updateUniversity,
+  deleteUniversity,
+} = require('./mutations/university');
+const { createUser, updateUser, deleteUser } = require('./mutations/user');
+const {
+  createWorkshop,
+  updateWorkshop,
+  deleteWorkshop,
+} = require('./mutations/workshop');
+
 const typeDefs = `
   scalar DateTime
   
-  type AssignmentInput {
+  input AssignmentInput {
     name: String
     shortDescription: String
     description: String
@@ -25,7 +57,7 @@ const typeDefs = `
     createdAt: DateTime
   }
 
-  type ChairInput {
+  input ChairInput {
     name: String
   }
 
@@ -35,7 +67,7 @@ const typeDefs = `
     createdAt: DateTime
   }
 
-  type SubjectInput {
+  input SubjectInput {
     name: String
   }
 
@@ -45,7 +77,7 @@ const typeDefs = `
     createdAt: DateTime
   }
 
-  type TagInput {
+  input TagInput {
     name: String
     color: String
   }
@@ -56,7 +88,7 @@ const typeDefs = `
     createdAt: DateTime
   }
 
-  type UniversityInput {
+  input UniversityInput {
     name: String
   }
 
@@ -66,7 +98,7 @@ const typeDefs = `
     createdAt: DateTime
   }
 
-  type UserInput {
+  input UserInput {
     email: String
   }
 
@@ -76,7 +108,7 @@ const typeDefs = `
     createdAt: DateTime
   }
 
-  type WorkshopInput {
+  input WorkshopInput {
     name: String
   }
 
@@ -142,6 +174,57 @@ const typeDefs = `
 
 const resolvers = {
   DateTime: GraphQLDateTime,
+  Query: {
+    assignment,
+    assignments,
+
+    chair,
+    chairs,
+
+    subject,
+    subjects,
+
+    tag,
+    tags,
+
+    university,
+    universitys,
+
+    user,
+    users,
+
+    workshop,
+    workshops,
+  },
+  Mutation: {
+    createAssignment,
+    updateAssignment,
+    deleteAssignment,
+
+    createChair,
+    updateChair,
+    deleteChair,
+
+    createSubject,
+    updateSubject,
+    deleteSubject,
+
+    createTag,
+    updateTag,
+    deleteTag,
+
+    createUniversity,
+    updateUniversity,
+    deleteUniversity,
+
+    createUser,
+    updateUser,
+    deleteUser,
+
+    createWorkshop,
+    updateWorkshop,
+    deleteWorkshop,
+  },
 };
 
 const schema = makeExecutableSchema({
