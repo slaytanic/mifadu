@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -54,6 +54,8 @@ class LoginForm extends Component {
       [name]: event.target.value,
     });
   };
+
+  handleLogin = () => {};
 
   render() {
     const { classes } = this.props;

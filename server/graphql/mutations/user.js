@@ -6,6 +6,14 @@ function createUser(obj, { input }, context) {
   return User.create(input);
 }
 
+function createOrUpdateUser(obj, { input }, context) {
+  return User.findOneAndUpdate({ email: input.email }, input, {
+    upsert: true,
+    new: true,
+    setDefaultsOnInsert: true,
+  });
+}
+
 function updateUser(obj, { id, input }, context) {
   return User.findOneAndUpdate({ _id: id }, input, { new: true });
 }
@@ -41,6 +49,7 @@ function logoutUser(obj, args, { req }) {
 }
 
 module.exports.createUser = createUser;
+module.exports.createOrUpdateUser = createOrUpdateUser;
 module.exports.updateUser = updateUser;
 module.exports.deleteUser = deleteUser;
 module.exports.loginUser = loginUser;

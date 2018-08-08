@@ -29,6 +29,35 @@ class HomePage extends Component {
   render() {
     const { classes } = this.props;
 
+    let loginLogout;
+    if (this.props.user) {
+      loginLogout = (
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          component={Link}
+          to="/logout"
+        >
+          Salir
+          <Icon className={classes.rightIcon}>send</Icon>
+        </Button>
+      );
+    } else {
+      loginLogout = (
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          component={Link}
+          to="/login"
+        >
+          Ingresar
+          <Icon className={classes.rightIcon}>send</Icon>
+        </Button>
+      );
+    }
+
     return (
       <Grid container className={classes.root} spacing={16}>
         <Grid item xs={12}>
@@ -41,16 +70,7 @@ class HomePage extends Component {
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
             aliquip.
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            component={Link}
-            to="/login"
-          >
-            Ingresar
-            <Icon className={classes.rightIcon}>send</Icon>
-          </Button>
+          {loginLogout}
         </Grid>
       </Grid>
     );

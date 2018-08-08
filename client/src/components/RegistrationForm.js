@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -13,7 +14,7 @@ import Button from '@material-ui/core/Button';
 
 import ErrorList from './ErrorList';
 
-import { getSubjects, getWorkshops, createUser } from '../data/service';
+import { getSubjects, getWorkshops, createOrUpdateUser } from '../data/service';
 
 const styles = theme => ({
   container: {
@@ -85,17 +86,75 @@ class RegistrationForm extends Component {
     });
   };
 
-  handleRegister = () => {
-    console.log(this.state);
+  handleRegister = history => {
     const errors = [];
+
     if (this.state.password != this.state.passwordConfirmation) {
       errors.push({
         name: 'passwordConfirmation',
         message: 'La confirmación de la clave no coincide',
       });
     }
+
+    if (!this.state.externalProvider && this.state.password.length < 8) {
+      errors.push({
+        name: 'password',
+        message: 'La clave debe tener al menos 8 caracteres',
+      });
+    }
+
+    if (this.state.email.length < 1) {
+      errors.push({
+        name: 'email',
+        message: 'El e-mail debe ser válido',
+      });
+    }
+
+    if (this.state.firstName.length < 1) {
+      errors.push({
+        name: 'firstName',
+        message: 'El nombre debe ser válido',
+      });
+    }
+
+    if (this.state.lastName.length < 1) {
+      errors.push({
+        name: 'lastName',
+        message: 'El apellido debe ser válido',
+      });
+    }
+
+    if (this.state.acceptedTerms !== true) {
+      errors.push({
+        name: 'acceptedTerms',
+        message: 'Debe aceptar los términos y condiciones de uso',
+      });
+    }
+
+    if (errors.length < 1) {
+      const input = (({
+        firstName,
+        lastName,
+        idNumber,
+        email,
+        acceptedTerms,
+        receiveNews,
+      }) => ({
+        firstName,
+        lastName,
+        idNumber,
+        email,
+        acceptedTerms,
+        receiveNews,
+      }))(this.state);
+      createOrUpdateUser({ ...input, completedProfile: true })
+        .then(response => {
+          this.props.setCurrentUser(response.data.data.createOrUpdateUser);
+          this.props.history.push('/');
+        })
+        .catch(() => {});
+    }
     this.setState({ errors });
-    console.log(this.state);
   };
 
   hasError = name => () => {
@@ -347,6 +406,9 @@ class RegistrationForm extends Component {
 
 RegistrationForm.propTypes = {
   classes: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(RegistrationForm);
+export default withRouter(withStyles(styles)(RegistrationForm));

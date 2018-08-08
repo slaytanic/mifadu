@@ -17,9 +17,17 @@ class App extends Component {
 
   componentDidMount() {
     getMe().then(res => {
-      this.setState({ me: res.data.data.me });
+      this.setCurrentUser(res.data.data.me);
     });
   }
+
+  setCurrentUser = user => {
+    console.log('setCurrentUser', user);
+    console.log('this', this);
+    this.setState({ me: user });
+    console.log('hellooooo');
+    console.log('state:', this.state);
+  };
 
   render() {
     const { me } = this.state;
@@ -28,7 +36,11 @@ class App extends Component {
       return (
         <div className="App">
           <MenuAppBar />
-          <Route render={() => <RegisterPage user={me} />} />
+          <Route
+            render={() => (
+              <RegisterPage user={me} setCurrentUser={this.setCurrentUser} />
+            )}
+          />
         </div>
       );
     }
@@ -36,7 +48,7 @@ class App extends Component {
     return (
       <div className="App">
         <MenuAppBar user={me} />
-        <Route exact path="/" component={HomePage} />
+        <Route exact path="/" render={() => <HomePage user={me} />} />
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/register" component={RegisterPage} />
       </div>

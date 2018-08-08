@@ -44,7 +44,10 @@ class RegisterPage extends Component {
               <Typography variant="headline" component="h3">
                 Registro
               </Typography>
-              <RegistrationForm user={this.props.user} />
+              <RegistrationForm
+                user={this.props.user}
+                setCurrentUser={this.props.setCurrentUser}
+              />
             </CardContent>
           </Card>
         </Grid>

@@ -25,9 +25,10 @@ export function loginUser(email, password) {
   });
 }
 
-export function createUser(input) {
+export function createOrUpdateUser(input) {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: 'mutation($input: UserInput) { createUser(input: $input) { id } }',
+    query:
+      'mutation($input: UserInput!) { createOrUpdateUser(input: $input) { firstName, lastName, email, completedProfile } }',
     variables: {
       input,
     },

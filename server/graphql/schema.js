@@ -28,6 +28,7 @@ const {
 } = require('./mutations/university');
 const {
   createUser,
+  createOrUpdateUser,
   updateUser,
   deleteUser,
   loginUser,
@@ -187,6 +188,7 @@ const typeDefs = `
     deleteUniversity(id: ID!): University
 
     createUser(input: UserInput!): User
+    createOrUpdateUser(input: UserInput!): User
     updateUser(id: ID!, input: UserInput!): User
     deleteUser(id: ID!): User
     loginUser(email: String!, password: String!): User
@@ -245,6 +247,7 @@ const resolvers = {
     deleteUniversity,
 
     createUser,
+    createOrUpdateUser,
     updateUser,
     deleteUser,
     loginUser,

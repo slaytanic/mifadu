@@ -9,7 +9,7 @@ function users(obj, args, context) {
 }
 
 function me(obj, args, { req }) {
-  return req.user;
+  return User.findOne({ email: req.user.email });
 }
 
 module.exports.user = user;
