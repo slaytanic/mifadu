@@ -14,7 +14,7 @@ import Button from '@material-ui/core/Button';
 
 import ErrorList from './ErrorList';
 
-import { getSubjects, getWorkshops, createOrUpdateUser } from '../data/service';
+import { getSubjects, getWorkshops, createOrUpdateUser, loginUser } from '../data/service';
 
 const styles = theme => ({
   container: {
@@ -86,7 +86,7 @@ class RegistrationForm extends Component {
     });
   };
 
-  handleRegister = history => {
+  handleRegister = () => {
     const errors = [];
 
     if (this.state.password != this.state.passwordConfirmation) {
@@ -139,6 +139,7 @@ class RegistrationForm extends Component {
         email,
         acceptedTerms,
         receiveNews,
+        password,
       }) => ({
         firstName,
         lastName,
@@ -146,11 +147,20 @@ class RegistrationForm extends Component {
         email,
         acceptedTerms,
         receiveNews,
+        password,
       }))(this.state);
       createOrUpdateUser({ ...input, completedProfile: true })
         .then(response => {
+          console.log(this.props);
           this.props.setCurrentUser(response.data.data.createOrUpdateUser);
-          this.props.history.push('/');
+          if (!this.state.externalProvider) {
+            loginUser(this.state.email, this.state.password).then(() => {
+              this.props.history.push('/');
+            })
+          } else {
+            this.props.history.push('/');
+          }
+          console.log(this.props.history);
         })
         .catch(() => {});
     }

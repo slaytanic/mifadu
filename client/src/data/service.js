@@ -17,7 +17,7 @@ export function logoutUser() {
 export function loginUser(email, password) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'mutation($email: String, $password: String) { loginUser(email: $email, password: $password) { id } }',
+      'mutation($email: String!, $password: String!) { loginUser(email: $email, password: $password) { firstName, lastName, email, completedProfile } }',
     variables: {
       email,
       password,

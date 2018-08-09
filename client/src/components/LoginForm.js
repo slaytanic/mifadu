@@ -14,7 +14,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
-import { getSubjects, getWorkshops } from '../data/service';
+import ErrorList from './ErrorList';
+
+import { getSubjects, getWorkshops, loginUser } from '../data/service';
 
 const styles = theme => ({
   container: {
@@ -47,6 +49,7 @@ class LoginForm extends Component {
   state = {
     email: '',
     password: '',
+    errors: [],
   };
 
   handleChange = name => event => {
@@ -55,7 +58,16 @@ class LoginForm extends Component {
     });
   };
 
-  handleLogin = () => {};
+  handleLogin = () => {
+    loginUser(this.state.email, this.state.password).then(res => {
+      if (res.data.data.loginUser) {
+        this.props.setCurrentUser(res.data.data.loginUser);
+        this.props.history.push('/');
+      } else {
+        this.setState({ errors: [{ message: 'Usuario o clave incorrectos' }] });
+      }
+    });
+  };
 
   render() {
     const { classes } = this.props;
@@ -63,6 +75,10 @@ class LoginForm extends Component {
     return (
       <form className={classes.container} noValidate autoComplete="off">
         <Grid container>
+          <Grid item xs="12">
+            <ErrorList errors={this.state.errors} />
+          </Grid>
+
           <Grid item xs="12">
             <TextField
               required
@@ -81,6 +97,8 @@ class LoginForm extends Component {
               id="password"
               label="Clave"
               className={classes.textField}
+              value={this.state.password}
+              onChange={this.handleChange('password')}
               type="password"
               margin="normal"
             />
@@ -106,6 +124,9 @@ class LoginForm extends Component {
 
 LoginForm.propTypes = {
   classes: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(LoginForm);
+export default withRouter(withStyles(styles)(LoginForm));

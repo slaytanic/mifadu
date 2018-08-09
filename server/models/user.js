@@ -22,7 +22,12 @@ const userSchema = new Schema(
 );
 
 userSchema.pre('save', function save(next) {
+  console.log('pre save');
   if (!this.isModified('password')) return next();
+
+  if (this.password === '') {
+    this.password = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 8);
+  }
 
   return bcrypt.genSalt(SALT_WORK_FACTOR, (saltErr, salt) => {
     if (saltErr) return next(saltErr);
@@ -37,6 +42,7 @@ userSchema.pre('save', function save(next) {
 });
 
 userSchema.methods.validPassword = function validPassword(password, done) {
+  console.log('hash', this.password, 'password', password);
   bcrypt.compare(password, this.password, (err, res) => {
     done(err, res);
   });

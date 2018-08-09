@@ -36,8 +36,7 @@ class HomePage extends Component {
           variant="contained"
           color="primary"
           className={classes.button}
-          component={Link}
-          to="/logout"
+          onClick={this.props.logoutUser}
         >
           Salir
           <Icon className={classes.rightIcon}>send</Icon>

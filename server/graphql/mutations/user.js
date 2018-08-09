@@ -7,10 +7,22 @@ function createUser(obj, { input }, context) {
 }
 
 function createOrUpdateUser(obj, { input }, context) {
-  return User.findOneAndUpdate({ email: input.email }, input, {
-    upsert: true,
-    new: true,
-    setDefaultsOnInsert: true,
+  return new Promise((resolve, reject) => {
+    User.findOne({ email: input.email }, (err, doc) => {
+      if (err) { return reject(err); }
+      if (doc) {
+        doc.set(input);
+        doc.save((saveErr) => {
+          if (saveErr) { return reject(saveErr); }
+          return resolve(doc);
+        });
+      }
+      const user = new User(input);
+      return user.save((saveErr) => {
+        if (saveErr) { return reject(saveErr); }
+        return resolve(user);
+      });
+    });
   });
 }
 
@@ -32,7 +44,7 @@ function loginUser(obj, args, { req, res, next }) {
         return reject(info.message);
       }
 
-      req.login(user, (err) => {
+      return req.login(user, (err) => {
         if (err) {
           return reject(err);
         }

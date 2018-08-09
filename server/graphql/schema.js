@@ -109,13 +109,14 @@ const typeDefs = `
   }
 
   input UserInput {
-    firstName: String
-    lastName: String
-    completedProfile: Boolean
-    acceptedTerms: Boolean
-    receiveNews: Boolean
-    idNumber: String
-    email: String
+    firstName: String!
+    lastName: String!
+    completedProfile: Boolean!
+    acceptedTerms: Boolean!
+    receiveNews: Boolean!
+    idNumber: String!
+    email: String!
+    password: String!
   }
 
   type User {

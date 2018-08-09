@@ -95,7 +95,7 @@ class LoginPage extends Component {
         <Grid item xs={12}>
           <Typography variant="title">Ingresar con e-mail</Typography>
 
-          <LoginForm />
+          <LoginForm setCurrentUser={this.props.setCurrentUser} />
         </Grid>
       </Grid>
     );

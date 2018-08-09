@@ -6,7 +6,7 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 
-import { getMe } from './data/service';
+import { getMe, logoutUser } from './data/service';
 
 // import logo from './logo.png';
 import './App.css';
@@ -22,12 +22,14 @@ class App extends Component {
   }
 
   setCurrentUser = user => {
-    console.log('setCurrentUser', user);
-    console.log('this', this);
     this.setState({ me: user });
-    console.log('hellooooo');
-    console.log('state:', this.state);
   };
+
+  logoutUser = () => {
+    logoutUser().then(() => {
+      this.setCurrentUser(null);
+    });
+  }
 
   render() {
     const { me } = this.state;
@@ -48,9 +50,13 @@ class App extends Component {
     return (
       <div className="App">
         <MenuAppBar user={me} />
-        <Route exact path="/" render={() => <HomePage user={me} />} />
-        <Route exact path="/login" component={LoginPage} />
-        <Route exact path="/register" component={RegisterPage} />
+        <Route exact path="/" render={() => <HomePage user={me} logoutUser={this.logoutUser} />} />
+        <Route exact path="/login" render={() => (<LoginPage setCurrentUser={this.setCurrentUser} />)} />
+        <Route exact path="/register"
+            render={() => (
+              <RegisterPage user={me} setCurrentUser={this.setCurrentUser} />
+            )}
+          />
       </div>
     );
   }
