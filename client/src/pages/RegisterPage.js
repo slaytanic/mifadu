@@ -47,6 +47,7 @@ class RegisterPage extends Component {
               <RegistrationForm
                 user={this.props.user}
                 setCurrentUser={this.props.setCurrentUser}
+                logoutUser={this.props.logoutUser}
               />
             </CardContent>
           </Card>

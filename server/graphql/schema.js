@@ -117,6 +117,12 @@ const typeDefs = `
     idNumber: String!
     email: String!
     password: String!
+    workshop: ID!
+    subjects: [ID!]!
+    previouslyOnThisChair: Boolean
+    previousYearForThisChair: String
+    website: String
+    aboutMe: String
   }
 
   type User {
@@ -128,8 +134,14 @@ const typeDefs = `
     receiveNews: Boolean
     idNumber: String
     email: String
+    workshop: Workshop
+    subjects: [Subject]
     updatedAt: DateTime
     createdAt: DateTime
+    previouslyOnThisChair: Boolean
+    previousYearForThisChair: String
+    website: String
+    aboutMe: String
   }
 
   input WorkshopInput {

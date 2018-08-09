@@ -9,12 +9,22 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import ListItemText from '@material-ui/core/ListItemText';
+import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 
 import ErrorList from './ErrorList';
 
-import { getSubjects, getWorkshops, createOrUpdateUser, loginUser } from '../data/service';
+import {
+  getSubjects,
+  getWorkshops,
+  createOrUpdateUser,
+  loginUser,
+} from '../data/service';
 
 const styles = theme => ({
   container: {
@@ -33,6 +43,16 @@ const styles = theme => ({
   },
   menu: {
     width: 200,
+  },
+  button: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    width: 400 + theme.spacing.unit * 2,
+    // minWidth: 120,
+    // maxWidth: 300,
   },
 });
 
@@ -67,10 +87,16 @@ class RegistrationForm extends Component {
     passwordConfirmation: '',
     acceptedTerms: false,
     receiveNews: false,
+    allSubjects: [],
     subjects: [],
-    workshops: [],
+    workshop: '',
+    allWorkshops: [],
     externalProvider: false,
     errors: [],
+    previouslyOnThisChair: false,
+    previousYearForThisChair: '',
+    website: '',
+    aboutMe: '',
   };
 
   handleChange = name => event => {
@@ -80,10 +106,25 @@ class RegistrationForm extends Component {
     });
   };
 
+  handleMultiSelect = name => event => {
+    console.log(name);
+    console.log(event.target.value);
+    this.setState({
+      [name]: event.target.value,
+      errors: this.state.errors.filter(error => error.name != name),
+    });
+    console.log(this.state.subjects);
+  };
+
   toggleCheckbox = name => () => {
     this.setState({
       [name]: !this.state[name],
     });
+  };
+
+  handleCancel = () => {
+    this.props.logoutUser();
+    this.props.history.push('/');
   };
 
   handleRegister = () => {
@@ -124,6 +165,13 @@ class RegistrationForm extends Component {
       });
     }
 
+    if (this.state.lastName.length < 1) {
+      errors.push({
+        name: 'idNumber',
+        message: 'El DNI debe ser válido',
+      });
+    }
+
     if (this.state.acceptedTerms !== true) {
       errors.push({
         name: 'acceptedTerms',
@@ -140,6 +188,12 @@ class RegistrationForm extends Component {
         acceptedTerms,
         receiveNews,
         password,
+        workshop,
+        subjects,
+        previouslyOnThisChair,
+        previousYearForThisChair,
+        website,
+        aboutMe,
       }) => ({
         firstName,
         lastName,
@@ -148,19 +202,29 @@ class RegistrationForm extends Component {
         acceptedTerms,
         receiveNews,
         password,
+        workshop,
+        subjects,
+        previouslyOnThisChair,
+        previousYearForThisChair,
+        website,
+        aboutMe,
       }))(this.state);
       createOrUpdateUser({ ...input, completedProfile: true })
         .then(response => {
-          console.log(this.props);
-          this.props.setCurrentUser(response.data.data.createOrUpdateUser);
-          if (!this.state.externalProvider) {
-            loginUser(this.state.email, this.state.password).then(() => {
-              this.props.history.push('/');
-            })
+          if (response.data.errors) {
+            this.setState({
+              errors: [{ message: 'Ese e-mail ya se encuentra en uso' }],
+            });
           } else {
-            this.props.history.push('/');
+            this.props.setCurrentUser(response.data.data.createOrUpdateUser);
+            if (!this.state.externalProvider) {
+              loginUser(this.state.email, this.state.password).then(() => {
+                this.props.history.push('/');
+              });
+            } else {
+              this.props.history.push('/');
+            }
           }
-          console.log(this.props.history);
         })
         .catch(() => {});
     }
@@ -186,12 +250,12 @@ class RegistrationForm extends Component {
   componentDidMount() {
     getSubjects().then(res => {
       const { subjects } = res.data.data;
-      this.setState({ subjects });
+      this.setState({ allSubjects: subjects });
     });
 
     getWorkshops().then(res => {
       const { workshops } = res.data.data;
-      this.setState({ workshops });
+      this.setState({ allWorkshops: workshops });
     });
   }
 
@@ -212,6 +276,9 @@ class RegistrationForm extends Component {
               className={classes.textField}
               value={this.state.firstName}
               onChange={this.handleChange('firstName')}
+              error={this.state.errors.find(
+                error => error.name === 'firstName',
+              )}
               margin="normal"
             />
             <TextField
@@ -221,6 +288,7 @@ class RegistrationForm extends Component {
               className={classes.textField}
               value={this.state.lastName}
               onChange={this.handleChange('lastName')}
+              error={this.state.errors.find(error => error.name === 'lastName')}
               margin="normal"
             />
           </Grid>
@@ -233,6 +301,7 @@ class RegistrationForm extends Component {
               className={classes.doubleWidthField}
               value={this.state.email}
               onChange={this.handleChange('email')}
+              error={this.state.errors.find(error => error.name === 'email')}
               helperText={
                 this.state.externalProvider
                   ? 'No se puede cambiar ya que viene de un proovedor externo'
@@ -249,6 +318,9 @@ class RegistrationForm extends Component {
                 label="Clave"
                 className={classes.textField}
                 onChange={this.handleChange('password')}
+                error={this.state.errors.find(
+                  error => error.name === 'password',
+                )}
                 type="password"
                 margin="normal"
               />
@@ -266,6 +338,151 @@ class RegistrationForm extends Component {
               />
             </Grid>
           )}
+          <Grid item xs="12">
+            <TextField
+              required
+              id="id-number"
+              label="DNI"
+              className={classes.doubleWidthField}
+              value={this.state.idNumber}
+              onChange={this.handleChange('idNumber')}
+              error={this.state.errors.find(error => error.name === 'idNumber')}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs="12">
+            <TextField
+              required
+              id="workshop"
+              label="Taller al que pertenece"
+              className={classes.doubleWidthField}
+              value={this.state.workshop}
+              onChange={this.handleChange('workshop')}
+              margin="normal"
+              select
+              // InputLabelProps={{
+              //   shrink: true,
+              // }}
+              SelectProps={{
+                MenuProps: {
+                  className: classes.menu,
+                },
+              }}
+              margin="normal"
+            >
+              {this.state.allWorkshops.map(option => (
+                <MenuItem key={option.id} value={option.id}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs="12">
+            <FormControl className={classes.formControl}>
+              <InputLabel required htmlFor="subjects">
+                Materias cursadas
+              </InputLabel>
+              <Select
+                multiple
+                value={this.state.subjects}
+                onChange={this.handleChange('subjects')}
+                input={<Input id="subjects" />}
+                renderValue={selected =>
+                  selected
+                    .map(s =>
+                      this.state.allSubjects.find(subject => s === subject.id),
+                    )
+                    .map(subject => subject.name)
+                    .join(', ')
+                }
+                MenuProps={{
+                  className: classes.menu,
+                }}
+              >
+                {this.state.allSubjects.map(subject => (
+                  <MenuItem key={subject.id} value={subject.id}>
+                    <Checkbox
+                      checked={this.state.subjects.indexOf(subject.id) > -1}
+                    />
+                    <ListItemText primary={subject.name} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {/* <TextField
+              required
+              id="subjects"
+              label="Materias cursadas"
+              className={classes.doubleWidthField}
+              value={this.state.subjects}
+              onChange={this.handleMultiSelect('subjects')}
+              margin="normal"
+              select
+              multiple
+              InputLabelProps={{
+                shrink: true,
+              }}
+              SelectProps={{
+                MenuProps: {
+                  className: classes.menu,
+                },
+              }}
+              margin="normal"
+            >
+              {this.state.subjects.map(option => (
+                <MenuItem key={option.id} value={option.id}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField> */}
+          </Grid>
+          <Grid item xs="12">
+            <FormControlLabel
+              label="Cursé Rondina en un año anterior"
+              control={
+                <Checkbox
+                  checked={this.state.previouslyOnThisChair}
+                  onChange={this.toggleCheckbox('previouslyOnThisChair')}
+                />
+              }
+            />
+          </Grid>
+          {this.state.previouslyOnThisChair && (
+            <Grid item xs="12">
+              <TextField
+                id="previous-year-for-this-chair"
+                label="En qué año?"
+                className={classes.doubleWidthField}
+                value={this.state.previousYearForThisChair}
+                onChange={this.handleChange('previousYearForThisChair')}
+                margin="normal"
+              />
+            </Grid>
+          )}
+          <Grid item xs="12">
+            <TextField
+              id="website"
+              label="Tenés un blog/sitio personal?"
+              className={classes.doubleWidthField}
+              value={this.state.website}
+              onChange={this.handleChange('website')}
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs="12">
+            <TextField
+              id="about-me"
+              multiline
+              rows="4"
+              rowsMax="12"
+              label="Nos querés contar algo sobre vos?"
+              className={classes.doubleWidthField}
+              value={this.state.aboutMe}
+              onChange={this.handleChange('aboutMe')}
+              margin="normal"
+            />
+          </Grid>
+
           {/* <Grid item xs="12">
             <TextField
               required
@@ -399,6 +616,14 @@ class RegistrationForm extends Component {
             />
           </Grid>
           <Grid item xs="12">
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.button}
+              onClick={this.handleCancel}
+            >
+              Cancelar
+            </Button>
             <Button
               variant="contained"
               color="primary"

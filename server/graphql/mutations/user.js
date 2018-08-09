@@ -1,25 +1,38 @@
 const User = require('../../models/user');
 
+const { canUpdateUser } = require('../policies/user');
+
 const passport = require('../../passport');
 
 function createUser(obj, { input }, context) {
   return User.create(input);
 }
 
-function createOrUpdateUser(obj, { input }, context) {
+function createOrUpdateUser(obj, { input }, { req }) {
   return new Promise((resolve, reject) => {
     User.findOne({ email: input.email }, (err, doc) => {
-      if (err) { return reject(err); }
+      if (err) {
+        return reject(err);
+      }
       if (doc) {
-        doc.set(input);
-        doc.save((saveErr) => {
-          if (saveErr) { return reject(saveErr); }
-          return resolve(doc);
-        });
+        const authorized = canUpdateUser(req.user, doc);
+        if (authorized === true) {
+          doc.set(input);
+          doc.save((saveErr) => {
+            if (saveErr) {
+              return reject(saveErr);
+            }
+            return resolve(doc);
+          });
+        } else {
+          return reject(authorized);
+        }
       }
       const user = new User(input);
       return user.save((saveErr) => {
-        if (saveErr) { return reject(saveErr); }
+        if (saveErr) {
+          return reject(saveErr);
+        }
         return resolve(user);
       });
     });

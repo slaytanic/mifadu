@@ -17,6 +17,12 @@ const userSchema = new Schema(
     receiveNews: { type: Boolean, default: false },
     acceptedTerms: { type: Boolean, default: false },
     completedProfile: { type: Boolean, default: false },
+    workshop: { type: Schema.Types.ObjectId, ref: 'Workshop' },
+    subjects: [{ type: Schema.Types.ObjectId, ref: 'Subject' }],
+    previouslyOnThisChair: Boolean,
+    previousYearForThisChair: String,
+    website: String,
+    aboutMe: String,
   },
   { timestamps: true },
 );
@@ -26,7 +32,10 @@ userSchema.pre('save', function save(next) {
   if (!this.isModified('password')) return next();
 
   if (this.password === '') {
-    this.password = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 8);
+    this.password = Math.random()
+      .toString(36)
+      .replace(/[^a-z]+/g, '')
+      .substr(0, 8);
   }
 
   return bcrypt.genSalt(SALT_WORK_FACTOR, (saltErr, salt) => {

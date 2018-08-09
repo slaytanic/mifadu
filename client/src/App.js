@@ -29,7 +29,7 @@ class App extends Component {
     logoutUser().then(() => {
       this.setCurrentUser(null);
     });
-  }
+  };
 
   render() {
     const { me } = this.state;
@@ -40,7 +40,11 @@ class App extends Component {
           <MenuAppBar />
           <Route
             render={() => (
-              <RegisterPage user={me} setCurrentUser={this.setCurrentUser} />
+              <RegisterPage
+                user={me}
+                setCurrentUser={this.setCurrentUser}
+                logoutUser={this.logoutUser}
+              />
             )}
           />
         </div>
@@ -49,14 +53,28 @@ class App extends Component {
 
     return (
       <div className="App">
-        <MenuAppBar user={me} />
-        <Route exact path="/" render={() => <HomePage user={me} logoutUser={this.logoutUser} />} />
-        <Route exact path="/login" render={() => (<LoginPage setCurrentUser={this.setCurrentUser} />)} />
-        <Route exact path="/register"
-            render={() => (
-              <RegisterPage user={me} setCurrentUser={this.setCurrentUser} />
-            )}
-          />
+        <MenuAppBar user={me} logoutUser={this.logoutUser} />
+        <Route
+          exact
+          path="/"
+          render={() => <HomePage user={me} logoutUser={this.logoutUser} />}
+        />
+        <Route
+          exact
+          path="/login"
+          render={() => <LoginPage setCurrentUser={this.setCurrentUser} />}
+        />
+        <Route
+          exact
+          path="/register"
+          render={() => (
+            <RegisterPage
+              user={me}
+              setCurrentUser={this.setCurrentUser}
+              logoutUser={this.logoutUser}
+            />
+          )}
+        />
       </div>
     );
   }

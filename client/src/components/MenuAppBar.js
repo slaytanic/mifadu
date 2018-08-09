@@ -30,9 +30,14 @@ const styles = {
 
 class MenuAppBar extends React.Component {
   state = {
-    auth: true,
+    auth: false,
     anchorEl: null,
   };
+
+  static getDerivedStateFromProps(props, state) {
+    console.log(props);
+    return { auth: props.user ? true : false };
+  }
 
   handleChange = (event, checked) => {
     this.setState({ auth: checked });
@@ -67,13 +72,13 @@ class MenuAppBar extends React.Component {
         </FormGroup> */}
         <AppBar position="static">
           <Toolbar>
-            <IconButton
+            {/* <IconButton
               className={classes.menuButton}
               color="inherit"
               aria-label="Menu"
             >
               <MenuIcon />
-            </IconButton>
+            </IconButton> */}
             <div className={classes.flex}>
               <img src={Logo} />
             </div>
@@ -109,8 +114,9 @@ class MenuAppBar extends React.Component {
                   open={open}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                  <MenuItem onClick={this.props.logoutUser}>Salir</MenuItem>
+                  {/* <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                  <MenuItem onClick={this.handleClose}>My account</MenuItem> */}
                 </Menu>
               </div>
             )}
