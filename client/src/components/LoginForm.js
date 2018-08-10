@@ -1,22 +1,18 @@
 import React, { Component } from 'react';
-import { Link, NavLink, withRouter } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import ErrorList from './ErrorList';
 
-import { getSubjects, getWorkshops, loginUser } from '../data/service';
+import { loginUser } from '../data/service';
 
 const styles = theme => ({
   container: {
@@ -106,7 +102,7 @@ class LoginForm extends Component {
         </Grid>
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
           className={classes.button}
           onClick={this.handleLogin}
         >

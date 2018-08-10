@@ -5,7 +5,6 @@ import { withRouter } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -51,31 +50,8 @@ const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit,
     width: 400 + theme.spacing.unit * 2,
-    // minWidth: 120,
-    // maxWidth: 300,
   },
 });
-
-const userTypes = [
-  { value: 'student', label: 'Estudiante' },
-  { value: 'tutor', label: 'Profesor' },
-];
-
-const genders = [
-  { value: 'female', label: 'Femenino' },
-  { value: 'male', label: 'Masculino' },
-  { value: 'other', label: 'Otro' },
-];
-
-const states = [
-  { value: 'CABA', label: 'Ciudad Aut&oacute;noma de Buenos Aires' },
-  { value: 'BA', label: 'Buenos Aires' },
-];
-
-const cities = {
-  CABA: [{ value: 'CABA', label: 'Ciudad Aut&oacute;noma de Buenos Aires' }],
-  BA: [{ value: 'Campana', label: 'Campana' }],
-};
 
 class RegistrationForm extends Component {
   state = {
@@ -102,7 +78,7 @@ class RegistrationForm extends Component {
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
-      errors: this.state.errors.filter(error => error.name != name),
+      errors: this.state.errors.filter(error => error.name !== name),
     });
   };
 
@@ -111,7 +87,7 @@ class RegistrationForm extends Component {
     console.log(event.target.value);
     this.setState({
       [name]: event.target.value,
-      errors: this.state.errors.filter(error => error.name != name),
+      errors: this.state.errors.filter(error => error.name !== name),
     });
     console.log(this.state.subjects);
   };
@@ -119,6 +95,7 @@ class RegistrationForm extends Component {
   toggleCheckbox = name => () => {
     this.setState({
       [name]: !this.state[name],
+      errors: this.state.errors.filter(error => error.name !== name),
     });
   };
 
@@ -130,7 +107,7 @@ class RegistrationForm extends Component {
   handleRegister = () => {
     const errors = [];
 
-    if (this.state.password != this.state.passwordConfirmation) {
+    if (this.state.password !== this.state.passwordConfirmation) {
       errors.push({
         name: 'passwordConfirmation',
         message: 'La confirmación de la clave no coincide',
@@ -358,11 +335,7 @@ class RegistrationForm extends Component {
               className={classes.doubleWidthField}
               value={this.state.workshop}
               onChange={this.handleChange('workshop')}
-              margin="normal"
               select
-              // InputLabelProps={{
-              //   shrink: true,
-              // }}
               SelectProps={{
                 MenuProps: {
                   className: classes.menu,
@@ -409,32 +382,6 @@ class RegistrationForm extends Component {
                 ))}
               </Select>
             </FormControl>
-            {/* <TextField
-              required
-              id="subjects"
-              label="Materias cursadas"
-              className={classes.doubleWidthField}
-              value={this.state.subjects}
-              onChange={this.handleMultiSelect('subjects')}
-              margin="normal"
-              select
-              multiple
-              InputLabelProps={{
-                shrink: true,
-              }}
-              SelectProps={{
-                MenuProps: {
-                  className: classes.menu,
-                },
-              }}
-              margin="normal"
-            >
-              {this.state.subjects.map(option => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </TextField> */}
           </Grid>
           <Grid item xs="12">
             <FormControlLabel
@@ -482,117 +429,6 @@ class RegistrationForm extends Component {
               margin="normal"
             />
           </Grid>
-
-          {/* <Grid item xs="12">
-            <TextField
-              required
-              id="user-type"
-              select
-              label="Tipo de usuario"
-              className={classes.textField}
-              value={this.state.userType}
-              onChange={this.handleChange('userType')}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              SelectProps={{
-                MenuProps: {
-                  className: classes.menu,
-                },
-              }}
-              margin="normal"
-            >
-              {userTypes.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              required
-              id="gender"
-              select
-              label="G&eacute;nero"
-              className={classes.textField}
-              value={this.state.gender}
-              onChange={this.handleChange('gender')}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              SelectProps={{
-                MenuProps: {
-                  className: classes.menu,
-                },
-              }}
-              margin="normal"
-            >
-              {genders.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs="12">
-            <TextField
-              required
-              id="birthday"
-              label="Fecha de nacimiento"
-              type="date"
-              className={classes.textField}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs="12">
-            <Typography variant="headline" component="h3">
-              Informaci&oacute;n Academica
-            </Typography>
-            <TextField
-              required
-              id="user-type"
-              select
-              label="Tipo de usuario"
-              className={classes.textField}
-              value={this.state.userType}
-              onChange={this.handleChange('userType')}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              SelectProps={{
-                MenuProps: {
-                  className: classes.menu,
-                },
-              }}
-              margin="normal"
-            >
-              {userTypes.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              required
-              id="gender"
-              label="G&eacute;nero"
-              className={classes.textField}
-              margin="normal"
-            />
-            <TextField
-              required
-              id="birthday"
-              label="Fecha de nacimiento"
-              type="date"
-              className={classes.textField}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              margin="normal"
-            />
-          </Grid> */}
           <Grid item xs="12">
             <FormControlLabel
               label="Acepto recibir informaci&oacute;n y novedades de MIFADU"
@@ -616,17 +452,12 @@ class RegistrationForm extends Component {
             />
           </Grid>
           <Grid item xs="12">
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={this.handleCancel}
-            >
+            <Button className={classes.button} onClick={this.handleCancel}>
               Cancelar
             </Button>
             <Button
               variant="contained"
-              color="primary"
+              color="secondary"
               className={classes.button}
               onClick={this.handleRegister}
             >

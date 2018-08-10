@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
+// import Icon from '@material-ui/core/Icon';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
 import LoginForm from '../components/LoginForm';
@@ -51,7 +51,7 @@ class LoginPage extends Component {
 
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             className={classes.button}
             href="/auth/google"
           >
@@ -62,7 +62,7 @@ class LoginPage extends Component {
           </Button>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             className={classes.button}
             href="/auth/facebook"
           >
@@ -73,7 +73,7 @@ class LoginPage extends Component {
           </Button>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             className={classes.button}
             href="/auth/twitter"
           >
