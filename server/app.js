@@ -98,9 +98,16 @@ app.get(
   }),
 );
 
-app.use(express.static(path.join(__dirname, 'build')));
+function redirectToHttps(req, res, next) {
+  if (req.secure) {
+    return next();
+  }
+  return res.redirect(`https://${req.headers.host}${req.url}`);
+}
 
-app.get('*', (req, res) => {
+app.use(redirectToHttps, express.static(path.join(__dirname, 'build')));
+
+app.get('*', redirectToHttps, (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
