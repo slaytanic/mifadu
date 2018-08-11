@@ -1,7 +1,7 @@
 ---
 applications:
 - name: mifadu
-  memory: 256M
+  memory: 128M
   instances: 1
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
   command: yarn server
