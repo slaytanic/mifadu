@@ -36,6 +36,8 @@ import GridContainer from '../components/Grid/GridContainer';
 
 import dashboardStyle from '../assets/jss/material-dashboard-react/views/dashboardStyle';
 
+import { getMyAssignments } from '../data/service';
+
 // import LoginForm from '../components/LoginForm';
 
 const styles = theme => ({
@@ -45,8 +47,8 @@ const styles = theme => ({
     // paddingTop: theme.spacing.unit * 2,
     // paddingBottom: theme.spacing.unit * 2,
     // backgroundColor: '#ff0000',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
     display: 'flex',
   },
   card: {
@@ -74,6 +76,12 @@ const styles = theme => ({
 });
 
 class StudentDashboardPage extends Component {
+  componentDidMount() {
+    getMyAssignments().then(res => {
+      this.setState({ assignments: res.data.data.myAssignments });
+    });
+  }
+
   render() {
     const { classes } = this.props;
 

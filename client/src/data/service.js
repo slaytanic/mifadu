@@ -44,3 +44,9 @@ export function getSubjects() {
 export function getWorkshops() {
   return axios.post(GRAPHQL_ENDPOINT, { query: '{ workshops { id, name } }' });
 }
+
+export function getMyAssignments() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: '{ myAssignments { id, name } }',
+  });
+}
