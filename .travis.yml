@@ -9,6 +9,7 @@ cache:
   yarn: true
 script:
   - cd client && yarn && yarn build && mv build ../server
+  - cd server && yarn
 deploy:
   skip_cleanup: true
   provider: cloudfoundry
