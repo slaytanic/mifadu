@@ -78,6 +78,7 @@ const styles = theme => ({
     ...theme.mixins.toolbar,
   },
   content: {
+    // display: 'flex',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
