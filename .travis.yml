@@ -8,8 +8,8 @@ before_install:
 cache:
   yarn: true
 script:
-  - cd client && yarn && CI=false yarn build && mv build ../server
-  - cd server && yarn
+  - cd client && yarn && CI=false yarn build && mv build ../server && cd ..
+  - cd server && yarn && cd ..
 deploy:
   skip_cleanup: true
   provider: cloudfoundry
