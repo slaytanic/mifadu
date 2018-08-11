@@ -13,8 +13,8 @@ const styles = theme => {
   return {
     root: {
       width: '100%',
-      // maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
+      maxWidth: 360,
+      // backgroundColor: theme.palette.background.paper,
     },
     listItemText: {
       color: theme.palette.error.main,

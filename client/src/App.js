@@ -8,6 +8,10 @@ import MenuAppBar from './components/MenuAppBar';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
+import AdminPage from './pages/AdminPage';
+import AssignmentPage from './pages/AssignmentPage';
+import StudentDashboardPage from './pages/StudentDashboardPage';
+import TutorDashboardPage from './pages/TutorDashboardPage';
 
 import { getMe, logoutUser } from './data/service';
 
@@ -16,12 +20,8 @@ import { getMe, logoutUser } from './data/service';
 
 const theme = createMuiTheme({
   palette: {
-    primary: {
-      main: '#f9f9f9',
-    },
-    secondary: {
-      main: '#0091ea',
-    },
+    primary: { main: '#0091ea' },
+    secondary: { main: '#f9f9f9' },
   },
 });
 
@@ -80,6 +80,13 @@ class App extends Component {
             path="/login"
             render={() => <LoginPage setCurrentUser={this.setCurrentUser} />}
           />
+          <Route exact path="/admin" render={() => <AdminPage />} />
+          <Route
+            exact
+            path="/student"
+            render={() => <StudentDashboardPage />}
+          />
+          <Route exact path="/tutor" render={() => <TutorDashboardPage />} />
           <Route
             exact
             path="/register"

@@ -102,7 +102,7 @@ class LoginForm extends Component {
         </Grid>
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           className={classes.button}
           onClick={this.handleLogin}
         >

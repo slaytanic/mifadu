@@ -146,6 +146,7 @@ class MenuAppBar extends React.Component {
     return (
       <div className={classes.root}>
         <AppBar
+          color="secondary"
           className={classNames(classes.appBar, {
             [classes.appBarShift]: drawerOpen,
             [classes[`appBarShift-${drawerAnchor}`]]: drawerOpen,
