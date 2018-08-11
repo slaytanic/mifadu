@@ -8,7 +8,7 @@ before_install:
 cache:
   yarn: true
 script:
-  - CI=false cd client && yarn && yarn build && mv build ../server
+  - cd client && yarn && CI=false yarn build && mv build ../server
   - cd server && yarn
 deploy:
   skip_cleanup: true
