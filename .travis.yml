@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "stable"
+script:
+  - cd client && yarn build && mv build ../server
+deploy:
+  skip_cleanup: true
+  provider: cloudfoundry
+  api: https://api.run.pivotal.io
+  username: slaytanic@gmail.com
+  password:
+    secure: d53220zOgbKG4DMZjVWcUYb3V3DHCarKfTtV0yXBKkyg6QcXDdS5neZlNZtx+DQ0BF5yAVHr0jc5AfHluCF2yK6Eh4bPfBij6lIOuI/K1AwF1z4t6QCWCm4w3+Jdo1im3VRh9aUpdPqnViTVasuDxNtv52+oA2Wg/G1c1G1afgWU80KX+/vxnZaHQ4lDWDT3mTfcFjfioby7nKCQfNH5lK7ewc/FNxcsQFidhp9ZZ4KJfyL4y7TfYKPyqCTPXbKtpluRMLPqsNHyE7gxiO+FJ6fuUj0CcTw5p/8lzmMpsOHPQM6VW9C8Q0nmlgAgUdYUsjElyThPdRNqSJv9zDw4w6umA68udwrfrfKWtiSHgutNvn6Rni0jgSpaCBfJq/pJQV2O6qEwPPknVgX6k9STg7QyRhyPcSW56FEi3/YvUiLlxG1ymP11Bq7eWapY3QXNEtyhK4FFwkGrEQ1DpckV0n80WdWZVZ2iINEvuJNaxq8l+yo/b/uHyFQGPWvG9aeC5vDkn9mycKNENrE+wmSGx9PBnsrcxEi/Nf4PzbfA9vlTcOBjwoVpzxKXqKt9gozyJWB30sOxTNzg5mESCdElG0qh03zRaLuTnZZuKdal8gYjvfoRvXCyqLCrZlAxD0sYy2Ws+YV0iJUKlBTqmB7/XO0DM0X4/vOaNMAlEge0Vyo=
+  organization: MiFADU
+  space: development
+  on:
+    repo: slaytanic/mifadu
+    branch: master
