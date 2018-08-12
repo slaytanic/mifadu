@@ -10,6 +10,8 @@ cache:
 script:
 - cd client && yarn && CI=false yarn build && mv build ../server && cd ..
 - cd server && yarn && cd ..
+before_deploy:
+- env
 deploy:
   provider: cloudfoundry
   api: https://api.run.pivotal.io
@@ -21,3 +23,10 @@ deploy:
   skip_cleanup: true
   on:
     branch: master
+env:
+  global:
+    - CF_API=https://api.run.pivotal.io
+    - CF_ORG=MiFADU
+    - CF_SPACE=development
+    - CF_USERNAME=slaytanic@gmail.com
+    secure: mts8s/CsERDPlKZOHLj1FDBOoxYyysHNO4ylmU8l2Iu0ACiabbupduFBCaiiC2B7mEoXZH1YYKtJqRBh5Qc5ViLKqQ2/ogY5vILsuBox/CTgSyGApQnaBi4BCh81M7wQSVGYARKebXISGexVsZPoX9RKy0FzxMgnJ74R038PYjRFwSg/dq2+1/QGMQRsYcOL2dHVQWFuPMrJSNTgYta5DGs066ap2AHTEThuS65hf2fupvzdpP4NJBC6ApXoM3Q90pf4wAFCtHdbZwzaTkXTytGGvIcGJ8Z5PhA7JL/Gwj1lQEKECGACSmayQxpBwENAui/uxb718xloKo+r7VR28iRct5En0ZFu/0u0e9IllKgHsvCfUgBRwYrj5Br3wI3wyucIhZlmnSCAVdu80PY8PALpM7td+udHixnjDfGEg0iwvdZ2nTd4zrPJon6pXIDPtdB80P+Svfi0ABI/ur4UnNOQ00WOzCWPFhiAD3EhnMGdTPZruZ4QjbHcv4tTRHecSx8A2j2UeDXnpBwzthnMCduTCcOqMmC9nZhNgKUZrWkKxmqTRncrB/Q6Qt83elbX91YFvhj6p5fASuPpt3jTKC+2KdhiDJ+p37NwwdcYHoVbuGfaPp4k9Yl/jrF2A9DvlmDdFh4O1wPC10ei0QDyE19BTIYi+WjuBjis8SFaQHY=
