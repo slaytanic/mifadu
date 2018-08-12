@@ -1,5 +1,5 @@
 module.exports = {
-  extends: 'airbnb',
+  extends: ['airbnb', 'prettier', 'prettier/react'],
   // plugins: ['prettier', 'prettier/react'],
   rules: {
     // Allow .js files to use JSX syntax
@@ -14,5 +14,17 @@ module.exports = {
     // Use console.error, console.warn and console.info instead
     // https://eslint.org/docs/rules/no-console
     'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+  },
+  env: {
+    // "es6": true,
+    // "node": true,
+    browser: true,
+  },
+  settings: {
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+      },
+    },
   },
 };
