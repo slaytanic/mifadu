@@ -34,6 +34,8 @@ import Danger from '../components/Typography/Danger';
 
 import dashboardStyle from '../assets/jss/material-dashboard-react/views/dashboardStyle';
 
+import { getUsers } from '../data/service';
+
 // import LoginForm from '../components/LoginForm';
 
 const styles = theme => ({
@@ -66,6 +68,12 @@ const styles = theme => ({
 });
 
 class AdminPage extends Component {
+  componentDidMount() {
+    getUsers().then(res => {
+      this.setState({ users: res.data.data.users });
+    });
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -76,7 +84,7 @@ class AdminPage extends Component {
             <CardIcon color="warning">
               <Icon>content_copy</Icon>
             </CardIcon>
-            <p className={classes.cardCategory}>Used Space</p>
+            <p className={classes.cardCategory}>Usuarios registrados</p>
             <h3 className={classes.cardTitle}>
               49/50 <small>GB</small>
             </h3>
@@ -87,7 +95,7 @@ class AdminPage extends Component {
                 <Warning />
               </Danger>
               <a href="#pablo" onClick={e => e.preventDefault()}>
-                Get more space
+                Ver todos los usuarios
               </a>
             </div>
           </CardFooter>

@@ -1,6 +1,8 @@
+const appEnv = require('cfenv').getAppEnv();
 require('dotenv').config();
 
 const config = {
+  isLocal: appEnv.isLocal,
   appSecret: process.env.APP_SECRET || 'mifadu-secret',
   mongoDbUrl: process.env.MONGODB_URL || 'mongodb://localhost/mifadu',
   googleClientID: process.env.GOOGLE_CLIENT_ID,

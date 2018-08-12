@@ -1,6 +1,6 @@
 const Assignment = require('../../models/assignment');
 
-function createAssignment(obj, { input }, context) {
+function createAssignment(obj, { input }, { req }) {
   return Assignment.create(input);
 }
 

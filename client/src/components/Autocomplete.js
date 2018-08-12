@@ -169,7 +169,7 @@ class Autocomplete extends React.PureComponent {
     this.setState({
       [name]: value,
     });
-    this.props.onSelect({ target: { value: value } });
+    this.props.onSelect({ target: { value: value.map(item => item.value) } });
   };
 
   formatCreateLabel = inputValue => {

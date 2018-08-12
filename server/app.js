@@ -7,11 +7,30 @@ const graphqlHTTP = require('express-graphql');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 // const passport = require('passport');
+const multer = require('multer');
 
 const passport = require('./passport');
 
 const config = require('./config');
 const graphqlSchema = require('./graphql/schema');
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+}).fields(['attachment'].map(name => ({ name, maxCount: 1 })));
+
+function handleUpload(req, res, next) {
+  upload(req, res, () => {
+    if (!req.files || req.files.length === 0) {
+      next();
+      return;
+    }
+    req.body = JSON.parse(req.body.request);
+    // req.files.forEach((file) => {
+    //   req.body.variables.input[file.fieldname] = file;
+    // });
+    next();
+  });
+}
 
 // const indexRouter = require('./routes/index');
 // const usersRouter = require('./routes/users');
@@ -64,14 +83,18 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/graphql', (req, res, next) => graphqlHTTP({
+app.use('/graphql', handleUpload, (req, res, next) => graphqlHTTP({
   schema: graphqlSchema,
   graphiql: true,
   context: { req, res, next },
 })(req, res, next));
 
 function redirectToHttps(req, res, next) {
-  if (req.secure || req.get('x-forwarded-proto') === 'https') {
+  if (
+    req.secure
+    || req.get('x-forwarded-proto') === 'https'
+    || config.isLocal
+  ) {
     return next();
   }
   return res.redirect(`https://${req.headers.host}${req.url}`);

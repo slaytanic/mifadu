@@ -28,11 +28,12 @@ const theme = createMuiTheme({
 class App extends Component {
   state = {
     me: null,
+    loading: true,
   };
 
   componentDidMount() {
     getMe().then(res => {
-      this.setCurrentUser(res.data.data.me);
+      this.setState({ me: res.data.data.me, loading: false });
     });
   }
 
@@ -47,7 +48,11 @@ class App extends Component {
   };
 
   render() {
-    const { me } = this.state;
+    const { me, loading } = this.state;
+
+    if (loading) {
+      return <div />;
+    }
 
     if (me && me.completedProfile === false) {
       return (

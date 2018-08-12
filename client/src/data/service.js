@@ -35,6 +35,12 @@ export function createOrUpdateUser(input) {
   });
 }
 
+export function getUsers() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: '{ users { firstName, lastName, email, completedProfile } }',
+  });
+}
+
 export function getSubjects() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query: '{ subjects { id, name, code } }',
@@ -67,11 +73,29 @@ export function getTags() {
 }
 
 export function createAssignment(input) {
-  return axios.post(GRAPHQL_ENDPOINT, {
-    query:
-      'mutation($input: AssignmentInput!) { createAssignment(input: $input) { id } }',
-    variables: {
-      input,
-    },
-  });
+  const formData = new FormData();
+
+  let attachment;
+  if (input.attachment) {
+    attachment = {
+      name: input.attachment.name,
+      type: input.attachment.type,
+    };
+    formData.append('attachment', input.attachment);
+  }
+
+  formData.append(
+    'request',
+    JSON.stringify({
+      query: `mutation($input: AssignmentInput!) { createAssignment(input: $input) { id } }`,
+      variables: {
+        input: {
+          ...input,
+          attachment,
+        },
+      },
+    }),
+  );
+
+  return axios.post(GRAPHQL_ENDPOINT, formData);
 }

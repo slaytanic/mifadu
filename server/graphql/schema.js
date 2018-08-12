@@ -43,7 +43,13 @@ const {
 const typeDefs = `
   scalar DateTime
   
-  input File {
+  input FileInput {
+    name: String
+    type: String
+  }
+
+  type File {
+    id: ID!
     name: String
     type: String
   }
@@ -55,7 +61,8 @@ const typeDefs = `
     type: String
     startsAt: DateTime
     endAt: DateTime
-    attachment: File
+    attachment: FileInput
+    tags: [ID]
   }
 
   type Assignment {
@@ -66,6 +73,8 @@ const typeDefs = `
     type: String
     startsAt: DateTime
     endAt: DateTime
+    attachment: File
+    tags: [Tag]
     updatedAt: DateTime
     createdAt: DateTime
   }

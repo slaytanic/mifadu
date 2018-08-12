@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+const fileSchema = require('./fileSchema');
+
 const assignmentSchema = new Schema(
   {
     name: String,
@@ -10,6 +12,8 @@ const assignmentSchema = new Schema(
     type: { type: String, enum: ['Group', 'Individual'] },
     startsAt: Date,
     endsAt: Date,
+    attachment: fileSchema,
+    tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
   },
   { timestamps: true },
 );
