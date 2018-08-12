@@ -3,7 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Select from 'react-select';
+// import Select from 'react-select';
+import CreatableSelect from 'react-select/lib/Creatable';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -132,6 +133,7 @@ function ValueContainer(props) {
 }
 
 function MultiValue(props) {
+  console.log(props);
   return (
     <Chip
       tabIndex={-1}
@@ -157,7 +159,7 @@ const components = {
   ValueContainer,
 };
 
-class IntegrationReactSelect extends React.Component {
+class Autocomplete extends React.PureComponent {
   state = {
     single: null,
     multi: null,
@@ -167,28 +169,32 @@ class IntegrationReactSelect extends React.Component {
     this.setState({
       [name]: value,
     });
-    this.props.onChange(value);
+    this.props.onSelect({ target: { value: value } });
+  };
+
+  formatCreateLabel = inputValue => {
+    return <span>Crear {inputValue}</span>;
   };
 
   render() {
-    const { classes, suggestions } = this.props;
-
+    const { classes, suggestions, placeholder } = this.props;
     return (
-      <Select
+      <CreatableSelect
         classes={classes}
         options={suggestions}
         components={components}
         value={this.state.multi}
         onChange={this.handleChange('multi')}
-        placeholder={this.props.placeholder}
+        placeholder={placeholder}
+        formatCreateLabel={this.formatCreateLabel}
         isMulti
       />
     );
   }
 }
 
-IntegrationReactSelect.propTypes = {
+Autocomplete.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(IntegrationReactSelect);
+export default withStyles(styles)(Autocomplete);

@@ -17,14 +17,10 @@ function seeds() {
     setDefaultsOnInsert: true,
   }).exec());
 
-  tags.forEach(tag => Tag.findOneAndUpdate(
-    { name: tag },
-    { name: tag },
-    {
-      upsert: true,
-      setDefaultsOnInsert: true,
-    },
-  ).exec());
+  tags.forEach(tag => Tag.findOneAndUpdate({ name: tag.name }, tag, {
+    upsert: true,
+    setDefaultsOnInsert: true,
+  }).exec());
 }
 
 module.exports = seeds;

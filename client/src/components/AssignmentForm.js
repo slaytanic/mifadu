@@ -22,7 +22,7 @@ import GridItem from './Grid/GridItem';
 import ErrorList from './ErrorList';
 import Autocomplete from './Autocomplete';
 
-import { loginUser } from '../data/service';
+import { createAssignment, getTags } from '../data/service';
 
 const styles = theme => ({
   container: {
@@ -58,6 +58,7 @@ class AssignmentForm extends Component {
   state = {
     assignment: {},
     errors: [],
+    tags: [],
   };
 
   handleChange = (name, sub) => event => {
@@ -89,14 +90,26 @@ class AssignmentForm extends Component {
       assignment: { ...this.state.assignment, attachment: file },
       errors: this.state.errors.filter(error => error.name !== 'attachment'),
     });
-    console.log(file);
+    // console.log(file);
+  };
+
+  componentDidMount() {
+    getTags().then(res => {
+      this.setState({ tags: res.data.data.tags });
+    });
+  }
+
+  handleSubmit = () => {
+    console.log(this.state.assignment);
+    createAssignment(this.state.assignment).then(res => {});
   };
 
   render() {
     const { classes } = this.props;
 
     return (
-      <form className={classes.container} noValidate autoComplete="off">
+      // <form className={classes.container} noValidate autoComplete="off">
+      <div>
         <GridContainer>
           <GridItem xs="12">
             <ErrorList errors={this.state.errors} />
@@ -196,7 +209,11 @@ class AssignmentForm extends Component {
           <GridItem xs="12">
             <Autocomplete
               placeholder="Categorías / Etiquetas"
-              onChange={this.handleChange('tags')}
+              onSelect={this.handleChange('assignment', 'tags')}
+              suggestions={this.state.tags.map(tag => ({
+                label: tag.name,
+                value: tag.id,
+              }))}
             />
           </GridItem>
           <GridItem xs="12">
@@ -210,7 +227,8 @@ class AssignmentForm extends Component {
             </Button>
           </GridItem>
         </GridContainer>
-      </form>
+        {/* </form> */}
+      </div>
     );
   }
 }

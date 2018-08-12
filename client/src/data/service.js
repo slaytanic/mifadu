@@ -65,3 +65,13 @@ export function getTags() {
     query: '{ tags { id, name } }',
   });
 }
+
+export function createAssignment(input) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query:
+      'mutation($input: AssignmentInput!) { createAssignment(input: $input) { id } }',
+    variables: {
+      input,
+    },
+  });
+}
