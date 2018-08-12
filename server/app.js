@@ -70,8 +70,16 @@ app.use('/graphql', (req, res, next) => graphqlHTTP({
   context: { req, res, next },
 })(req, res, next));
 
+function redirectToHttps(req, res, next) {
+  if (req.secure) {
+    return next();
+  }
+  return res.redirect(`https://${req.headers.host}${req.url}`);
+}
+
 app.get(
   '/auth/google',
+  redirectToHttps,
   passport.authenticate('google', {
     scope: 'https://www.googleapis.com/auth/userinfo.email',
   }),
@@ -87,6 +95,7 @@ app.get(
 
 app.get(
   '/auth/facebook',
+  redirectToHttps,
   passport.authenticate('facebook', { scope: ['email'] }),
 );
 
@@ -97,13 +106,6 @@ app.get(
     failureRedirect: '/login',
   }),
 );
-
-function redirectToHttps(req, res, next) {
-  if (req.secure) {
-    return next();
-  }
-  return res.redirect(`https://${req.headers.host}${req.url}`);
-}
 
 app.use(redirectToHttps, express.static(path.join(__dirname, 'build')));
 
