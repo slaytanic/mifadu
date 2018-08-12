@@ -111,6 +111,7 @@ const typeDefs = `
     id: ID!
     name: String
     color: String
+    assignments: [Assignment]
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -232,6 +233,12 @@ const typeDefs = `
 
 const resolvers = {
   DateTime: GraphQLDateTime,
+  Assignment: {
+    tags,
+  },
+  Tag: {
+    assignments,
+  },
   Query: {
     assignment,
     assignments,

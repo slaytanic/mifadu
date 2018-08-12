@@ -16,7 +16,7 @@ const graphqlSchema = require('./graphql/schema');
 
 const upload = multer({
   storage: multer.memoryStorage(),
-}).fields(['attachment'].map(name => ({ name, maxCount: 1 })));
+}).fields(['attachment', 'attachments'].map(name => ({ name })));
 
 function handleUpload(req, res, next) {
   upload(req, res, () => {
@@ -83,12 +83,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/graphql', handleUpload, (req, res, next) => graphqlHTTP({
-  schema: graphqlSchema,
-  graphiql: true,
-  context: { req, res, next },
-})(req, res, next));
-
 function redirectToHttps(req, res, next) {
   if (
     req.secure
@@ -99,6 +93,12 @@ function redirectToHttps(req, res, next) {
   }
   return res.redirect(`https://${req.headers.host}${req.url}`);
 }
+
+app.use('/graphql', redirectToHttps, handleUpload, (req, res, next) => graphqlHTTP({
+  schema: graphqlSchema,
+  graphiql: true,
+  context: { req, res, next },
+})(req, res, next));
 
 app.get(
   '/auth/google',

@@ -1,5 +1,6 @@
 module.exports = {
-  extends: ['airbnb', 'prettier', 'prettier/react'],
+  extends: 'airbnb',
+  // plugins: ['prettier', 'prettier/react'],
   rules: {
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
