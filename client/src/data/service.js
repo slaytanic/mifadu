@@ -50,3 +50,18 @@ export function getMyAssignments() {
     query: '{ myAssignments { id, name } }',
   });
 }
+
+export function getAssignment(id) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'query($id: ID!) { getAssignment(id: $id) { id, name } }',
+    variables: {
+      id,
+    },
+  });
+}
+
+export function getTags() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: '{ tags { id, name } }',
+  });
+}

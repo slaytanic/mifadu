@@ -87,6 +87,17 @@ class App extends Component {
             render={() => <StudentDashboardPage />}
           />
           <Route exact path="/tutor" render={() => <TutorDashboardPage />} />
+          <Route exact path="/assignments" render={() => <AssignmentPage />} />
+          <Route
+            exact
+            path="/assignments/:action"
+            render={() => <AssignmentPage />}
+          />
+          <Route
+            exact
+            path="/assignment/:id"
+            render={() => <AssignmentPage />}
+          />
           <Route
             exact
             path="/register"

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 // import { Link } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 
@@ -31,12 +32,14 @@ import CardIcon from '../components/Card/CardIcon';
 import CardBody from '../components/Card/CardBody';
 import CardFooter from '../components/Card/CardFooter';
 import Danger from '../components/Typography/Danger';
-import GridItem from '../components/Grid/GridItem';
 import GridContainer from '../components/Grid/GridContainer';
+import GridItem from '../components/Grid/GridItem';
 
 import dashboardStyle from '../assets/jss/material-dashboard-react/views/dashboardStyle';
 
-import { getMyAssignments } from '../data/service';
+import AssignmentForm from '../components/AssignmentForm';
+
+import { getMyAssignments, getAssignment } from '../data/service';
 
 // import LoginForm from '../components/LoginForm';
 
@@ -54,9 +57,13 @@ class AssignmentPage extends Component {
   };
 
   componentDidMount() {
-    getMyAssignments().then(res => {
-      this.setState({ assignments: res.data.data.myAssignments });
-    });
+    if (this.props.match.params.action === 'new') {
+      this.setState({ assignment: {} });
+    } else if (this.props.match.params.id) {
+      getAssignment(this.props.match.params.id).then(res => {
+        this.setState({ assignment: res.data.data.assignment });
+      });
+    }
   }
 
   render() {
@@ -65,7 +72,9 @@ class AssignmentPage extends Component {
     return (
       <div className={classes.root}>
         <GridContainer>
-          <GridItem xs={12} />
+          <GridItem xs={12}>
+            <AssignmentForm />
+          </GridItem>
         </GridContainer>
       </div>
     );
@@ -74,6 +83,9 @@ class AssignmentPage extends Component {
 
 AssignmentPage.propTypes = {
   classes: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AssignmentPage);
+export default withRouter(withStyles(styles)(AssignmentPage));
