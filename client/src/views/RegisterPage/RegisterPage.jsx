@@ -1,62 +1,89 @@
-import React from "react";
+import React from 'react';
 // @material-ui/core components
-import withStyles from "@material-ui/core/styles/withStyles";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import withStyles from '@material-ui/core/styles/withStyles';
+import InputAdornment from '@material-ui/core/InputAdornment';
 // @material-ui/icons
-import Email from "@material-ui/icons/Email";
-import LockOutline from "@material-ui/icons/LockOutline";
-import People from "@material-ui/icons/People";
+import Email from '@material-ui/icons/Email';
+import LockOutline from '@material-ui/icons/LockOutline';
+import People from '@material-ui/icons/People';
 // core components
-import Header from "components/Header/Header.jsx";
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import Footer from "components/Footer/Footer.jsx";
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
-import Button from "components/CustomButtons/Button.jsx";
-import Card from "components/Card/Card.jsx";
-import CardBody from "components/Card/CardBody.jsx";
-import CardHeader from "components/Card/CardHeader.jsx";
-import CardFooter from "components/Card/CardFooter.jsx";
-import CustomInput from "components/CustomInput/CustomInput.jsx";
+import Header from 'components/Header/Header.jsx';
+import HeaderLinks from 'components/Header/HeaderLinks.jsx';
+import Footer from 'components/Footer/Footer.jsx';
+import GridContainer from 'components/Grid/GridContainer.jsx';
+import GridItem from 'components/Grid/GridItem.jsx';
+import Button from 'components/CustomButtons/Button.jsx';
+import Card from 'components/Card/Card.jsx';
+import CardBody from 'components/Card/CardBody.jsx';
+import CardHeader from 'components/Card/CardHeader.jsx';
+import CardFooter from 'components/Card/CardFooter.jsx';
+import CustomInput from 'components/CustomInput/CustomInput.jsx';
 
-import loginPageStyle from "assets/jss/material-kit-react/views/loginPage.jsx";
+import loginPageStyle from 'assets/jss/material-kit-react/views/loginPage.jsx';
 
-import image from "assets/img/page_background.png";
+import image from 'assets/img/page_background.png';
+
+import {
+  getSubjects,
+  getWorkshops,
+  createOrUpdateUser,
+  loginUser,
+} from 'data/service';
 
 class RegisterPage extends React.Component {
   constructor(props) {
     super(props);
     // we use this to make the card to appear after the page has been rendered
     this.state = {
-      cardAnimaton: "cardHidden"
+      cardAnimaton: 'cardHidden',
+      user: {},
     };
   }
+
+  handleChange = (name, sub) => event => {
+    if (sub) {
+      this.setState({
+        [name]: { ...this.state[name], [sub]: event.target.value },
+        errors: this.state.errors.filter(error => error.name !== name),
+      });
+    } else {
+      this.setState({
+        [name]: event.target.value,
+        errors: this.state.errors.filter(error => error.name !== name),
+      });
+    }
+  };
+
   componentDidMount() {
     // we add a hidden class to the card and after 700 ms we delete it and the transition appears
     setTimeout(
       function() {
-        this.setState({ cardAnimaton: "" });
+        this.setState({ cardAnimaton: '' });
       }.bind(this),
-      700
+      700,
     );
+
+    getSubjects().then(res => {
+      const { subjects } = res.data.data;
+      this.setState({ allSubjects: subjects });
+    });
+
+    getWorkshops().then(res => {
+      const { workshops } = res.data.data;
+      this.setState({ allWorkshops: workshops });
+    });
   }
+
   render() {
     const { classes, ...rest } = this.props;
     return (
       <div>
-        <Header
-          absolute
-          color="transparent"
-          brand="Material Kit React"
-          rightLinks={<HeaderLinks />}
-          {...rest}
-        />
         <div
           className={classes.pageHeader}
           style={{
-            backgroundImage: "url(" + image + ")",
-            backgroundSize: "cover",
-            backgroundPosition: "top center"
+            backgroundImage: 'url(' + image + ')',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top center',
           }}
         >
           <div className={classes.container}>
@@ -65,93 +92,72 @@ class RegisterPage extends React.Component {
                 <Card className={classes[this.state.cardAnimaton]}>
                   <form className={classes.form}>
                     <CardHeader color="primary" className={classes.cardHeader}>
-                      <h4>Ingresar con redes sociales</h4>
-                      <div className={classes.socialLine}>
-                        <Button
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-twitter"} />
-                        </Button>
-                        <Button
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-facebook"} />
-                        </Button>
-                        <Button
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-google-plus-g"} />
-                        </Button>
-                      </div>
+                      <h4>Registrarse en MiFADU</h4>
                     </CardHeader>
-                    <p className={classes.divider}>...o e-mail</p>
+                    {/* <p className={classes.divider}>...o e-mail</p> */}
                     <CardBody>
-                      {/* <CustomInput
-                        labelText="First Name..."
-                        id="first"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        inputProps={{
-                          type: "text",
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <People className={classes.inputIconsColor} />
-                            </InputAdornment>
-                          )
-                        }}
-                      /> */}
                       <CustomInput
                         labelText="e-mail"
                         id="email"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          type: "email",
+                          type: 'email',
                           endAdornment: (
                             <InputAdornment position="end">
                               <Email className={classes.inputIconsColor} />
                             </InputAdornment>
-                          )
+                          ),
                         }}
+                        value={this.state.email}
+                        onChange={this.handleChange('user', 'email')}
                       />
                       <CustomInput
                         labelText="Clave"
-                        id="pass"
+                        id="password"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          type: "password",
+                          type: 'password',
                           endAdornment: (
                             <InputAdornment position="end">
                               <LockOutline
                                 className={classes.inputIconsColor}
                               />
                             </InputAdornment>
-                          )
+                          ),
                         }}
+                        value={this.state.password}
+                        onChange={this.handleChange('user', 'password')}
+                      />
+                      <CustomInput
+                        labelText="Confirmar clave"
+                        id="password-confirmation"
+                        formControlProps={{
+                          fullWidth: true,
+                        }}
+                        inputProps={{
+                          type: 'password',
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <LockOutline
+                                className={classes.inputIconsColor}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
+                        value={this.state.passwordConfirmation}
+                        onChange={this.handleChange('passwordConfirmation')}
                       />
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
                       <Button simple color="primary" size="lg">
-                        No tengo cuenta
+                        Cancelar
                       </Button>
                       <Button simple color="primary" size="lg">
-                        Ingresar
+                        Registrarse
                       </Button>
                     </CardFooter>
                   </form>
