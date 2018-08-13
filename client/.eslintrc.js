@@ -1,6 +1,6 @@
 module.exports = {
   extends: ['airbnb', 'prettier', 'prettier/react'],
-  // plugins: ['prettier', 'prettier/react'],
+  plugins: ['react'],
   rules: {
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
@@ -16,7 +16,7 @@ module.exports = {
     'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
   },
   env: {
-    // "es6": true,
+    es6: true,
     // "node": true,
     browser: true,
   },

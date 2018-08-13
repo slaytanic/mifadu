@@ -42,7 +42,7 @@ const {
 
 const typeDefs = `
   scalar DateTime
-  
+
   input FileInput {
     name: String
     type: String
@@ -138,7 +138,7 @@ const typeDefs = `
     workshop: ID!
     subjects: [ID!]!
     previouslyOnThisChair: Boolean
-    previousYearForThisChair: String
+    previousYearOnThisChair: String
     website: String
     aboutMe: String
   }
@@ -157,7 +157,7 @@ const typeDefs = `
     updatedAt: DateTime
     createdAt: DateTime
     previouslyOnThisChair: Boolean
-    previousYearForThisChair: String
+    previousYearOnThisChair: String
     website: String
     aboutMe: String
   }
@@ -192,7 +192,7 @@ const typeDefs = `
     user(id: ID!): User
     users: [User]
     me: User
-    
+
     workshop(id: ID!): Workshop
     workshops: [Workshop]
   }

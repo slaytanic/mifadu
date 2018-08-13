@@ -7,8 +7,8 @@ import classNames from 'classnames';
 // @material-ui/core components
 import withStyles from '@material-ui/core/styles/withStyles';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 // @material-ui/icons
 import Clear from '@material-ui/icons/Clear';
@@ -16,7 +16,7 @@ import Check from '@material-ui/icons/Check';
 // core components
 import customInputStyle from 'assets/jss/material-kit-react/components/customInputStyle.jsx';
 
-function CustomInput({ ...props }) {
+function CustomSelect({ ...props }) {
   const {
     classes,
     formControlProps,
@@ -28,7 +28,6 @@ function CustomInput({ ...props }) {
     white,
     inputRootCustomClasses,
     success,
-    helperText,
   } = props;
 
   const labelClasses = classNames({
@@ -60,6 +59,7 @@ function CustomInput({ ...props }) {
         <InputLabel
           className={classes.labelRoot + ' ' + labelClasses}
           htmlFor={id}
+          shrink={true}
           {...labelProps}
         >
           {labelText}
@@ -72,20 +72,20 @@ function CustomInput({ ...props }) {
           disabled: classes.disabled,
           underline: underlineClasses,
         }}
+        inputComponent={Select}
         id={id}
-        {...inputProps}
+        inputProps={{ ...inputProps, children: props.children }}
       />
       {error ? (
         <Clear className={classes.feedback + ' ' + classes.labelRootError} />
       ) : success ? (
         <Check className={classes.feedback + ' ' + classes.labelRootSuccess} />
       ) : null}
-      {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
   );
 }
 
-CustomInput.propTypes = {
+CustomSelect.propTypes = {
   classes: PropTypes.object.isRequired,
   labelText: PropTypes.node,
   labelProps: PropTypes.object,
@@ -98,4 +98,4 @@ CustomInput.propTypes = {
   white: PropTypes.bool,
 };
 
-export default withStyles(customInputStyle)(CustomInput);
+export default withStyles(customInputStyle)(CustomSelect);

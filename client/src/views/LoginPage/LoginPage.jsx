@@ -103,6 +103,8 @@ class LoginPage extends React.Component {
                         fullWidth: true,
                       }}
                       inputProps={{
+                        value: this.state.email,
+                        onChange: this.handleChange('email'),
                         type: 'email',
                         endAdornment: (
                           <InputAdornment position="end">
@@ -110,8 +112,6 @@ class LoginPage extends React.Component {
                           </InputAdornment>
                         ),
                       }}
-                      value={this.state.email}
-                      onChange={this.handleChange('email')}
                     />
                     <CustomInput
                       labelText="Clave"
@@ -121,14 +121,14 @@ class LoginPage extends React.Component {
                       }}
                       inputProps={{
                         type: 'password',
+                        value: this.state.password,
+                        onChange: this.handleChange('password'),
                         endAdornment: (
                           <InputAdornment position="end">
                             <LockOutline className={classes.inputIconsColor} />
                           </InputAdornment>
                         ),
                       }}
-                      value={this.state.password}
-                      onChange={this.handleChange('password')}
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>

@@ -20,7 +20,7 @@ const userSchema = new Schema(
     workshop: { type: Schema.Types.ObjectId, ref: 'Workshop' },
     subjects: [{ type: Schema.Types.ObjectId, ref: 'Subject' }],
     previouslyOnThisChair: Boolean,
-    previousYearForThisChair: String,
+    previousYearOnThisChair: String,
     website: String,
     aboutMe: String,
   },
@@ -28,7 +28,6 @@ const userSchema = new Schema(
 );
 
 userSchema.pre('save', function save(next) {
-  console.log('pre save');
   if (!this.isModified('password')) return next();
 
   if (this.password === '') {
@@ -51,7 +50,6 @@ userSchema.pre('save', function save(next) {
 });
 
 userSchema.methods.validPassword = function validPassword(password, done) {
-  console.log('hash', this.password, 'password', password);
   bcrypt.compare(password, this.password, (err, res) => {
     done(err, res);
   });
