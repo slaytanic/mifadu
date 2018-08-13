@@ -78,31 +78,17 @@ class LoginPage extends React.Component {
                   <CardHeader color="primary" className={classes.cardHeader}>
                     <h4>Ingresar con redes sociales</h4>
                     <div className={classes.socialLine}>
-                      <Button
-                        justIcon
-                        href="/auth/twitter"
-                        target="_blank"
-                        color="transparent"
-                        onClick={e => e.preventDefault()}
-                      >
+                      <Button justIcon href="/auth/twitter" color="transparent">
                         <i className="fab fa-twitter" />
                       </Button>
                       <Button
                         justIcon
                         href="/auth/facebook"
-                        target="_blank"
                         color="transparent"
-                        onClick={e => e.preventDefault()}
                       >
                         <i className="fab fa-facebook" />
                       </Button>
-                      <Button
-                        justIcon
-                        href="/auth/google"
-                        target="_blank"
-                        color="transparent"
-                        onClick={e => e.preventDefault()}
-                      >
+                      <Button justIcon href="/auth/google" color="transparent">
                         <i className="fab fa-google-plus-g" />
                       </Button>
                     </div>
