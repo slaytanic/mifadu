@@ -35,9 +35,18 @@ export function createOrUpdateUser(input) {
   });
 }
 
+export function deleteUser(id) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'mutation($id: ID!) { deleteUser(id: $id) { id } }',
+    variables: {
+      id,
+    },
+  });
+}
+
 export function getUsers() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: '{ users { firstName, lastName, email, completedProfile } }',
+    query: '{ users { id, firstName, lastName, email, completedProfile, idNumber } }',
   });
 }
 

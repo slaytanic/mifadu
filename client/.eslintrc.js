@@ -1,6 +1,7 @@
+const path = require('path');
+
 module.exports = {
   extends: ['airbnb', 'prettier', 'prettier/react'],
-  plugins: ['react'],
   rules: {
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
@@ -14,16 +15,17 @@ module.exports = {
     // Use console.error, console.warn and console.info instead
     // https://eslint.org/docs/rules/no-console
     'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+
+    'react/forbid-prop-types': 'off',
   },
+  parser: 'babel-eslint',
   env: {
-    es6: true,
-    // "node": true,
     browser: true,
   },
   settings: {
     'import/resolver': {
       node: {
-        paths: ['src'],
+        paths: path.resolve(__dirname, 'src'),
       },
     },
   },

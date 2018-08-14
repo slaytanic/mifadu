@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import LoginPage from 'views/LoginPage/LoginPage.jsx';
-import RegisterPage from 'views/RegisterPage/RegisterPage.jsx';
-import DashboardPage from 'views/DashboardPage/DashboardPage.jsx';
+import LoginPage from 'views/LoginPage/LoginPage';
+import RegisterPage from 'views/RegisterPage/RegisterPage';
+import DashboardPage from 'views/DashboardPage/DashboardPage';
 
 import { getMe, logoutUser } from 'data/service';
 
@@ -37,17 +37,25 @@ class App extends Component {
     }
 
     if (me && me.completedProfile === false) {
-      return <RegisterPage user={me} setCurrentUser={this.setCurrentUser} logoutUser={this.logoutUser} />;
+      return (
+        <RegisterPage user={me} setCurrentUser={this.setCurrentUser} logoutUser={this.logoutUser} />
+      );
     }
 
     return (
       <Switch>
-        {me ? <DashboardPage user={me} logoutUser={this.logoutUser} /> : <Route
+        {me ? (
+          <DashboardPage user={me} logoutUser={this.logoutUser} />
+        ) : (
+          <Route exact path="/" render={() => <LoginPage setCurrentUser={this.setCurrentUser} />} />
+        )}
+        <Route
           exact
-          path="/"
-          render={() => <LoginPage setCurrentUser={this.setCurrentUser} />}
-        />}
-        <Route exact path="/register" render={() => <RegisterPage setCurrentUser={this.setCurrentUser} logoutUser={this.logoutUser} />} />
+          path="/register"
+          render={() => (
+            <RegisterPage setCurrentUser={this.setCurrentUser} logoutUser={this.logoutUser} />
+          )}
+        />
       </Switch>
     );
   }

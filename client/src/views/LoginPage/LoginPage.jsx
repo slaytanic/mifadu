@@ -81,11 +81,7 @@ class LoginPage extends React.Component {
                       <Button justIcon href="/auth/twitter" color="transparent">
                         <i className="fab fa-twitter" />
                       </Button>
-                      <Button
-                        justIcon
-                        href="/auth/facebook"
-                        color="transparent"
-                      >
+                      <Button justIcon href="/auth/facebook" color="transparent">
                         <i className="fab fa-facebook" />
                       </Button>
                       <Button justIcon href="/auth/google" color="transparent">
@@ -132,21 +128,10 @@ class LoginPage extends React.Component {
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button
-                      simple
-                      color="primary"
-                      size="lg"
-                      component={Link}
-                      to="/register"
-                    >
+                    <Button simple color="primary" size="lg" component={Link} to="/register">
                       No tengo cuenta
                     </Button>
-                    <Button
-                      simple
-                      color="primary"
-                      size="lg"
-                      onClick={this.handleLogin}
-                    >
+                    <Button simple color="primary" size="lg" onClick={this.handleLogin}>
                       Ingresar
                     </Button>
                   </CardFooter>
