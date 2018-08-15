@@ -16,39 +16,33 @@ function CustomTable({ ...props }) {
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
         {tableHead !== undefined ? (
-          <TableHead className={classes[tableHeaderColor + 'TableHeader']}>
+          <TableHead className={classes[`${tableHeaderColor} TableHeader`]}>
             <TableRow>
-              {tableHead.map((prop, index) => {
-                return (
-                  <TableCell
-                    className={classes.tableCell + ' ' + classes.tableHeadCell}
-                    key={prop.key || index}
-                  >
-                    {prop.label}
-                  </TableCell>
-                );
-              })}
+              {tableHead.map((prop, index) => (
+                <TableCell
+                  className={`${classes.tableCell} ${classes.tableHeadCell}`}
+                  key={prop.key || index}
+                >
+                  {prop.label}
+                </TableCell>
+              ))}
               {actions && <TableCell />}
             </TableRow>
           </TableHead>
         ) : null}
         <TableBody>
-          {tableData.map((prop, index) => {
-            return (
-              <TableRow key={prop.id || index}>
-                {tableHead.map(header => {
-                  return (
-                    <TableCell className={classes.tableCell} key={header.key}>
-                      {prop[header.key]}
-                    </TableCell>
-                  );
-                })}
-                <TableCell className={classes.tableCell}>
-                  {actions.map(action => action(prop.id || index))}
+          {tableData.map((prop, index) => (
+            <TableRow key={prop.id || index}>
+              {tableHead.map(header => (
+                <TableCell className={classes.tableCell} key={header.key}>
+                  {prop[header.key]}
                 </TableCell>
-              </TableRow>
-            );
-          })}
+              ))}
+              <TableCell className={classes.tableCell}>
+                {actions.map(action => action(prop.id || index))}
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
@@ -57,6 +51,7 @@ function CustomTable({ ...props }) {
 
 CustomTable.defaultProps = {
   tableHeaderColor: 'gray',
+  actions: [],
 };
 
 CustomTable.propTypes = {
@@ -70,8 +65,8 @@ CustomTable.propTypes = {
     'rose',
     'gray',
   ]),
-  tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+  tableHead: PropTypes.arrayOf(PropTypes.string).isRequired,
+  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
   actions: PropTypes.arrayOf(PropTypes.func),
 };
 

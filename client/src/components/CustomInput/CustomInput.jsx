@@ -14,7 +14,7 @@ import Input from '@material-ui/core/Input';
 import Clear from '@material-ui/icons/Clear';
 import Check from '@material-ui/icons/Check';
 // core components
-import customInputStyle from 'assets/jss/material-kit-react/components/customInputStyle.jsx';
+import customInputStyle from 'assets/jss/material-kit-react/components/customInputStyle';
 
 function CustomInput({ ...props }) {
   const {
@@ -32,8 +32,8 @@ function CustomInput({ ...props }) {
   } = props;
 
   const labelClasses = classNames({
-    [' ' + classes.labelRootError]: error,
-    [' ' + classes.labelRootSuccess]: success && !error,
+    [` ${classes.labelRootError}`]: error,
+    [` ${classes.labelRootSuccess}`]: success && !error,
   });
   const underlineClasses = classNames({
     [classes.underlineError]: error,
@@ -57,11 +57,7 @@ function CustomInput({ ...props }) {
   return (
     <FormControl {...formControlProps} className={formControlClasses}>
       {labelText !== undefined ? (
-        <InputLabel
-          className={classes.labelRoot + ' ' + labelClasses}
-          htmlFor={id}
-          {...labelProps}
-        >
+        <InputLabel className={`${classes.labelRoot} ${labelClasses}`} htmlFor={id} {...labelProps}>
           {labelText}
         </InputLabel>
       ) : null}
@@ -76,14 +72,18 @@ function CustomInput({ ...props }) {
         {...inputProps}
       />
       {error ? (
-        <Clear className={classes.feedback + ' ' + classes.labelRootError} />
+        <Clear className={`${classes.feedback} ${classes.labelRootError}`} />
       ) : success ? (
-        <Check className={classes.feedback + ' ' + classes.labelRootSuccess} />
+        <Check className={`${classes.feedback} ${classes.labelRootSuccess}`} />
       ) : null}
       {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
   );
 }
+
+CustomInput.defaultProps = {
+  formControlProps: {},
+};
 
 CustomInput.propTypes = {
   classes: PropTypes.object.isRequired,

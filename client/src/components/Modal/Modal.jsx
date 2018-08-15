@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 // material-ui components
 import withStyles from '@material-ui/core/styles/withStyles';
 import Slide from '@material-ui/core/Slide';
@@ -19,6 +20,17 @@ function Transition(props) {
 }
 
 class Modal extends React.Component {
+  propTypes = {
+    classes: PropTypes.object.isRequired,
+    handleOk: PropTypes.func.isRequired,
+    handleCancel: PropTypes.func.isRequired,
+    okText: PropTypes.string,
+    cancelText: PropTypes.string,
+    bodyText: PropTypes.string.isRequired,
+    titleText: PropTypes.string.isRequired,
+    open: PropTypes.bool.isRequired,
+  };
+
   render() {
     const {
       classes,
@@ -30,7 +42,7 @@ class Modal extends React.Component {
       titleText,
       open,
     } = this.props;
-    console.log(this.props);
+
     return (
       <div>
         <Dialog

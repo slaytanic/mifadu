@@ -36,8 +36,8 @@ import profileBg from 'assets/img/profile-bg.jpg';
 
 import profilePageStyle from 'assets/jss/material-kit-react/views/profilePage';
 
-import SectionAssignments from './Sections/AssignmentsSection';
-import SectionUsers from './Sections/UsersSection';
+import AssignmentsSection from './Sections/AssignmentsSection';
+import UsersSection from './Sections/UsersSection';
 
 const styles = {
   ...profilePageStyle,
@@ -95,8 +95,8 @@ class DashboardPage extends React.Component {
                 <Button component={Link} to='/users'>Usuarios</Button>
               </div>
               <Switch>
-                <Route path="/users" render={() => <SectionUsers />} />
-                <Route path="/assignments" render={() => <SectionAssignments />} />
+                <Route path="/users" render={() => <UsersSection />} />
+                <Route path="/assignments" render={() => <AssignmentsSection />} />
               </Switch>
               <GridContainer justify="center">
                 <GridItem xs={12} sm={12} md={8} className={classes.navWrapper}>
