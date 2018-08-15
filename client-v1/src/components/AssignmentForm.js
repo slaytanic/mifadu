@@ -65,7 +65,7 @@ class AssignmentForm extends Component {
     if (sub) {
       this.setState({
         [name]: { ...this.state[name], [sub]: event.target.value },
-        errors: this.state.errors.filter(error => error.name !== name),
+        errors: this.state.errors.filter(error => error.name !== sub),
       });
     } else {
       this.setState({

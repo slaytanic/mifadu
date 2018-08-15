@@ -130,6 +130,20 @@ app.get(
   }),
 );
 
+app.get(
+  '/auth/twitter',
+  redirectToHttps,
+  passport.authenticate('twitter'),
+);
+
+app.get(
+  '/auth/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect('/');
+  },
+);
+
 app.use(redirectToHttps, express.static(path.join(__dirname, 'build')));
 
 app.get('*', redirectToHttps, (req, res) => {

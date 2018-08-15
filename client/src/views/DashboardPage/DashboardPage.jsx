@@ -5,6 +5,7 @@ import { Switch, Route, Link } from 'react-router-dom';
 import classNames from 'classnames';
 // @material-ui/core components
 import withStyles from '@material-ui/core/styles/withStyles';
+import Icon from '@material-ui/core/Icon';
 // @material-ui/icons
 // import Camera from '@material-ui/icons/Camera';
 import Palette from '@material-ui/icons/Palette';
@@ -18,6 +19,11 @@ import GridItem from 'components/Grid/GridItem';
 import HeaderLinks from 'components/Header/HeaderLinks';
 import NavPills from 'components/NavPills/NavPills';
 import Parallax from 'components/Parallax/Parallax';
+import Card from 'components/Card/Card';
+import CardHeader from 'components/Card/CardHeader';
+import CardBody from 'components/Card/CardBody';
+import CardFooter from 'components/Card/CardFooter';
+import CardIcon from 'components/Card/CardIcon';
 
 import profile from 'assets/img/faces/christian.jpg';
 
@@ -35,12 +41,38 @@ import work5 from 'assets/img/examples/clem-onojegaw.jpg';
 import profileBg from 'assets/img/profile-bg.jpg';
 
 import profilePageStyle from 'assets/jss/material-kit-react/views/profilePage';
+// import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardStyle';
 
 import AssignmentsSection from './Sections/AssignmentsSection';
 import UsersSection from './Sections/UsersSection';
 
 const styles = {
+  // ...dashboardStyle,
   ...profilePageStyle,
+  // card: {
+  //   maxWidth: '300px',
+  // },
+  cardCategory: {
+    color: 'rgba(255,255,255,.62)',
+    margin: '0',
+    fontSize: '14px',
+    marginTop: '0',
+    marginBottom: '0',
+  },
+  cardTitle: {
+    color: '#FFFFFF',
+    marginTop: '0px',
+    minHeight: 'auto',
+    fontWeight: '300',
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: '3px',
+    textDecoration: 'none',
+    '& small': {
+      color: '#777',
+      fontWeight: '400',
+      lineHeight: '1',
+    },
+  },
 };
 
 class DashboardPage extends React.Component {
@@ -48,6 +80,54 @@ class DashboardPage extends React.Component {
     const { classes, user, logoutUser, ...rest } = this.props;
     const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
     const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
+
+    const mainView = (
+      <GridContainer justify="center">
+        <GridItem xs={12} sm={12} md={8} className={classes.navWrapper}>
+          <NavPills
+            alignCenter
+            color="primary"
+            tabs={[
+              {
+                tabButton: 'Trabajos',
+                tabIcon: Palette,
+                tabContent: (
+                  <GridContainer justify="center">
+                    <GridItem xs={12} sm={12} md={4}>
+                      <img alt="..." src={work1} className={navImageClasses} />
+                      <img alt="..." src={work2} className={navImageClasses} />
+                      <img alt="..." src={work3} className={navImageClasses} />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
+                      <img alt="..." src={work4} className={navImageClasses} />
+                      <img alt="..." src={work5} className={navImageClasses} />
+                    </GridItem>
+                  </GridContainer>
+                ),
+              },
+              {
+                tabButton: 'Favoritos',
+                tabIcon: Favorite,
+                tabContent: (
+                  <GridContainer justify="center">
+                    <GridItem xs={12} sm={12} md={4}>
+                      <img alt="..." src={work4} className={navImageClasses} />
+                      <img alt="..." src={studio3} className={navImageClasses} />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
+                      <img alt="..." src={work2} className={navImageClasses} />
+                      <img alt="..." src={work1} className={navImageClasses} />
+                      <img alt="..." src={studio1} className={navImageClasses} />
+                    </GridItem>
+                  </GridContainer>
+                ),
+              },
+            ]}
+          />
+        </GridItem>
+      </GridContainer>
+    );
+
     return (
       <div>
         <Header
@@ -89,59 +169,77 @@ class DashboardPage extends React.Component {
                   </div>
                 </GridItem>
               </GridContainer>
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={4}>
+                  <Card className={classes.card}>
+                    <CardHeader color="warning" stats icon>
+                      <CardIcon color="warning">
+                        <Icon>content_copy</Icon>
+                      </CardIcon>
+                      <p className={classes.cardCategory}>Entregas pendientes</p>
+                      <h3 className={classes.cardTitle}>49/50</h3>
+                    </CardHeader>
+                    <CardFooter stats>
+                      <div className={classes.stats}>
+                        <a href="#pablo" onClick={e => e.preventDefault()}>
+                          Ver entregas pendientes
+                        </a>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <Card className={classes.card}>
+                    <CardHeader color="warning" stats icon>
+                      <CardIcon color="warning">
+                        <Icon>content_copy</Icon>
+                      </CardIcon>
+                      <p className={classes.cardCategory}>Entregas en evaluación</p>
+                      <h3 className={classes.cardTitle}>49/50</h3>
+                    </CardHeader>
+                    <CardFooter stats>
+                      <div className={classes.stats}>
+                        <a href="#pablo" onClick={e => e.preventDefault()}>
+                          Ver entregas realizadas
+                        </a>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <Card className={classes.card}>
+                    <CardHeader color="warning" stats icon>
+                      <CardIcon color="warning">
+                        <Icon>content_copy</Icon>
+                      </CardIcon>
+                      <p className={classes.cardCategory}>Entregas en evaluación</p>
+                      <h3 className={classes.cardTitle}>49/50</h3>
+                    </CardHeader>
+                    <CardFooter stats>
+                      <div className={classes.stats}>
+                        <a href="#pablo" onClick={e => e.preventDefault()}>
+                          Ver entregas realizadas
+                        </a>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </GridItem>
+              </GridContainer>
+
               <div className={classes.description}>
                 <p>Lalalalala lal al la lla lal la la lal la la la lallalala</p>
-                <Button component={Link} to='/assignments'>TPs</Button>
-                <Button component={Link} to='/users'>Usuarios</Button>
+                <Button component={Link} to="/assignments">
+                  TPs
+                </Button>
+                <Button component={Link} to="/users">
+                  Usuarios
+                </Button>
               </div>
               <Switch>
+                <Route path="/" exact render={() => mainView} />
                 <Route path="/users" render={() => <UsersSection />} />
                 <Route path="/assignments" render={() => <AssignmentsSection />} />
               </Switch>
-              <GridContainer justify="center">
-                <GridItem xs={12} sm={12} md={8} className={classes.navWrapper}>
-                  <NavPills
-                    alignCenter
-                    color="primary"
-                    tabs={[
-                      {
-                        tabButton: 'Trabajos',
-                        tabIcon: Palette,
-                        tabContent: (
-                          <GridContainer justify="center">
-                            <GridItem xs={12} sm={12} md={4}>
-                              <img alt="..." src={work1} className={navImageClasses} />
-                              <img alt="..." src={work2} className={navImageClasses} />
-                              <img alt="..." src={work3} className={navImageClasses} />
-                            </GridItem>
-                            <GridItem xs={12} sm={12} md={4}>
-                              <img alt="..." src={work4} className={navImageClasses} />
-                              <img alt="..." src={work5} className={navImageClasses} />
-                            </GridItem>
-                          </GridContainer>
-                        ),
-                      },
-                      {
-                        tabButton: 'Favoritos',
-                        tabIcon: Favorite,
-                        tabContent: (
-                          <GridContainer justify="center">
-                            <GridItem xs={12} sm={12} md={4}>
-                              <img alt="..." src={work4} className={navImageClasses} />
-                              <img alt="..." src={studio3} className={navImageClasses} />
-                            </GridItem>
-                            <GridItem xs={12} sm={12} md={4}>
-                              <img alt="..." src={work2} className={navImageClasses} />
-                              <img alt="..." src={work1} className={navImageClasses} />
-                              <img alt="..." src={studio1} className={navImageClasses} />
-                            </GridItem>
-                          </GridContainer>
-                        ),
-                      },
-                    ]}
-                  />
-                </GridItem>
-              </GridContainer>
             </div>
           </div>
         </div>

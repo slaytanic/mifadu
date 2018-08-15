@@ -60,7 +60,7 @@ const typeDefs = `
     description: String
     type: String
     startsAt: DateTime
-    endAt: DateTime
+    endsAt: DateTime
     attachment: FileInput
     tags: [ID]
   }
@@ -72,7 +72,7 @@ const typeDefs = `
     description: String
     type: String
     startsAt: DateTime
-    endAt: DateTime
+    endsAt: DateTime
     attachment: File
     tags: [Tag]
     updatedAt: DateTime

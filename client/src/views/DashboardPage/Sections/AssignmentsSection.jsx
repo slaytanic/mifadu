@@ -1,20 +1,23 @@
 import React from 'react';
-// import { Switch, Route } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
+// import InputAdornment from '@material-ui/core/InputAdornment';
+// import FormControl from '@material-ui/core/FormControl';
+// import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
+// import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import FormHelperText from '@material-ui/core/FormHelperText';
+// import Button from '@material-ui/core/Button';
 
 import CustomInput from 'components/CustomInput/CustomInput';
+import CustomSelect from 'components/CustomSelect/CustomSelect';
 import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
+import Autocomplete from 'components/Autocomplete/Autocomplete';
 
 import { getTags, createAssignment } from 'data/service';
 
@@ -26,8 +29,9 @@ const styles = {
 
 class AssignmentsSection extends React.Component {
   state = {
-    assignment: { name: '', shortDescription: '', description: '', endsAt: new Date() },
+    assignment: { name: '', shortDescription: '', description: '', endsAt: new Date(), tags: [] },
     errors: [],
+    tags: [],
   };
 
   componentDidMount() {
@@ -73,17 +77,19 @@ class AssignmentsSection extends React.Component {
       assignment: { ...prevState.assignment, attachment: file },
       errors: prevState.errors.filter(error => error.name !== 'attachment'),
     }));
-    // console.log(file);
   };
 
   handleSubmit = () => {
+    const { history } = this.props;
     const { assignment } = this.state;
-    createAssignment(assignment).then(res => {});
+    createAssignment(assignment).then(res => {
+      history.push(`/assignments/${res.data.data.createAssignment.id}`);
+    });
   };
 
   render() {
     const { classes } = this.props;
-    const { assignment, errors } = this.state;
+    const { assignment, errors, tags } = this.state;
     return (
       <div className={classes.root}>
         <ErrorList errors={errors} />
@@ -146,13 +152,13 @@ class AssignmentsSection extends React.Component {
         <CustomInput
           id="ends-at"
           labelText="Fecha de entrega"
-          type="date"
           formControlProps={{
             fullWidth: true,
           }}
           inputProps={{
             value: assignment.endsAt,
             onChange: this.handleChange('assignment', 'endsAt'),
+            type: 'date',
             // endAdornment: !this.hasError('shortDescription') && (
             //   <InputAdornment position="end">
             //     <PermIdentity className={classes.inputIconsColor} />
@@ -160,56 +166,45 @@ class AssignmentsSection extends React.Component {
             // ),
           }}
           error={this.hasError('endsAt')}
-
-          // className={classes.doubleWidthField}
-          // value={this.state.assignment.endsAt}
-          // onChange={this.handleChange('assignment', 'endsAt')}
-          // margin="normal"
-          // InputLabelProps={{
-          //   shrink: true,
-          // }}
         />
+        <CustomSelect
+          id="type"
+          labelText="Tipo"
+          formControlProps={{
+            fullWidth: true,
+          }}
+          inputProps={{
+            value: assignment.type,
+            onChange: this.handleChange('assignment', 'type'),
+          }}
+          error={this.hasError('type')}
+        >
+          <MenuItem value="Group">Grupal</MenuItem>
+          <MenuItem value="Individual">Individual</MenuItem>
+        </CustomSelect>
 
-        <FormControl className={classes.textField}>
-          <InputLabel htmlFor="type" shrink required>
-            Tipo
-          </InputLabel>
-          <Select
-            value={assignment.type}
-            onChange={this.handleChange('assignment', 'type')}
-            inputProps={{
-              name: 'type',
-              id: 'type',
-            }}
-          >
-            <MenuItem value="Group">Grupal</MenuItem>
-            <MenuItem value="Individual">Individual</MenuItem>
-          </Select>
-        </FormControl>
-
-        <input
-          accept="application/pdf"
-          className={classes.input}
-          id="attachment"
-          multiple
-          type="file"
-          onChange={this.handleFile}
-        />
-        <labelText htmlFor="attachment">
-          {/* <Button>  variant="outlined" component="span" className={classes.button}> */}
-          <Button>Subir consigna</Button>
-        </labelText>
+        <label htmlFor="attachment">
+          <input
+            accept="application/pdf"
+            className={classes.input}
+            id="attachment"
+            multiple
+            type="file"
+            onChange={this.handleFile}
+          />
+          <Button component="span">Subir consigna</Button>
+        </label>
         <FormHelperText>Formato PDF</FormHelperText>
         {assignment.attachment && <Typography>{assignment.attachment.name}</Typography>}
 
-        {/* <Autocomplete
+        <Autocomplete
           placeholder="Categorías / Etiquetas"
           onSelect={this.handleChange('assignment', 'tags')}
-          suggestions={this.state.tags.map(tag => ({
-            labelText: tag.name,
+          suggestions={tags.map(tag => ({
+            label: tag.name,
             value: tag.id,
           }))}
-        /> */}
+        />
 
         <Button
           // variant="contained"
@@ -226,6 +221,7 @@ class AssignmentsSection extends React.Component {
 
 AssignmentsSection.propTypes = {
   classes: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AssignmentsSection);
+export default withRouter(withStyles(styles)(AssignmentsSection));
