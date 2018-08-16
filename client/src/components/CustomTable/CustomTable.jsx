@@ -16,7 +16,7 @@ function CustomTable({ ...props }) {
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
         {tableHead !== undefined ? (
-          <TableHead className={classes[`${tableHeaderColor} TableHeader`]}>
+          <TableHead className={classes[`${tableHeaderColor}TableHeader`]}>
             <TableRow>
               {tableHead.map((prop, index) => (
                 <TableCell
@@ -38,7 +38,7 @@ function CustomTable({ ...props }) {
                   {prop[header.key]}
                 </TableCell>
               ))}
-              <TableCell className={classes.tableCell}>
+              <TableCell className={classes.tableCell} key="actions">
                 {actions.map(action => action(prop.id || index))}
               </TableCell>
             </TableRow>
@@ -65,8 +65,8 @@ CustomTable.propTypes = {
     'rose',
     'gray',
   ]),
-  tableHead: PropTypes.arrayOf(PropTypes.string).isRequired,
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+  tableHead: PropTypes.arrayOf(PropTypes.object).isRequired,
+  tableData: PropTypes.arrayOf(PropTypes.object).isRequired,
   actions: PropTypes.arrayOf(PropTypes.func),
 };
 
