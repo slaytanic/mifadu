@@ -1,5 +1,5 @@
 const { makeExecutableSchema } = require('graphql-tools');
-const { GraphQLDateTime } = require('graphql-iso-date');
+const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date');
 
 const { assignment, assignments } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
@@ -41,6 +41,7 @@ const {
 } = require('./mutations/workshop');
 
 const typeDefs = `
+  scalar Date
   scalar DateTime
 
   input FileInput {
@@ -59,8 +60,8 @@ const typeDefs = `
     shortDescription: String
     description: String
     type: String
-    startsAt: DateTime
-    endsAt: DateTime
+    startsAt: Date
+    endsAt: Date
     attachment: FileInput
     tags: [ID]
   }
@@ -71,8 +72,8 @@ const typeDefs = `
     shortDescription: String
     description: String
     type: String
-    startsAt: DateTime
-    endsAt: DateTime
+    startsAt: Date
+    endsAt: Date
     attachment: File
     tags: [Tag]
     updatedAt: DateTime
@@ -232,6 +233,7 @@ const typeDefs = `
 `;
 
 const resolvers = {
+  Date: GraphQLDate,
   DateTime: GraphQLDateTime,
   Assignment: {
     tags,

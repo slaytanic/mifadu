@@ -21,7 +21,7 @@ import NavPills from 'components/NavPills/NavPills';
 import Parallax from 'components/Parallax/Parallax';
 import Card from 'components/Card/Card';
 import CardHeader from 'components/Card/CardHeader';
-import CardBody from 'components/Card/CardBody';
+// import CardBody from 'components/Card/CardBody';
 import CardFooter from 'components/Card/CardFooter';
 import CardIcon from 'components/Card/CardIcon';
 
@@ -43,8 +43,8 @@ import profileBg from 'assets/img/profile-bg.jpg';
 import profilePageStyle from 'assets/jss/material-kit-react/views/profilePage';
 // import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardStyle';
 
-import AssignmentsSection from './Sections/AssignmentsSection';
-import UsersSection from './Sections/UsersSection';
+// import AssignmentsSection from './Sections/AssignmentsSection';
+// import UsersSection from './Sections/UsersSection';
 
 const styles = {
   // ...dashboardStyle,
@@ -235,11 +235,11 @@ class DashboardPage extends React.Component {
                   Usuarios
                 </Button>
               </div>
-              <Switch>
+              {/* <Switch>
                 <Route path="/" exact render={() => mainView} />
                 <Route path="/users" render={() => <UsersSection />} />
                 <Route path="/assignments" render={() => <AssignmentsSection />} />
-              </Switch>
+              </Switch> */}
             </div>
           </div>
         </div>

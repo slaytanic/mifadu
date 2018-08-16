@@ -27,7 +27,7 @@ const styles = {
   },
 };
 
-class AssignmentsSection extends React.Component {
+class AssignmentForm extends React.Component {
   state = {
     assignment: { name: '', shortDescription: '', description: '', endsAt: new Date(), tags: [] },
     errors: [],
@@ -219,9 +219,9 @@ class AssignmentsSection extends React.Component {
   }
 }
 
-AssignmentsSection.propTypes = {
+AssignmentForm.propTypes = {
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styles)(AssignmentsSection));
+export default withRouter(withStyles(styles)(AssignmentForm));

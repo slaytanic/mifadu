@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import LoginPage from 'views/LoginPage/LoginPage';
 import RegisterPage from 'views/RegisterPage/RegisterPage';
 import DashboardPage from 'views/DashboardPage/DashboardPage';
+import AdminPage from 'views/AdminPage/AdminPage';
 
 import { getMe, logoutUser } from 'data/service';
 
@@ -45,7 +46,14 @@ class App extends Component {
     return (
       <Switch>
         {me ? (
-          <DashboardPage user={me} logoutUser={this.logoutUser} />
+          <div>
+            <Route
+              exact
+              path="/"
+              render={() => <DashboardPage user={me} logoutUser={this.logoutUser} />}
+            />
+            <Route render={() => <AdminPage user={me} logoutUser={this.logoutUser} />} />
+          </div>
         ) : (
           <Route exact path="/" render={() => <LoginPage setCurrentUser={this.setCurrentUser} />} />
         )}

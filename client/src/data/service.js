@@ -75,6 +75,21 @@ export function getAssignment(id) {
   });
 }
 
+export function getAssignments() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'query { assignments { id, name, shortDescription } }',
+  });
+}
+
+export function deleteAssignment(id) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'mutation($id: ID!) { deleteAssignment(id: $id) { id } }',
+    variables: {
+      id,
+    },
+  });
+}
+
 export function getTags() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query: '{ tags { id, name } }',
