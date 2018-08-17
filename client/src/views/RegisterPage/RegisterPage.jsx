@@ -35,12 +35,7 @@ import customCheckboxRadioSwitch from 'assets/jss/material-kit-react/customCheck
 
 import image from 'assets/img/page_background.png';
 
-import {
-  getSubjects,
-  getWorkshops,
-  createOrUpdateUser,
-  loginUser,
-} from 'data/service';
+import { getSubjects, getWorkshops, createOrUpdateUser, loginUser } from 'data/service';
 
 const styles = {
   ...customInputStyle,
@@ -49,6 +44,9 @@ const styles = {
   container: {
     ...loginPageStyle.container,
     paddingTop: '10vh',
+  },
+  hidden: {
+    visibility: 'hidden',
   },
 };
 
@@ -76,7 +74,7 @@ class RegisterPage extends React.Component {
       },
       passwordConfirmation: '',
       errors: [],
-      externalProvider: props.user ? true : false,
+      externalProvider: !!props.user,
       workshops: [],
       subjects: [],
     };
@@ -137,10 +135,7 @@ class RegisterPage extends React.Component {
       });
     }
 
-    if (
-      !this.state.externalProvider &&
-      (!user.password || user.password.length < 8)
-    ) {
+    if (!this.state.externalProvider && (!user.password || user.password.length < 8)) {
       errors.push({
         name: 'password',
         message: 'La clave debe tener al menos 8 caracteres',
@@ -221,17 +216,14 @@ class RegisterPage extends React.Component {
 
   hasError = name => {
     const errors = this.state.errors.find(error => error.name === name);
-    return errors ? true : false;
+    return !!errors;
   };
 
   componentDidMount() {
     // we add a hidden class to the card and after 700 ms we delete it and the transition appears
-    setTimeout(
-      function() {
-        this.setState({ cardAnimaton: '' });
-      }.bind(this),
-      700,
-    );
+    setTimeout(() => {
+      this.setState({ cardAnimaton: '' });
+    }, 700);
 
     getSubjects().then(res => {
       const { subjects } = res.data.data;
@@ -253,14 +245,14 @@ class RegisterPage extends React.Component {
         <div
           className={classes.pageHeader}
           style={{
-            backgroundImage: 'url(' + image + ')',
+            backgroundImage: `url(${image})`,
             backgroundSize: 'cover',
             // backgroundPosition: 'top center',
           }}
         >
           <div className={classes.container}>
             <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={4}>
+              <GridItem xs={12} sm={12} md={6}>
                 <Card className={classes[this.state.cardAnimaton]}>
                   <form className={classes.form}>
                     <CardHeader color="primary" className={classes.cardHeader}>
@@ -293,89 +285,89 @@ class RegisterPage extends React.Component {
                         error={this.hasError('email')}
                       />
                       {!this.state.externalProvider && (
-                        <CustomInput
-                          labelText="Clave"
-                          id="password"
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            value: this.state.user.password,
-                            onChange: this.handleChange('user', 'password'),
-                            type: 'password',
-                            endAdornment: !this.hasError('password') && (
-                              <InputAdornment position="end">
-                                <LockOutline
-                                  className={classes.inputIconsColor}
-                                />
-                              </InputAdornment>
-                            ),
-                          }}
-                          error={this.hasError('password')}
-                        />
+                        <GridContainer>
+                          <GridItem xs={12} sm={12} md={6}>
+                            <CustomInput
+                              labelText="Clave"
+                              id="password"
+                              formControlProps={{
+                                fullWidth: true,
+                              }}
+                              inputProps={{
+                                value: this.state.user.password,
+                                onChange: this.handleChange('user', 'password'),
+                                type: 'password',
+                                endAdornment: !this.hasError('password') && (
+                                  <InputAdornment position="end">
+                                    <LockOutline className={classes.inputIconsColor} />
+                                  </InputAdornment>
+                                ),
+                              }}
+                              error={this.hasError('password')}
+                            />
+                          </GridItem>
+                          <GridItem xs={12} sm={12} md={6}>
+                            <CustomInput
+                              labelText="Confirmar clave"
+                              id="password-confirmation"
+                              formControlProps={{
+                                fullWidth: true,
+                              }}
+                              inputProps={{
+                                value: this.state.passwordConfirmation,
+                                onChange: this.handleChange('passwordConfirmation'),
+                                type: 'password',
+                                endAdornment: !this.hasError('password-confirmation') && (
+                                  <InputAdornment position="end">
+                                    <LockOutline className={classes.inputIconsColor} />
+                                  </InputAdornment>
+                                ),
+                              }}
+                              error={this.hasError('passwordConfirmation')}
+                            />
+                          </GridItem>
+                        </GridContainer>
                       )}
-                      {!this.state.externalProvider && (
-                        <CustomInput
-                          labelText="Confirmar clave"
-                          id="password-confirmation"
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            value: this.state.passwordConfirmation,
-                            onChange: this.handleChange('passwordConfirmation'),
-                            type: 'password',
-                            endAdornment: !this.hasError(
-                              'password-confirmation',
-                            ) && (
-                              <InputAdornment position="end">
-                                <LockOutline
-                                  className={classes.inputIconsColor}
-                                />
-                              </InputAdornment>
-                            ),
-                          }}
-                          error={this.hasError('passwordConfirmation')}
-                        />
-                      )}
-                      <CustomInput
-                        labelText="Nombre"
-                        id="first-name"
-                        formControlProps={{
-                          fullWidth: true,
-                        }}
-                        inputProps={{
-                          value: this.state.user.firstName,
-                          onChange: this.handleChange('user', 'firstName'),
-                          endAdornment: !this.hasError('firstName') && (
-                            <InputAdornment position="end">
-                              <PermIdentity
-                                className={classes.inputIconsColor}
-                              />
-                            </InputAdornment>
-                          ),
-                        }}
-                        error={this.hasError('firstName')}
-                      />
-                      <CustomInput
-                        labelText="Apellido"
-                        id="last-name"
-                        formControlProps={{
-                          fullWidth: true,
-                        }}
-                        inputProps={{
-                          value: this.state.user.lastName,
-                          onChange: this.handleChange('user', 'lastName'),
-                          endAdornment: !this.hasError('lastName') && (
-                            <InputAdornment position="end">
-                              <PermIdentity
-                                className={classes.inputIconsColor}
-                              />
-                            </InputAdornment>
-                          ),
-                        }}
-                        error={this.hasError('lastName')}
-                      />
+                      <GridContainer>
+                        <GridItem xs={12} sm={12} md={6}>
+                          <CustomInput
+                            labelText="Nombre"
+                            id="first-name"
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              value: this.state.user.firstName,
+                              onChange: this.handleChange('user', 'firstName'),
+                              endAdornment: !this.hasError('firstName') && (
+                                <InputAdornment position="end">
+                                  <PermIdentity className={classes.inputIconsColor} />
+                                </InputAdornment>
+                              ),
+                            }}
+                            error={this.hasError('firstName')}
+                          />
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={6}>
+                          <CustomInput
+                            labelText="Apellido"
+                            id="last-name"
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              value: this.state.user.lastName,
+                              onChange: this.handleChange('user', 'lastName'),
+                              endAdornment: !this.hasError('lastName') && (
+                                <InputAdornment position="end">
+                                  <PermIdentity className={classes.inputIconsColor} />
+                                </InputAdornment>
+                              ),
+                            }}
+                            error={this.hasError('lastName')}
+                          />
+                        </GridItem>
+                      </GridContainer>
                       <CustomInput
                         labelText="DNI"
                         id="id-number"
@@ -387,9 +379,7 @@ class RegisterPage extends React.Component {
                           onChange: this.handleChange('user', 'idNumber'),
                           endAdornment: !this.hasError('idNumber') && (
                             <InputAdornment position="end">
-                              <PermIdentity
-                                className={classes.inputIconsColor}
-                              />
+                              <PermIdentity className={classes.inputIconsColor} />
                             </InputAdornment>
                           ),
                         }}
@@ -425,79 +415,68 @@ class RegisterPage extends React.Component {
                           multiple: true,
                           renderValue: selected =>
                             selected
-                              .map(s =>
-                                this.state.subjects.find(
-                                  subject => s === subject.id,
-                                ),
-                              )
+                              .map(s => this.state.subjects.find(subject => s === subject.id))
                               .map(subject => subject.name)
                               .join(', '),
                         }}
                       >
                         {this.state.subjects.map(subject => (
                           <MenuItem key={subject.id} value={subject.id}>
-                            <Checkbox
-                              checked={
-                                this.state.user.subjects.indexOf(subject.id) >
-                                -1
-                              }
-                            />
+                            <Checkbox checked={this.state.user.subjects.indexOf(subject.id) > -1} />
                             <ListItemText primary={subject.name} />
                           </MenuItem>
                         ))}
                       </CustomSelect>
-                      <div
-                        className={
-                          classes.checkboxAndRadio +
-                          ' ' +
-                          classes.checkboxAndRadioHorizontal
-                        }
-                      >
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              onClick={this.handleToggle(
-                                'user',
-                                'previouslyOnThisChair',
-                              )}
-                              checked={this.state.user.previouslyOnThisChair}
-                              checkedIcon={
-                                <Check className={classes.checkedIcon} />
-                              }
-                              icon={<Check className={classes.uncheckedIcon} />}
-                              classes={{ checked: classes.checked }}
-                            />
-                          }
-                          classes={{ label: classes.label }}
-                          label="Ya cursé Rondina en un año anterior"
-                        />
-                      </div>
-                      {this.state.user.previouslyOnThisChair && (
-                        <CustomInput
-                          labelText="Año de la cursada anterior"
-                          id="previous-year-on-this-chair"
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            value: this.state.user.previousYearOnThisChair,
-                            onChange: this.handleChange(
-                              'user',
-                              'previousYearOnThisChair',
-                            ),
-                            endAdornment: !this.hasError(
-                              'previousYearOnThisChair',
-                            ) && (
-                              <InputAdornment position="end">
-                                <PermIdentity
-                                  className={classes.inputIconsColor}
+                      <GridContainer>
+                        <GridItem xs={12} sm={12} md={8}>
+                          <div
+                            className={
+                              classes.checkboxAndRadio // +
+                              // ' ' +
+                              // classes.checkboxAndRadioHorizontal
+                            }
+                          >
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  onClick={this.handleToggle('user', 'previouslyOnThisChair')}
+                                  checked={this.state.user.previouslyOnThisChair}
+                                  checkedIcon={<Check className={classes.checkedIcon} />}
+                                  icon={<Check className={classes.uncheckedIcon} />}
+                                  classes={{ checked: classes.checked }}
                                 />
-                              </InputAdornment>
-                            ),
-                          }}
-                          error={this.hasError('previousYearOnThisChair')}
-                        />
-                      )}
+                              }
+                              classes={{ label: classes.label }}
+                              label="Ya cursé Rondina en un año anterior"
+                            />
+                          </div>
+                        </GridItem>
+                        <GridItem
+                          xs={12}
+                          sm={12}
+                          md={4}
+                          className={this.state.user.previouslyOnThisChair ? '' : classes.hidden}
+                        >
+                          <CustomInput
+                            // className={this.state.user.previouslyOnThisChair ? '' : classes.hidden}
+                            labelText="Año anterior"
+                            id="previous-year-on-this-chair"
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              value: this.state.user.previousYearOnThisChair,
+                              onChange: this.handleChange('user', 'previousYearOnThisChair'),
+                              endAdornment: !this.hasError('previousYearOnThisChair') && (
+                                <InputAdornment position="end">
+                                  <PermIdentity className={classes.inputIconsColor} />
+                                </InputAdornment>
+                              ),
+                            }}
+                            error={this.hasError('previousYearOnThisChair')}
+                          />
+                        </GridItem>
+                      </GridContainer>
                       <CustomInput
                         labelText="Blog / Sitio personal"
                         id="website"
@@ -509,9 +488,7 @@ class RegisterPage extends React.Component {
                           onChange: this.handleChange('user', 'website'),
                           endAdornment: !this.hasError('website') && (
                             <InputAdornment position="end">
-                              <PermIdentity
-                                className={classes.inputIconsColor}
-                              />
+                              <PermIdentity className={classes.inputIconsColor} />
                             </InputAdornment>
                           ),
                         }}
@@ -530,29 +507,23 @@ class RegisterPage extends React.Component {
                           onChange: this.handleChange('user', 'aboutMe'),
                           endAdornment: !this.hasError('aboutMe') && (
                             <InputAdornment position="end">
-                              <PermIdentity
-                                className={classes.inputIconsColor}
-                              />
+                              <PermIdentity className={classes.inputIconsColor} />
                             </InputAdornment>
                           ),
                         }}
                         error={this.hasError('aboutMe')}
                       />
                       <div
-                        className={
-                          classes.checkboxAndRadio +
-                          ' ' +
+                        className={`${classes.checkboxAndRadio} ${
                           classes.checkboxAndRadioHorizontal
-                        }
+                        }`}
                       >
                         <FormControlLabel
                           control={
                             <Checkbox
                               onClick={this.handleToggle('user', 'receiveNews')}
                               checked={this.state.user.receiveNews}
-                              checkedIcon={
-                                <Check className={classes.checkedIcon} />
-                              }
+                              checkedIcon={<Check className={classes.checkedIcon} />}
                               icon={<Check className={classes.uncheckedIcon} />}
                               classes={{ checked: classes.checked }}
                             />
@@ -562,23 +533,16 @@ class RegisterPage extends React.Component {
                         />
                       </div>
                       <div
-                        className={
-                          classes.checkboxAndRadio +
-                          ' ' +
+                        className={`${classes.checkboxAndRadio} ${
                           classes.checkboxAndRadioHorizontal
-                        }
+                        }`}
                       >
                         <FormControlLabel
                           control={
                             <Checkbox
-                              onClick={this.handleToggle(
-                                'user',
-                                'acceptedTerms',
-                              )}
+                              onClick={this.handleToggle('user', 'acceptedTerms')}
                               checked={this.state.user.acceptedTerms}
-                              checkedIcon={
-                                <Check className={classes.checkedIcon} />
-                              }
+                              checkedIcon={<Check className={classes.checkedIcon} />}
                               icon={<Check className={classes.uncheckedIcon} />}
                               classes={{ checked: classes.checked }}
                             />
@@ -589,20 +553,10 @@ class RegisterPage extends React.Component {
                       </div>
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
-                      <Button
-                        simple
-                        color="primary"
-                        size="lg"
-                        onClick={this.handleCancel}
-                      >
+                      <Button simple color="primary" size="lg" onClick={this.handleCancel}>
                         Cancelar
                       </Button>
-                      <Button
-                        simple
-                        color="primary"
-                        size="lg"
-                        onClick={this.handleRegister}
-                      >
+                      <Button simple color="primary" size="lg" onClick={this.handleRegister}>
                         Registrarse
                       </Button>
                     </CardFooter>
