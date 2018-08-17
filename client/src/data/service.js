@@ -123,3 +123,30 @@ export function createAssignment(input) {
 
   return axios.post(GRAPHQL_ENDPOINT, formData);
 }
+
+export function updateAssignmentWork(id, input) {
+  const formData = new FormData();
+
+  // let attachment;
+  // if (input.attachment) {
+  //   attachment = {
+  //     name: input.attachment.name,
+  //     type: input.attachment.type,
+  //   };
+  //   formData.append('attachment', input.attachment);
+  // }
+
+  formData.append(
+    'request',
+    JSON.stringify({
+      query: `mutation($input: AssignmentWorkInput!) { updateAssignmentWork(input: $input) { id } }`,
+      variables: {
+        input: {
+          ...input,
+        },
+      },
+    }),
+  );
+
+  return axios.post(GRAPHQL_ENDPOINT, formData);
+}

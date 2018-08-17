@@ -63,7 +63,21 @@ const typeDefs = `
     startsAt: Date
     endsAt: Date
     attachment: FileInput
+    evaluationVariable: String
     tags: [ID]
+    requiredWork: [RequiredWorkInput]
+  }
+
+  input RequiredWorkInput {
+    type: String
+    description: String
+  }
+
+  type RequiredWork {
+    id: ID!
+    type: String
+    description: String
+    assignmentWork: [AssignmentWork]
   }
 
   type Assignment {
@@ -75,9 +89,17 @@ const typeDefs = `
     startsAt: Date
     endsAt: Date
     attachment: File
+    evaluationVariable: String
     tags: [Tag]
+    requiredWork: [RequiredWork]
     updatedAt: DateTime
     createdAt: DateTime
+  }
+
+  type AssignmentWork {
+    id: ID!
+    user: [User]
+    attachment: File
   }
 
   input ChairInput {

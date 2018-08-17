@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, withRouter } from 'react-router-dom';
 
 import LoginPage from 'views/LoginPage/LoginPage';
 import RegisterPage from 'views/RegisterPage/RegisterPage';
@@ -31,6 +31,7 @@ class App extends Component {
   };
 
   render() {
+    const { location } = this.props;
     const { me, loading } = this.state;
 
     if (loading) {
@@ -42,7 +43,7 @@ class App extends Component {
         <RegisterPage user={me} setCurrentUser={this.setCurrentUser} logoutUser={this.logoutUser} />
       );
     }
-
+    console.log(this.props);
     return (
       <Switch>
         {me ? (
@@ -52,7 +53,9 @@ class App extends Component {
               path="/"
               render={() => <DashboardPage user={me} logoutUser={this.logoutUser} />}
             />
-            <Route render={() => <AdminPage user={me} logoutUser={this.logoutUser} />} />
+            {location.pathname !== '/' && (
+              <Route render={() => <AdminPage user={me} logoutUser={this.logoutUser} />} />
+            )}
           </div>
         ) : (
           <Route exact path="/" render={() => <LoginPage setCurrentUser={this.setCurrentUser} />} />
@@ -69,4 +72,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);
