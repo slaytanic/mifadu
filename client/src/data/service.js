@@ -68,7 +68,8 @@ export function getMyAssignments() {
 
 export function getAssignment(id) {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: 'query($id: ID!) { getAssignment(id: $id) { id, name } }',
+    query:
+      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { type, description }, endsAt, type, tags { id } } }',
     variables: {
       id,
     },
@@ -113,6 +114,35 @@ export function createAssignment(input) {
     JSON.stringify({
       query: `mutation($input: AssignmentInput!) { createAssignment(input: $input) { id } }`,
       variables: {
+        input: {
+          ...input,
+          attachment,
+        },
+      },
+    }),
+  );
+
+  return axios.post(GRAPHQL_ENDPOINT, formData);
+}
+
+export function updateAssignment(id, input) {
+  const formData = new FormData();
+
+  let attachment;
+  if (input.attachment) {
+    attachment = {
+      name: input.attachment.name,
+      type: input.attachment.type,
+    };
+    formData.append('attachment', input.attachment);
+  }
+
+  formData.append(
+    'request',
+    JSON.stringify({
+      query: `mutation($id: ID!, $input: AssignmentInput!) { updateAssignment(id: $id, input: $input) { id } }`,
+      variables: {
+        id,
         input: {
           ...input,
           attachment,

@@ -1,65 +1,73 @@
-import React from "react";
+import React from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
 // nodejs library that concatenates classes
-import classNames from "classnames";
+import classNames from 'classnames';
 // @material-ui/core components
-import withStyles from "@material-ui/core/styles/withStyles";
+import withStyles from '@material-ui/core/styles/withStyles';
 
 // @material-ui/icons
 
 // core components
-import Header from "components/Header/Header";
-import Footer from "components/Footer/Footer";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Button from "components/CustomButtons/Button";
-import HeaderLinks from "components/Header/HeaderLinks";
-import Parallax from "components/Parallax/Parallax";
+import Header from 'components/Header/Header';
+import Footer from 'components/Footer/Footer';
+import GridContainer from 'components/Grid/GridContainer';
+import GridItem from 'components/Grid/GridItem';
+import Button from 'components/CustomButtons/Button';
+import HeaderLinks from 'components/Header/HeaderLinks';
+import Parallax from 'components/Parallax/Parallax';
 
-import landingPageStyle from "assets/jss/material-kit-react/views/landingPage";
+import landingPageStyle from 'assets/jss/material-kit-react/views/landingPage';
 
 // Sections for this page
-import AssignmentsSection from "./Sections/AssignmentsSection";
+import AssignmentsSection from './Sections/AssignmentsSection';
 // import AssignmentSection from "./Sections/AssignmentSection";
-import AssignmentForm from "./Forms/AssignmentForm";
-import UsersSection from "./Sections/UsersSection";
+import AssignmentForm from './Forms/AssignmentForm';
+import UsersSection from './Sections/UsersSection';
 // import ProductSection from "./Sections/ProductSection";
 // import TeamSection from "./Sections/TeamSection";
 // import WorkSection from "./Sections/WorkSection";
 
 // import { container, title } from 'assets/jss/material-kit-react.jsx';
 
+const styles = {
+  ...landingPageStyle,
+  container: {
+    ...landingPageStyle.container,
+    paddingBottom: '50px',
+  },
+};
+
 // const landingPageStyle = {
-  // container: {
-  //   zIndex: '12',
-  //   color: '#FFFFFF',
-  //   ...container,
-  // },
-  // title: {
-  //   ...title,
-  //   display: 'inline-block',
-  //   position: 'relative',
-  //   marginTop: '30px',
-  //   minHeight: '32px',
-  //   color: '#FFFFFF',
-  //   textDecoration: 'none',
-  // },
-  // subtitle: {
-  //   fontSize: '1.313rem',
-  //   maxWidth: '500px',
-  //   margin: '10px auto 0',
-  // },
-  // main: {
-  //   background: '#FFFFFF',
-  //   position: 'relative',
-  //   zIndex: '3',
-  // },
-  // mainRaised: {
-  //   margin: '-60px 30px 0px',
-  //   borderRadius: '6px',
-  //   boxShadow:
-  //     '0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)',
-  // },
+// container: {
+//   zIndex: '12',
+//   color: '#FFFFFF',
+//   ...container,
+// },
+// title: {
+//   ...title,
+//   display: 'inline-block',
+//   position: 'relative',
+//   marginTop: '30px',
+//   minHeight: '32px',
+//   color: '#FFFFFF',
+//   textDecoration: 'none',
+// },
+// subtitle: {
+//   fontSize: '1.313rem',
+//   maxWidth: '500px',
+//   margin: '10px auto 0',
+// },
+// main: {
+//   background: '#FFFFFF',
+//   position: 'relative',
+//   zIndex: '3',
+// },
+// mainRaised: {
+//   margin: '-60px 30px 0px',
+//   borderRadius: '6px',
+//   boxShadow:
+//     '0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)',
+// },
 // };
 
 const dashboardRoutes = [];
@@ -71,7 +79,7 @@ class LandingPage extends React.Component {
       <div>
         <Header
           // color="transparent"
-          brand="MiFADU"
+          brand={<Link to="/">MiFADU</Link>}
           rightLinks={<HeaderLinks user={user} logoutUser={logoutUser} />}
           fixed
           changeColorOnScroll={{
@@ -80,7 +88,7 @@ class LandingPage extends React.Component {
           }}
           {...rest}
         />
-        <Parallax small filter image={require("assets/img/profile-bg.jpg")}>
+        <Parallax small filter image={require('assets/img/profile-bg.jpg')}>
           <div className={classes.container}>
             <GridContainer>
               <GridItem xs={12} sm={12} md={6}>
@@ -107,23 +115,23 @@ class LandingPage extends React.Component {
         </Parallax>
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container}>
-          <Button component={Link} to="/assignments">
-                  TPs
-                </Button>
+            <Button component={Link} to="/assignments">
+              TPs
+            </Button>
 
-          <Button component={Link} to="/assignments/new">
-                  Crear TP
-                </Button>
-                <Button component={Link} to="/users">
-                  Usuarios
-                </Button>
+            <Button component={Link} to="/assignments/new">
+              Crear TP
+            </Button>
+            <Button component={Link} to="/users">
+              Usuarios
+            </Button>
             <Switch>
-                <Route path="/users" exact render={() => <UsersSection />} />
-                <Route path="/assignments" exact render={() => <AssignmentsSection />} />
-                <Route path="/assignments/new" render={() => <AssignmentForm />} />
-                {/* <Route path="/assignments/:id" render={() => <AssignmentForm />} />
-                <Route path="/assignments/:id/edit" render={() => <AssignmentForm />} /> */}
-              </Switch>
+              <Route path="/users" exact render={() => <UsersSection />} />
+              <Route path="/assignments" exact render={() => <AssignmentsSection />} />
+              {/* <Route path="/assignments/:id" render={() => <AssignmentForm />} /> */}
+              <Route path="/assignments/:id/:action" render={() => <AssignmentForm />} />
+              <Route path="/assignments/:action" render={() => <AssignmentForm />} />
+            </Switch>
           </div>
         </div>
         <Footer />
@@ -132,4 +140,4 @@ class LandingPage extends React.Component {
   }
 }
 
-export default withStyles(landingPageStyle)(LandingPage);
+export default withStyles(styles)(LandingPage);

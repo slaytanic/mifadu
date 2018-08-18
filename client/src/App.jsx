@@ -43,7 +43,6 @@ class App extends Component {
         <RegisterPage user={me} setCurrentUser={this.setCurrentUser} logoutUser={this.logoutUser} />
       );
     }
-    console.log(this.props);
     return (
       <Switch>
         {me ? (

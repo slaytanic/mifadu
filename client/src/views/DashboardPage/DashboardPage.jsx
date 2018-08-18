@@ -40,106 +40,53 @@ import work5 from 'assets/img/examples/clem-onojegaw.jpg';
 
 import profileBg from 'assets/img/profile-bg.jpg';
 
-import profilePageStyle from 'assets/jss/material-kit-react/views/profilePage';
-import { container, title } from "assets/jss/material-kit-react";
-import imagesStyle from "assets/jss/material-kit-react/imagesStyles";
+import logo from 'logo.svg';
 
-// import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardStyle';
+import { container, title } from 'assets/jss/material-kit-react';
+import imagesStyle from 'assets/jss/material-kit-react/imagesStyles';
+import { getUsers } from '../../data/service';
+
+import profilePageStyle from 'assets/jss/material-kit-react/views/profilePage';
+import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardStyle';
 
 // import AssignmentsSection from './Sections/AssignmentsSection';
 // import UsersSection from './Sections/UsersSection';
 
 const styles = {
-  // ...dashboardStyle,
-  // ...profilePageStyle,
-  // card: {
-  //   maxWidth: '300px',
-  // },
-  // container: { ...container, color: '#3C4858' },
-  ...container,
-  profile: {
-    textAlign: "center",
-    "& img": {
-      maxWidth: "160px",
-      width: "100%",
-      margin: "0 auto",
-      transform: "translate3d(0, -50%, 0)"
-    }
-  },
-  description: {
-    margin: "1.071rem auto 0",
-    maxWidth: "600px",
-    color: "#999",
-    textAlign: "center !important"
-  },
-  name: {
-    marginTop: "-100px"
-  },
-  ...imagesStyle,
-  main: {
-    background: "#FFFFFF",
-    position: "relative",
-    zIndex: "3"
-  },
-  mainRaised: {
-    margin: "-60px 30px 0px",
-    borderRadius: "6px",
-    boxShadow:
-      "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
-  },
-  title: {
-    ...title,
-    display: "inline-block",
-    position: "relative",
-    // marginTop: "30px",
-    // minHeight: "32px",
-    textDecoration: "none"
+  ...dashboardStyle,
+  ...profilePageStyle,
+  container: {
+    ...profilePageStyle.container,
+    paddingBottom: '50px',
   },
   subtitle: {
     marginTop: '-10px',
-    marginBottom: "24px",
-  },
-  socials: {
-    marginTop: "0",
-    width: "100%",
-    transform: "none",
-    left: "0",
-    top: "0",
-    height: "100%",
-    lineHeight: "41px",
-    fontSize: "20px",
-    color: "#999"
-  },
-  navWrapper: {
-    margin: "20px auto 50px auto",
-    textAlign: "center"
+    marginBottom: '24px',
   },
   cardCategory: {
-    color: 'rgba(255,255,255,.62)',
-    margin: '0',
-    fontSize: '14px',
-    marginTop: '0',
-    marginBottom: '0',
+    ...dashboardStyle.cardCategory,
+    color: '#FFFFFF'
   },
   cardTitle: {
-    color: '#FFFFFF',
-    marginTop: '0px',
-    minHeight: 'auto',
-    fontWeight: '300',
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: '3px',
-    textDecoration: 'none',
-    '& small': {
-      color: '#777',
-      fontWeight: '400',
-      lineHeight: '1',
-    },
-  },
+    ...dashboardStyle.cardTitle,
+    color: '#FFFFFF'
+  }
 };
 
 class DashboardPage extends React.Component {
+  state = {
+    userCount: 0,
+  };
+
+  componentDidMount() {
+    getUsers().then(res => {
+      this.setState({ userCount: res.data.data.users.length });
+    });
+  }
+
   render() {
     const { classes, user, logoutUser, ...rest } = this.props;
+    const { userCount } = this.state;
     const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
     const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
 
@@ -194,7 +141,7 @@ class DashboardPage extends React.Component {
       <div>
         <Header
           // color="transparent"
-          brand="MiFADU"
+          brand={<Link to="/">MiFADU</Link>}
           rightLinks={<HeaderLinks user={user} logoutUser={logoutUser} />}
           fixed
           changeColorOnScroll={{
@@ -234,18 +181,16 @@ class DashboardPage extends React.Component {
               <GridContainer justify="center">
                 <GridItem xs={12} sm={12} md={4}>
                   <Card className={classes.card}>
-                    <CardHeader color="warning" stats icon>
-                      <CardIcon color="warning">
-                        <Icon>content_copy</Icon>
+                    <CardHeader color="primary" stats icon>
+                      <CardIcon color="primary">
+                        <Icon>person</Icon>
                       </CardIcon>
-                      <p className={classes.cardCategory}>Entregas pendientes</p>
-                      <h3 className={classes.cardTitle}>49/50</h3>
+                      <p className={classes.cardCategory}>Usuarios</p>
+                      <h3 className={classes.cardTitle}>{userCount}</h3>
                     </CardHeader>
                     <CardFooter stats>
                       <div className={classes.stats}>
-                        <Link to="/assignments/pending">
-                          Ver entregas pendientes
-                        </Link>
+                        <Link to="/users">Administrar usuarios</Link>
                       </div>
                     </CardFooter>
                   </Card>
@@ -256,14 +201,28 @@ class DashboardPage extends React.Component {
                       <CardIcon color="warning">
                         <Icon>content_copy</Icon>
                       </CardIcon>
+                      <p className={classes.cardCategory}>Entregas pendientes</p>
+                      <h3 className={classes.cardTitle}>49/50</h3>
+                    </CardHeader>
+                    <CardFooter stats>
+                      <div className={classes.stats}>
+                        <Link to="/assignments/pending">Ver entregas pendientes</Link>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <Card className={classes.card}>
+                    <CardHeader color="success" stats icon>
+                      <CardIcon color="success">
+                        <Icon>content_copy</Icon>
+                      </CardIcon>
                       <p className={classes.cardCategory}>Entregas en evaluación</p>
                       <h3 className={classes.cardTitle}>49/50</h3>
                     </CardHeader>
                     <CardFooter stats>
                       <div className={classes.stats}>
-                        <Link to="/assignments/complete">
-                          Ver entregas realizadas
-                        </Link>
+                        <Link to="/assignments/complete">Ver entregas realizadas</Link>
                       </div>
                     </CardFooter>
                   </Card>
@@ -289,12 +248,9 @@ class DashboardPage extends React.Component {
               </GridContainer>
 
               <div className={classes.description}>
-                <p>Lalalalala lal al la lla lal la la lal la la la lallalala</p>
-                <Button component={Link} to="/assignments">
-                  TPs
-                </Button>
-                <Button component={Link} to="/users">
-                  Usuarios
+                {/* <p>Lalalalala lal al la lla lal la la lal la la la lallalala</p> */}
+                <Button color="primary" component={Link} to="/assignments/new">
+                  Crear nuevo Trabajo Práctico
                 </Button>
               </div>
               {/* <Switch>

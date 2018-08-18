@@ -19,7 +19,7 @@ import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
 import Autocomplete from 'components/Autocomplete/Autocomplete';
 
-import { getTags, createAssignment } from 'data/service';
+import { getAssignment, updateAssignmentWork } from 'data/service';
 
 const styles = {
   input: {
@@ -34,7 +34,12 @@ class AssignmentWorkForm extends React.Component {
   };
 
   componentDidMount() {
-    console.log(this.props);
+    const { match } = this.props;
+    if (match.params.id) {
+      getAssignment(id).then(res => {
+        this.setState({ assignment: res.data.data.assignment });
+      });
+    }
   }
 
   handleChange = (name, sub) => event => {

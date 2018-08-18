@@ -18,8 +18,10 @@ import CustomSelect from 'components/CustomSelect/CustomSelect';
 import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
 import Autocomplete from 'components/Autocomplete/Autocomplete';
+import GridContainer from 'components/Grid/GridContainer';
+import GridItem from 'components/Grid/GridItem';
 
-import { getTags, createAssignment } from 'data/service';
+import { getTags, getAssignment, createAssignment, updateAssignment } from 'data/service';
 
 const styles = {
   input: {
@@ -30,6 +32,9 @@ const styles = {
     // maxWidth: "600px",
     color: '#999',
     // textAlign: "center !important"
+  },
+  smallInput: {
+    width: '200px',
   },
 };
 
@@ -48,6 +53,16 @@ class AssignmentForm extends React.Component {
   };
 
   componentDidMount() {
+    const { match } = this.props;
+
+    if (match.params.id) {
+      getAssignment(match.params.id).then(res => {
+        const { assignment } = res.data.data;
+        assignment.tags = assignment.tags.map(t => t.id);
+        this.setState({ assignment });
+      });
+    }
+
     getTags().then(res => {
       this.setState({ tags: res.data.data.tags });
     });
@@ -57,7 +72,10 @@ class AssignmentForm extends React.Component {
     const { value } = event.target;
     if (key && index !== undefined) {
       this.setState(prevState => ({
-        [name]: { ...prevState[name], [sub]: prevState[name][sub].map((v, i) => i === index ? { ...v, [key]: value } : v) },
+        [name]: {
+          ...prevState[name],
+          [sub]: prevState[name][sub].map((v, i) => (i === index ? { ...v, [key]: value } : v)),
+        },
         // errors: prevState.errors.filter(error => error.name !== sub),
       }));
     } else if (sub) {
@@ -99,9 +117,18 @@ class AssignmentForm extends React.Component {
   handleSubmit = () => {
     const { history } = this.props;
     const { assignment } = this.state;
-    createAssignment(assignment).then(res => {
-      history.push(`/assignments/${res.data.data.createAssignment.id}`);
-    });
+    const { id } = assignment;
+
+    if (id) {
+      delete assignment.id;
+      updateAssignment(id, assignment).then(res => {
+        history.push(`/assignments/${res.data.data.updateAssignment.id}`);
+      });
+    } else {
+      createAssignment(assignment).then(res => {
+        history.push(`/assignments/${res.data.data.createAssignment.id}`);
+      });
+    }
   };
 
   handleAddRequiredWork = () => {
@@ -128,148 +155,148 @@ class AssignmentForm extends React.Component {
     return (
       <div className={classes.root}>
         <ErrorList errors={errors} />
-        <CustomInput
-          id="name"
-          labelText="Nombre del trabajo práctico"
-          formControlProps={{
-            fullWidth: true,
-          }}
-          inputProps={{
-            value: assignment.name,
-            onChange: this.handleChange('assignment', 'name'),
-            // endAdornment: !this.hasError('name') && (
-            //   <InputAdornment position="end">
-            //     <PermIdentity className={classes.inputIconsColor} />
-            //   </InputAdornment>
-            // ),
-          }}
-          error={this.hasError('name')}
-        />
-        <CustomInput
-          id="short-description"
-          labelText="Descripción corta"
-          formControlProps={{
-            fullWidth: true,
-          }}
-          inputProps={{
-            value: assignment.shortDescription,
-            onChange: this.handleChange('assignment', 'shortDescription'),
-            // endAdornment: !this.hasError('shortDescription') && (
-            //   <InputAdornment position="end">
-            //     <PermIdentity className={classes.inputIconsColor} />
-            //   </InputAdornment>
-            // ),
-          }}
-          error={this.hasError('shortDescription')}
-        />
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={12}>
+            <CustomInput
+              id="name"
+              labelText="Nombre del trabajo práctico"
+              formControlProps={{
+                fullWidth: true,
+              }}
+              inputProps={{
+                value: assignment.name,
+                onChange: this.handleChange('assignment', 'name'),
+                // endAdornment: !this.hasError('name') && (
+                //   <InputAdornment position="end">
+                //     <PermIdentity className={classes.inputIconsColor} />
+                //   </InputAdornment>
+                // ),
+              }}
+              error={this.hasError('name')}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={12} md={8}>
+            <CustomInput
+              id="short-description"
+              labelText="Descripción corta"
+              formControlProps={{
+                fullWidth: true,
+              }}
+              inputProps={{
+                value: assignment.shortDescription,
+                onChange: this.handleChange('assignment', 'shortDescription'),
+                // endAdornment: !this.hasError('shortDescription') && (
+                //   <InputAdornment position="end">
+                //     <PermIdentity className={classes.inputIconsColor} />
+                //   </InputAdornment>
+                // ),
+              }}
+              error={this.hasError('shortDescription')}
+            />
+            <CustomInput
+              id="description"
+              labelText="Descripción"
+              formControlProps={{
+                fullWidth: true,
+              }}
+              inputProps={{
+                multiline: true,
+                rows: 4,
+                value: assignment.description,
+                onChange: this.handleChange('assignment', 'description'),
+                // endAdornment: !this.hasError('description') && (
+                //   <InputAdornment position="end">
+                //     {/* <PermIdentity className={classes.inputIconsColor} /> */}
+                //   </InputAdornment>
+                // ),
+              }}
+              error={this.hasError('description')}
+              helperText="No es consigna"
+            />
+          </GridItem>
+          <GridItem xs={12} sm={12} md={4}>
+            <CustomInput
+              id="ends-at"
+              labelText="Fecha de entrega"
+              formControlProps={{
+                fullWidth: true,
+              }}
+              labelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                value: assignment.endsAt,
+                onChange: this.handleChange('assignment', 'endsAt'),
+                type: 'date',
+                // endAdornment: !this.hasError('shortDescription') && (
+                //   <InputAdornment position="end">
+                //     <PermIdentity className={classes.inputIconsColor} />
+                //   </InputAdornment>
+                // ),
+              }}
+              error={this.hasError('endsAt')}
+            />
 
-        <CustomInput
-          id="description"
-          labelText="Descripción"
-          formControlProps={{
-            fullWidth: true,
-          }}
-          inputProps={{
-            multiline: true,
-            rows: 4,
-            value: assignment.description,
-            onChange: this.handleChange('assignment', 'description'),
-            // endAdornment: !this.hasError('description') && (
-            //   <InputAdornment position="end">
-            //     {/* <PermIdentity className={classes.inputIconsColor} /> */}
-            //   </InputAdornment>
-            // ),
-          }}
-          error={this.hasError('description')}
-          helperText="No es consigna"
-        />
-
-        <CustomInput
-          id="ends-at"
-          labelText="Fecha de entrega"
-          formControlProps={{
-            fullWidth: true,
-          }}
-          inputProps={{
-            value: assignment.endsAt,
-            onChange: this.handleChange('assignment', 'endsAt'),
-            type: 'date',
-            // endAdornment: !this.hasError('shortDescription') && (
-            //   <InputAdornment position="end">
-            //     <PermIdentity className={classes.inputIconsColor} />
-            //   </InputAdornment>
-            // ),
-          }}
-          error={this.hasError('endsAt')}
-        />
-        <CustomSelect
-          id="type"
-          labelText="Tipo"
-          formControlProps={{
-            fullWidth: true,
-          }}
-          inputProps={{
-            value: assignment.type,
-            onChange: this.handleChange('assignment', 'type'),
-          }}
-          error={this.hasError('type')}
-        >
-          <MenuItem value="Group">Grupal</MenuItem>
-          <MenuItem value="Individual">Individual</MenuItem>
-        </CustomSelect>
-
-        <label htmlFor="attachment">
-          <input
-            accept="application/pdf"
-            className={classes.input}
-            id="attachment"
-            multiple
-            type="file"
-            onChange={this.handleFile}
-          />
-          <Button component="span">Subir consigna</Button>
-        </label>
-        <FormHelperText>Formato PDF</FormHelperText>
-        {assignment.attachment && <Typography>{assignment.attachment.name}</Typography>}
-
-        <CustomInput
-          id="evaluation-variable"
-          labelText="Variable de evaluación"
-          formControlProps={{
-            fullWidth: true,
-          }}
-          inputProps={{
-            value: assignment.evaluationVariable,
-            onChange: this.handleChange('assignment', 'evaluationVariable'),
-            // endAdornment: !this.hasError('evaluationVariable') && (
-            //   <InputAdornment position="end">
-            //     <PermIdentity className={classes.inputIconsColor} />
-            //   </InputAdornment>
-            // ),
-          }}
-          error={this.hasError('evaluationVariable')}
-        />
-
-        <h6 className={classes.subtitle}>Componentes de la entrega</h6>
-        {assignment.requiredWork.map((requiredWork, index) => (
-          <div>
+            <CustomInput
+              id="evaluation-variable"
+              labelText="Variable de evaluación"
+              formControlProps={{
+                fullWidth: true,
+              }}
+              inputProps={{
+                value: assignment.evaluationVariable,
+                onChange: this.handleChange('assignment', 'evaluationVariable'),
+                // endAdornment: !this.hasError('evaluationVariable') && (
+                //   <InputAdornment position="end">
+                //     <PermIdentity className={classes.inputIconsColor} />
+                //   </InputAdornment>
+                // ),
+              }}
+              error={this.hasError('evaluationVariable')}
+            />
             <CustomSelect
-              id={`required-work-type-${index}`}
+              id="type"
               labelText="Tipo"
               formControlProps={{
                 fullWidth: true,
               }}
               inputProps={{
-                value: assignment.requiredWork[index].type,
-                onChange: this.handleChange('assignment', 'requiredWork', 'type', index),
+                value: assignment.type,
+                onChange: this.handleChange('assignment', 'type'),
               }}
-              // error={this.hasError('type', index)}
+              error={this.hasError('type')}
             >
-              <MenuItem value="PDF">PDF</MenuItem>
-              <MenuItem value="JPG">JPEG</MenuItem>
-              <MenuItem value="Video">Video</MenuItem>
-              <MenuItem value="URL">URL</MenuItem>
+              <MenuItem value="Group">Grupal</MenuItem>
+              <MenuItem value="Individual">Individual</MenuItem>
             </CustomSelect>
+          </GridItem>
+        </GridContainer>
+
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={4}>
+            <label htmlFor="attachment">
+              <input
+                accept="application/pdf"
+                className={classes.input}
+                id="attachment"
+                multiple
+                type="file"
+                onChange={this.handleFile}
+              />
+              <Button component="span" fullWidth>
+                Subir consigna
+              </Button>
+            </label>
+          </GridItem>
+          <GridItem xs={12} sm={12} md={4}>
+            <FormHelperText>La consigna debe estar en formato PDF</FormHelperText>
+            {assignment.attachment && <Typography>{assignment.attachment.name}</Typography>}
+          </GridItem>
+        </GridContainer>
+
+        <h6 className={classes.subtitle}>Componentes de la entrega</h6>
+        {assignment.requiredWork.map((requiredWork, index) => (
+          <div>
             <CustomInput
               id={`required-work-type-${index}`}
               labelText="Descripción"
@@ -282,10 +309,38 @@ class AssignmentForm extends React.Component {
               }}
               // error={this.hasError('type')}
             />
-            <Button onClick={this.handleRemoveRequiredWork(index)}>Quitar componente</Button>
+            <GridContainer>
+              <GridItem xs={12} sm={12} md={8}>
+                <CustomSelect
+                  id={`required-work-type-${index}`}
+                  labelText="Tipo"
+                  formControlProps={{
+                    fullWidth: false,
+                    className: classes.smallInput,
+                  }}
+                  inputProps={{
+                    value: assignment.requiredWork[index].type,
+                    onChange: this.handleChange('assignment', 'requiredWork', 'type', index),
+                  }}
+                  // error={this.hasError('type', index)}
+                >
+                  <MenuItem value="PDF">PDF</MenuItem>
+                  <MenuItem value="JPG">JPEG</MenuItem>
+                  <MenuItem value="Video">Video</MenuItem>
+                  <MenuItem value="URL">URL</MenuItem>
+                </CustomSelect>
+              </GridItem>
+              <GridItem xs={12} sm={12} md={4}>
+                <Button onClick={this.handleRemoveRequiredWork(index)} color="danger" fullWidth>
+                  Quitar componente
+                </Button>
+              </GridItem>
+            </GridContainer>
           </div>
         ))}
-        <Button onClick={this.handleAddRequiredWork}>Agregar componente</Button>
+        <Button onClick={this.handleAddRequiredWork} color="info" fullWidth>
+          Agregar componente
+        </Button>
 
         <Autocomplete
           placeholder="Categorías / Etiquetas"
@@ -298,11 +353,12 @@ class AssignmentForm extends React.Component {
 
         <Button
           // variant="contained"
-          // color="primary"
+          color="primary"
           // className={classes.button}
           onClick={this.handleSubmit}
+          fullWidth
         >
-          Dar de alta
+          {assignment.id ? 'Guardar cambios' : 'Dar de alta'}
         </Button>
       </div>
     );
