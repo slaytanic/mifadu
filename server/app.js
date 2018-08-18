@@ -15,7 +15,8 @@ const config = require('./config');
 const graphqlSchema = require('./graphql/schema');
 
 const upload = multer({
-  storage: multer.memoryStorage(),
+  // storage: multer.memoryStorage(),
+  dest: 'uploads/',
 }).fields(['attachment', 'attachments'].map(name => ({ name })));
 
 function handleUpload(req, res, next) {
@@ -130,11 +131,7 @@ app.get(
   }),
 );
 
-app.get(
-  '/auth/twitter',
-  redirectToHttps,
-  passport.authenticate('twitter'),
-);
+app.get('/auth/twitter', redirectToHttps, passport.authenticate('twitter'));
 
 app.get(
   '/auth/twitter/callback',
