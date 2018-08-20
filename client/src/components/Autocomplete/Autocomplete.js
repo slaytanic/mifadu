@@ -32,9 +32,7 @@ const styles = theme => ({
   },
   chipFocused: {
     backgroundColor: emphasize(
-      theme.palette.type === 'light'
-        ? theme.palette.grey[300]
-        : theme.palette.grey[700],
+      theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
       0.08,
     ),
   },
@@ -115,21 +113,14 @@ function Placeholder(props) {
 
 function SingleValue(props) {
   return (
-    <Typography
-      className={props.selectProps.classes.singleValue}
-      {...props.innerProps}
-    >
+    <Typography className={props.selectProps.classes.singleValue} {...props.innerProps}>
       {props.children}
     </Typography>
   );
 }
 
 function ValueContainer(props) {
-  return (
-    <div className={props.selectProps.classes.valueContainer}>
-      {props.children}
-    </div>
-  );
+  return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
 }
 
 function MultiValue(props) {
@@ -160,31 +151,29 @@ const components = {
 };
 
 class Autocomplete extends React.PureComponent {
-  state = {
-    single: null,
-    multi: null,
-  };
+  // state = {
+  //   single: null,
+  //   multi: null,
+  // };
 
-  handleChange = name => value => {
-    this.setState({
-      [name]: value,
-    });
-    this.props.onSelect({ target: { value: value.map(item => item.value) } });
-  };
+  // handleChange = name => value => {
+  // this.setState({
+  //   [name]: value,
+  // });
+  // this.props.onSelect({ target: { value: value.map(item => item.value) } });
+  // };
 
-  formatCreateLabel = inputValue => {
-    return <span>Crear {inputValue}</span>;
-  };
+  formatCreateLabel = inputValue => <span>Crear {inputValue}</span>;
 
   render() {
-    const { classes, suggestions, placeholder } = this.props;
+    const { classes, suggestions, placeholder, value, handleChange } = this.props;
     return (
       <CreatableSelect
         classes={classes}
         options={suggestions}
         components={components}
-        value={this.state.multi}
-        onChange={this.handleChange('multi')}
+        value={value}
+        onChange={handleChange}
         placeholder={placeholder}
         formatCreateLabel={this.formatCreateLabel}
         isMulti

@@ -69,7 +69,7 @@ export function getMyAssignments() {
 export function getAssignment(id) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description }, endsAt, type, tags { id, name } } }',
+      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description }, endsAt, type, tags { id, name }, evaluationVariable, attachment { id, type, name, url } } }',
     variables: {
       id,
     },
@@ -101,7 +101,7 @@ export function createAssignment(input) {
   const formData = new FormData();
 
   let attachment;
-  if (input.attachment) {
+  if (input.attachment && input.attachment.size) {
     attachment = {
       name: input.attachment.name,
       type: input.attachment.type,
@@ -129,7 +129,7 @@ export function updateAssignment(id, input) {
   const formData = new FormData();
 
   let attachment;
-  if (input.attachment) {
+  if (input.attachment && input.attachment.size) {
     attachment = {
       name: input.attachment.name,
       type: input.attachment.type,

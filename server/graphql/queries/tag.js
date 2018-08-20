@@ -5,6 +5,9 @@ function tag(obj, args, context) {
 }
 
 function tags(obj, args, context) {
+  if (obj && obj.tags) {
+    return Tag.find({ _id: { $in: obj.tags } });
+  }
   return Tag.find({});
 }
 

@@ -54,6 +54,7 @@ const typeDefs = `
     id: ID!
     name: String
     type: String
+    url: String
   }
 
   input AssignmentInput {

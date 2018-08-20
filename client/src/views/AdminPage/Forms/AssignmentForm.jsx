@@ -55,21 +55,30 @@ class AssignmentForm extends React.Component {
   componentDidMount() {
     const { match } = this.props;
 
-    if (match.params.id) {
-      getAssignment(match.params.id).then(res => {
-        const { assignment } = res.data.data;
-        assignment.tags = assignment.tags.map(t => t.id);
-        this.setState({ assignment });
-      });
-    }
-
     getTags().then(res => {
-      this.setState({ tags: res.data.data.tags });
+      this.setState({ tags: res.data.data.tags }, () => {
+        if (match.params.id) {
+          getAssignment(match.params.id).then(res => {
+            const { assignment } = res.data.data;
+            assignment.tags = assignment.tags.map(t => ({ value: t.id, label: t.name }));
+            assignment.requiredWork = assignment.requiredWork.map(rw => ({
+              type: rw.type,
+              description: rw.description,
+            }));
+            this.setState({ assignment });
+          });
+        }
+      });
     });
   }
 
   handleChange = (name, sub, key, index) => event => {
-    const { value } = event.target;
+    let value;
+    if (event.target) {
+      value = event.target.value;
+    } else {
+      value = event;
+    }
     if (key && index !== undefined) {
       this.setState(prevState => ({
         [name]: {
@@ -161,9 +170,15 @@ class AssignmentForm extends React.Component {
       return;
     }
 
+    assignment.tags = assignment.tags.map(t => t.value);
+
     if (id) {
-      delete assignment.id;
-      updateAssignment(id, assignment).then(res => {
+      updateAssignment(
+        id,
+        Object.keys(assignment)
+          .filter(k => k !== 'id')
+          .reduce((o, k) => ({ ...o, [k]: assignment[k] }), {}),
+      ).then(res => {
         history.push(`/assignments/${res.data.data.updateAssignment.id}`);
       });
     } else {
@@ -332,7 +347,15 @@ class AssignmentForm extends React.Component {
           </GridItem>
           <GridItem xs={12} sm={12} md={4}>
             <FormHelperText>La consigna debe estar en formato PDF</FormHelperText>
-            {assignment.attachment && <Typography>{assignment.attachment.name}</Typography>}
+            {assignment.attachment && (
+              <Typography>
+                {assignment.attachment.url ? (
+                  <a href={assignment.attachment.url}>{assignment.attachment.name}</a>
+                ) : (
+                  assignment.attachment.name
+                )}
+              </Typography>
+            )}
           </GridItem>
         </GridContainer>
 
@@ -386,7 +409,8 @@ class AssignmentForm extends React.Component {
 
         <Autocomplete
           placeholder="Categorías / Etiquetas"
-          onSelect={this.handleChange('assignment', 'tags')}
+          handleChange={this.handleChange('assignment', 'tags')}
+          value={assignment.tags}
           suggestions={tags.map(tag => ({
             label: tag.name,
             value: tag.id,
