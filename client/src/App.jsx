@@ -53,7 +53,20 @@ class App extends Component {
               render={() => <DashboardPage user={me} logoutUser={this.logoutUser} />}
             />
             {location.pathname !== '/' && (
-              <Route render={() => <AdminPage user={me} logoutUser={this.logoutUser} />} />
+              <Switch>
+                <Route
+                  path="/:collection/:id?/:action"
+                  render={() => <AdminPage user={me} logoutUser={this.logoutUser} />}
+                />
+                <Route
+                  path="/:collection/:action(pending|complete)"
+                  render={() => <AdminPage user={me} logoutUser={this.logoutUser} />}
+                />
+                <Route
+                  path="/:collection/:id?"
+                  render={() => <AdminPage user={me} logoutUser={this.logoutUser} />}
+                />
+              </Switch>
             )}
           </div>
         ) : (

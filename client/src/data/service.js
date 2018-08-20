@@ -69,7 +69,7 @@ export function getMyAssignments() {
 export function getAssignment(id) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { type, description }, endsAt, type, tags { id } } }',
+      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description }, endsAt, type, tags { id, name } } }',
     variables: {
       id,
     },
@@ -154,7 +154,7 @@ export function updateAssignment(id, input) {
   return axios.post(GRAPHQL_ENDPOINT, formData);
 }
 
-export function updateAssignmentWork(id, input) {
+export function submitAssignmentWork(id, input) {
   const formData = new FormData();
 
   // let attachment;
@@ -169,8 +169,9 @@ export function updateAssignmentWork(id, input) {
   formData.append(
     'request',
     JSON.stringify({
-      query: `mutation($input: AssignmentWorkInput!) { updateAssignmentWork(input: $input) { id } }`,
+      query: `mutation($id: ID!, $input: SubmitWorkInput!) { submitAssignmentWork(id: $id, input: $input) { id } }`,
       variables: {
+        id,
         input: {
           ...input,
         },

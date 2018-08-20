@@ -5,6 +5,6 @@ module.exports = {
     // Use console.error, console.warn and console.info instead
     // https://eslint.org/docs/rules/no-console
     'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
-    'no-underscore-dangle': ['error', { allow: ['_id'] }],
+    'no-underscore-dangle': ['error', { allow: ['_id', '_user'] }],
   },
 };

@@ -13,6 +13,7 @@ const {
   createAssignment,
   updateAssignment,
   deleteAssignment,
+  submitAssignmentWork,
 } = require('./mutations/assignment');
 const { createChair, updateChair, deleteChair } = require('./mutations/chair');
 const {
@@ -96,10 +97,30 @@ const typeDefs = `
     createdAt: DateTime
   }
 
+  input EvaluationInput {
+    score1: Int
+    score2: Int
+    score3: Int
+    score4: Int
+    score5: Int
+  }
+
+  input AssignmentWorkInput {
+    requiredWorkId: ID!
+    attachment: FileInput
+    content: String
+  }
+
+  input SubmitWorkInput {
+    evaluation: EvaluationInput
+    assignmentWork: [AssignmentWorkInput]
+  }
+
   type AssignmentWork {
     id: ID!
     user: [User]
     attachment: File
+    content: String
   }
 
   input ChairInput {
@@ -225,6 +246,8 @@ const typeDefs = `
     updateAssignment(id: ID!, input: AssignmentInput!): Assignment
     deleteAssignment(id: ID!): Assignment
 
+    submitAssignmentWork(id: ID!, input: SubmitWorkInput!): Assignment
+
     createChair(input: ChairInput!): Chair
     updateChair(id: ID!, input: ChairInput!): Chair
     deleteChair(id: ID!): Chair
@@ -290,6 +313,7 @@ const resolvers = {
     createAssignment,
     updateAssignment,
     deleteAssignment,
+    submitAssignmentWork,
 
     createChair,
     updateChair,

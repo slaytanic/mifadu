@@ -43,7 +43,7 @@ async function updateAssignment(obj, { id, input }, { req }) {
     return new Error('Assignment not found');
   }
   return new Promise((resolve, reject) => {
-    assignment.set({ input });
+    assignment.set(input);
     if (!req.files || !req.files.attachment) {
       return resolve(assignment.save());
     }
@@ -55,9 +55,11 @@ async function updateAssignment(obj, { id, input }, { req }) {
       return cloudinary.v2.uploader.upload(
         req.files.attachment[0].path,
         {
-          public_id: `${doc.attachment._id}/${doc.attachment.name.substring(
+          public_id: `${
+            doc.attachment._id
+          }/${req.files.attachment[0].originalname.substring(
             0,
-            doc.attachment.name.lastIndexOf('.'),
+            req.files.attachment[0].originalname.lastIndexOf('.'),
           )}`,
           overwrite: true,
         },
@@ -74,12 +76,44 @@ async function updateAssignment(obj, { id, input }, { req }) {
   });
 }
 
-async function updateAssignmentWork(obj, { id, input }, { req }) {
+async function submitAssignmentWork(obj, { id, input }, { req }) {
   const assignment = await Assignment.findOne({ _id: id });
   if (assignment === undefined) {
     return new Error('Assignment not found');
   }
-  // const assignmentWork = { ...input, user: req.user._id };
+
+  assignment.requiredWork.forEach((rw) => {
+    if (!input.assignmentWorks) {
+      return;
+    }
+
+    const newAssignmentWork = input.assignmentWorks.find(
+      aw => aw.requiredWorkId === rw.id,
+    );
+    if (!newAssignmentWork) {
+      return;
+    }
+    const assignmentWork = rw.assignmentWork.filter(
+      aw => aw.user !== req.user._id,
+    );
+    assignmentWork.push({
+      content: newAssignmentWork.content,
+      attachment: newAssignmentWork.attachment,
+      user: req.user._id,
+    });
+    rw.set({ assignmentWork });
+  });
+
+  assignment.set({
+    evaluations: (assignment.evaluations || [])
+      .filter(e => e.user.toString() !== req.user._id)
+      .concat({
+        ...input.evaluation,
+        user: req.user._id,
+        targetUser: req.user_id,
+      }),
+  });
+  return assignment.save();
 }
 
 function deleteAssignment(obj, { id }) {
@@ -88,5 +122,5 @@ function deleteAssignment(obj, { id }) {
 
 module.exports.createAssignment = createAssignment;
 module.exports.updateAssignment = updateAssignment;
-module.exports.updateAssignmentWork = updateAssignmentWork;
+module.exports.submitAssignmentWork = submitAssignmentWork;
 module.exports.deleteAssignment = deleteAssignment;

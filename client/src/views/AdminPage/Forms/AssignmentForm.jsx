@@ -44,7 +44,7 @@ class AssignmentForm extends React.Component {
       name: '',
       shortDescription: '',
       description: '',
-      endsAt: new Date(),
+      endsAt: '',
       tags: [],
       requiredWork: [{ type: '', description: '' }],
     },
@@ -116,8 +116,50 @@ class AssignmentForm extends React.Component {
 
   handleSubmit = () => {
     const { history } = this.props;
-    const { assignment } = this.state;
+    const assignment = { ...this.state.assignment };
     const { id } = assignment;
+
+    const errors = [];
+
+    if (!assignment.attachment) {
+      errors.push({ id: 'attachment', message: 'Debe adjuntar una consigna' });
+    }
+
+    if (assignment.name.length < 1) {
+      errors.push({ id: 'name', message: 'Debe introducir un nombre' });
+    }
+
+    if (assignment.shortDescription.length < 1) {
+      errors.push({ id: 'shortDescription', message: 'Debe introducir una descripción corta' });
+    }
+
+    if (assignment.description.length < 1) {
+      errors.push({ id: 'description', message: 'Debe introducir una descripción' });
+    }
+
+    if (!assignment.endsAt || assignment.endsAt.length < 1) {
+      errors.push({ id: 'endsAt', message: 'Debe introducir una fecha de entrega' });
+    }
+
+    assignment.requiredWork.forEach((rw, index) => {
+      if (rw.type.length < 1) {
+        errors.push({
+          id: `requiredWorkType-${index}`,
+          message: `Debe elegir un tipo para el componente de entrega N${index}`,
+        });
+      }
+      if (rw.description.length < 1) {
+        errors.push({
+          id: `requiredWorkDescription-${index}`,
+          message: `Debe introducir una descripción para el componente de entrega N${index}`,
+        });
+      }
+    });
+
+    if (errors.length > 0) {
+      this.setState({ errors });
+      return;
+    }
 
     if (id) {
       delete assignment.id;

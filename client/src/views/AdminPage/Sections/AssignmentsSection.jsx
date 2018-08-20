@@ -68,9 +68,17 @@ class AssignmentsSection extends React.Component {
         />
         <CustomTable
           tableHeaderColor="primary"
-          tableHead={[{ label: 'Nombre', key: 'name' }, { label: 'Descripción corta', key: 'shortDescription' }]}
+          tableHead={[
+            { label: 'Nombre', key: 'name' },
+            { label: 'Descripción corta', key: 'shortDescription' },
+          ]}
           tableData={assignments}
           actions={[
+            key => (
+              <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
+                <Info />
+              </Button>
+            ),
             key => (
               <Button color="transparent" component={Link} to={`/assignments/${key}`}>
                 <Info />

@@ -13,6 +13,19 @@ const assignmentWorkSchema = new Schema(
   { timestamps: true },
 );
 
+const evaluationSchema = new Schema(
+  {
+    score1: Number,
+    score2: Number,
+    score3: Number,
+    score4: Number,
+    score5: Number,
+    targetUser: { type: Schema.Types.ObjectId, ref: 'User' },
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
+  },
+  { timestamps: true },
+);
+
 const requiredWorkSchema = new Schema(
   {
     type: { type: String, enum: ['JPG', 'PDF', 'Video', 'URL'] },
@@ -33,6 +46,7 @@ const assignmentSchema = new Schema(
     evaluationVariable: String,
     requiredWork: [requiredWorkSchema],
     attachment: fileSchema,
+    evaluations: [evaluationSchema],
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     user: { type: Schema.Types.ObjectId, ref: 'User' },
   },
