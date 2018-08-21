@@ -54,7 +54,7 @@ class AssignmentWorkForm extends React.Component {
     }
   }
 
-  handleChange = (name, sub, key, id) => event => {
+  handleChange = (name, sub, key, subkey, id) => event => {
     let value;
     if (event.target) {
       value = event.target.value;
@@ -64,7 +64,15 @@ class AssignmentWorkForm extends React.Component {
 
     if (id) {
       this.setState(prevState => ({
-        [name]: { ...prevState[name], [sub]: { ...prevState[name][sub], [key]: value } },
+        [name]: {
+          ...prevState[name],
+          [sub]: prevState[name][sub].map((item, index) => {
+            if (item.id === id) {
+              return { ...item, [key]: { ...prevState[name][sub][index][key], [subkey]: value } };
+            }
+            return item;
+          }),
+        },
         errors: prevState.errors.filter(error => error.name !== key),
       }));
     } else if (key) {
@@ -103,7 +111,15 @@ class AssignmentWorkForm extends React.Component {
       return;
     }
     this.setState(prevState => ({
-      assignment: { ...prevState.assignment, attachment: file },
+      assignment: {
+        ...prevState.assignment,
+        requiredWork: prevState.assignment.requiredWork.map(rw => {
+          if (rw.id === id) {
+            return { ...rw, assignmentWork: { ...rw.assignmentWork, attachment: file } };
+          }
+          return rw;
+        }),
+      },
       errors: prevState.errors.filter(error => error.name !== 'attachment'),
     }));
   };
@@ -112,7 +128,14 @@ class AssignmentWorkForm extends React.Component {
     const { history } = this.props;
     const { assignment } = this.state;
 
-    submitAssignmentWork(assignment.id, { evaluation: assignment.evaluation }).then(res => {
+    submitAssignmentWork(assignment.id, {
+      evaluation: assignment.evaluation,
+      assignmentWork: assignment.requiredWork.map(rw => ({
+        requiredWorkId: rw.id,
+        content: rw.assignmentWork.content,
+        attachment: rw.assignmentWork.attachment,
+      })),
+    }).then(res => {
       history.push(`/assignments/complete`);
     });
   };
@@ -170,7 +193,13 @@ class AssignmentWorkForm extends React.Component {
                   }}
                   inputProps={{
                     value: rw.assignmentWork.content,
-                    onChange: this.handleChange('assignment', 'assignmentWork', 'content', rw.id),
+                    onChange: this.handleChange(
+                      'assignment',
+                      'requiredWork',
+                      'assignmentWork',
+                      'content',
+                      rw.id,
+                    ),
                   }}
                   error={this.hasError('evaluationVariable')}
                 />
