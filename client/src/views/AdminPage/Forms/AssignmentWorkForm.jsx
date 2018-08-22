@@ -195,7 +195,7 @@ class AssignmentWorkForm extends React.Component {
         )}
         <h6>Autoevaluación</h6>
         <p>
-          Cosa 1
+          1. Propuesta Conceptual
           <Nouislider
             start={[assignment.evaluation.score1]}
             connect={[true, false]}
@@ -206,7 +206,7 @@ class AssignmentWorkForm extends React.Component {
           {assignment.evaluation.score1}
         </p>
         <p>
-          Cosa 2
+          2. Proceso
           <Nouislider
             start={[assignment.evaluation.score2]}
             connect={[true, false]}
@@ -217,7 +217,7 @@ class AssignmentWorkForm extends React.Component {
           {assignment.evaluation.score2}
         </p>
         <p>
-          Cosa 3
+          3. {assignment.evaluationVariable || 'Variable'}
           <Nouislider
             start={[assignment.evaluation.score3]}
             connect={[true, false]}
@@ -228,7 +228,7 @@ class AssignmentWorkForm extends React.Component {
           {assignment.evaluation.score3}
         </p>
         <p>
-          Cosa 4
+          4. Producto
           <Nouislider
             start={[assignment.evaluation.score4]}
             connect={[true, false]}
@@ -239,7 +239,7 @@ class AssignmentWorkForm extends React.Component {
           {assignment.evaluation.score4}
         </p>
         <p>
-          {assignment.evaluationVariable || 'Variable'}
+          5. Comunicación
           <Nouislider
             start={[assignment.evaluation.score5]}
             connect={[true, false]}
