@@ -81,13 +81,13 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
   if (assignment === undefined) {
     return new Error('Assignment not found');
   }
-
+  console.log(input);
   assignment.requiredWork.forEach((rw) => {
-    if (!input.assignmentWorks) {
+    if (!input.assignmentWork) {
       return;
     }
 
-    const newAssignmentWork = input.assignmentWorks.find(
+    const newAssignmentWork = input.assignmentWork.find(
       aw => aw.requiredWorkId === rw.id,
     );
     if (!newAssignmentWork) {
@@ -101,6 +101,7 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
       attachment: newAssignmentWork.attachment,
       user: req.user._id,
     });
+    console.log(assignmentWork);
     rw.set({ assignmentWork });
   });
 
@@ -110,7 +111,7 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
       .concat({
         ...input.evaluation,
         user: req.user._id,
-        targetUser: req.user_id,
+        targetUser: req.user._id,
       }),
   });
   return assignment.save();
