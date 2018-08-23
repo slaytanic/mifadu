@@ -205,16 +205,27 @@ class AssignmentWorkForm extends React.Component {
                 />
               )}
               {['PDF', 'JPG'].includes(rw.type) && (
-                <label htmlFor="attachment">
+                <label htmlFor={`attachment-${rw.id}`}>
                   <input
                     accept={this.acceptFor(rw.type)}
                     className={classes.input}
-                    id="attachment"
+                    id={`attachment-${rw.id}`}
                     multiple
                     type="file"
                     onChange={this.handleFile(rw.id)}
                   />
                   <Button component="span">Subir componente</Button>
+                  {rw.assignmentWork.attachment && (
+                    <Typography>
+                      {rw.assignmentWork.attachment.url ? (
+                        <a href={rw.assignmentWork.attachment.url}>
+                          {rw.assignmentWork.attachment.name}
+                        </a>
+                      ) : (
+                        rw.assignmentWork.attachment.name
+                      )}
+                    </Typography>
+                  )}
                 </label>
               )}
             </p>

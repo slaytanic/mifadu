@@ -69,7 +69,7 @@ export function getMyAssignments() {
 export function getAssignment(id) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description }, endsAt, type, tags { id, name }, evaluationVariable, attachment { id, type, name, url } } }',
+      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description, assignmentWork { id, content, attachment { name, type, url } } }, endsAt, type, tags { id, name }, evaluationVariable, attachment { id, type, name, url } } }',
     variables: {
       id,
     },
@@ -157,14 +157,19 @@ export function updateAssignment(id, input) {
 export function submitAssignmentWork(id, input) {
   const formData = new FormData();
 
-  // let attachment;
-  // if (input.attachment) {
-  //   attachment = {
-  //     name: input.attachment.name,
-  //     type: input.attachment.type,
-  //   };
-  //   formData.append('attachment', input.attachment);
-  // }
+  const attachments = {};
+
+  if (input.assignmentWork) {
+    input.assignmentWork.forEach(aw => {
+      if (aw.attachment) {
+        attachments[aw.requiredWorkId] = {
+          name: aw.attachment.name,
+          type: aw.attachment.type,
+        };
+        formData.append(aw.requiredWorkId, aw.attachment);
+      }
+    });
+  }
 
   formData.append(
     'request',
@@ -174,6 +179,10 @@ export function submitAssignmentWork(id, input) {
         id,
         input: {
           ...input,
+          assignmentWork: input.assignmentWork.map(aw => ({
+            ...aw,
+            attachment: attachments[aw.requiredWorkId],
+          })),
         },
       },
     }),

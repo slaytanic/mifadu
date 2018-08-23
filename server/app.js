@@ -17,11 +17,13 @@ const graphqlSchema = require('./graphql/schema');
 const upload = multer({
   // storage: multer.memoryStorage(),
   dest: 'uploads/',
-}).fields(['attachment', 'attachments'].map(name => ({ name })));
+}).any();
 
 function handleUpload(req, res, next) {
   upload(req, res, () => {
-    if (!req.files || req.files.length === 0) {
+    // console.log(req.body);
+    // if (!req.files || req.files.length === 0) {
+    if (!req.body.request) {
       next();
       return;
     }

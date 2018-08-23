@@ -79,7 +79,7 @@ const typeDefs = `
     id: ID!
     type: String
     description: String
-    assignmentWork: [AssignmentWork]
+    assignmentWork: AssignmentWork
   }
 
   type Assignment {
