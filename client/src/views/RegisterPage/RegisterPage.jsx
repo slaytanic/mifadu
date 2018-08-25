@@ -503,7 +503,7 @@ class RegisterPage extends React.Component {
                         inputProps={{
                           multiline: true,
                           rows: 4,
-                          value: this.state.user.website,
+                          value: this.state.user.aboutMe,
                           onChange: this.handleChange('user', 'aboutMe'),
                           endAdornment: !this.hasError('aboutMe') && (
                             <InputAdornment position="end">
