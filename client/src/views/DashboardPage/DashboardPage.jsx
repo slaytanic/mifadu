@@ -42,12 +42,13 @@ import profileBg from 'assets/img/profile-bg.jpg';
 
 import logo from 'logo.svg';
 
-import { container, title } from 'assets/jss/material-kit-react';
-import imagesStyle from 'assets/jss/material-kit-react/imagesStyles';
-import { getUsers } from '../../data/service';
+// import { container, title } from 'assets/jss/material-kit-react';
+// import imagesStyle from 'assets/jss/material-kit-react/imagesStyles';
 
 import profilePageStyle from 'assets/jss/material-kit-react/views/profilePage';
 import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardStyle';
+
+import { getMyStudents, getPendingAssignments, getCompletedAssignments } from '../../data/service';
 
 // import AssignmentsSection from './Sections/AssignmentsSection';
 // import UsersSection from './Sections/UsersSection';
@@ -65,28 +66,36 @@ const styles = {
   },
   cardCategory: {
     ...dashboardStyle.cardCategory,
-    color: '#FFFFFF'
+    color: '#FFFFFF',
   },
   cardTitle: {
     ...dashboardStyle.cardTitle,
-    color: '#FFFFFF'
-  }
+    color: '#FFFFFF',
+  },
 };
 
 class DashboardPage extends React.Component {
   state = {
     userCount: 0,
+    pendingCount: 0,
+    completedCount: 0,
   };
 
   componentDidMount() {
-    getUsers().then(res => {
-      this.setState({ userCount: res.data.data.users.length });
+    getMyStudents().then(res => {
+      this.setState({ userCount: res.data.data.myStudents.length });
+    });
+    getPendingAssignments().then(res => {
+      this.setState({ pendingCount: res.data.data.pendingAssignments.length });
+    });
+    getCompletedAssignments().then(res => {
+      this.setState({ completedCount: res.data.data.completedAssignments.length });
     });
   }
 
   render() {
     const { classes, user, logoutUser, ...rest } = this.props;
-    const { userCount } = this.state;
+    const { userCount, pendingCount, completedCount } = this.state;
     const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
     const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
 
@@ -185,12 +194,12 @@ class DashboardPage extends React.Component {
                       <CardIcon color="primary">
                         <Icon>person</Icon>
                       </CardIcon>
-                      <p className={classes.cardCategory}>Usuarios</p>
+                      <p className={classes.cardCategory}>Estudiantes</p>
                       <h3 className={classes.cardTitle}>{userCount}</h3>
                     </CardHeader>
                     <CardFooter stats>
                       <div className={classes.stats}>
-                        <Link to="/users">Administrar usuarios</Link>
+                        <Link to="/users">Ver estudiantes</Link>
                       </div>
                     </CardFooter>
                   </Card>
@@ -202,7 +211,7 @@ class DashboardPage extends React.Component {
                         <Icon>content_copy</Icon>
                       </CardIcon>
                       <p className={classes.cardCategory}>Entregas pendientes</p>
-                      <h3 className={classes.cardTitle}>49/50</h3>
+                      <h3 className={classes.cardTitle}>{pendingCount}</h3>
                     </CardHeader>
                     <CardFooter stats>
                       <div className={classes.stats}>
@@ -217,8 +226,8 @@ class DashboardPage extends React.Component {
                       <CardIcon color="success">
                         <Icon>content_copy</Icon>
                       </CardIcon>
-                      <p className={classes.cardCategory}>Entregas en evaluación</p>
-                      <h3 className={classes.cardTitle}>49/50</h3>
+                      <p className={classes.cardCategory}>Entregas realizadas</p>
+                      <h3 className={classes.cardTitle}>{completedCount}</h3>
                     </CardHeader>
                     <CardFooter stats>
                       <div className={classes.stats}>

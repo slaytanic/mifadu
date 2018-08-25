@@ -1,12 +1,19 @@
 const { makeExecutableSchema } = require('graphql-tools');
 const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date');
 
-const { assignment, assignments } = require('./queries/assignment');
+const {
+  assignment,
+  assignments,
+  pendingAssignments,
+  completedAssignments,
+} = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
 const { tag, tags } = require('./queries/tag');
 const { university, universitys } = require('./queries/university');
-const { user, users, me } = require('./queries/user');
+const {
+  user, users, me, myStudents,
+} = require('./queries/user');
 const { workshop, workshops } = require('./queries/workshop');
 
 const {
@@ -105,6 +112,7 @@ const typeDefs = `
     score3: Float
     score4: Float
     score5: Float
+    observations: String
   }
 
   type Evaluation {
@@ -113,6 +121,7 @@ const typeDefs = `
     score3: Float
     score4: Float
     score5: Float
+    observations: String
   }
 
   input AssignmentWorkInput {
@@ -230,6 +239,8 @@ const typeDefs = `
   type Query {
     assignment(id: ID!): Assignment
     assignments: [Assignment]
+    pendingAssignments: [Assignment]
+    completedAssignments: [Assignment]
 
     chair(id: ID!): Chair
     chairs: [Chair]
@@ -246,6 +257,7 @@ const typeDefs = `
     user(id: ID!): User
     users: [User]
     me: User
+    myStudents: [User]
 
     workshop(id: ID!): Workshop
     workshops: [Workshop]
@@ -299,6 +311,8 @@ const resolvers = {
   Query: {
     assignment,
     assignments,
+    pendingAssignments,
+    completedAssignments,
 
     chair,
     chairs,
@@ -315,6 +329,7 @@ const resolvers = {
     user,
     users,
     me,
+    myStudents,
 
     workshop,
     workshops,

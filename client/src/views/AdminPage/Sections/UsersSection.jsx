@@ -13,7 +13,7 @@ import CustomTable from 'components/CustomTable/CustomTable';
 import Button from 'components/CustomButtons/Button';
 import Modal from 'components/Modal/Modal';
 
-import { getUsers, deleteUser } from 'data/service';
+import { getMyStudents, deleteUser } from 'data/service';
 
 const styles = {};
 
@@ -33,8 +33,8 @@ class UsersSection extends React.Component {
   }
 
   getUsers = () => {
-    getUsers().then(res => {
-      this.setState({ users: res.data.data.users });
+    getMyStudents().then(res => {
+      this.setState({ users: res.data.data.myStudents });
     });
   };
 
@@ -67,28 +67,28 @@ class UsersSection extends React.Component {
           tableHeaderColor="primary"
           tableHead={[
             { label: 'e-mail', key: 'email' },
-            { label: 'DNI', key: 'idNumber' },
+            // { label: 'DNI', key: 'idNumber' },
             { label: 'Nombre', key: 'firstName' },
             { label: 'Apellido', key: 'lastName' },
           ]}
           tableData={users}
-          actions={[
-            key => (
-              <Button color="transparent" component={Link} to={`/users/${key}`}>
-                <Info />
-              </Button>
-            ),
-            key => (
-              <Button color="transparent" component={Link} to={`/users/${key}/edit`}>
-                <Edit />
-              </Button>
-            ),
-            key => (
-              <Button color="transparent" onClick={this.handleDelete(key)}>
-                <Delete />
-              </Button>
-            ),
-          ]}
+          // actions={[
+          //   key => (
+          //     <Button color="transparent" component={Link} to={`/users/${key}`}>
+          //       <Info />
+          //     </Button>
+          //   ),
+          //   key => (
+          //     <Button color="transparent" component={Link} to={`/users/${key}/edit`}>
+          //       <Edit />
+          //     </Button>
+          //   ),
+          //   key => (
+          //     <Button color="transparent" onClick={this.handleDelete(key)}>
+          //       <Delete />
+          //     </Button>
+          //   ),
+          // ]}
         />
       </div>
     );

@@ -12,6 +12,11 @@ function me(obj, args, { req }) {
   return User.findOne({ email: req.user.email });
 }
 
+function myStudents(obj, args, { req }) {
+  return User.find({ workshop: req.user.workshop });
+}
+
 module.exports.user = user;
 module.exports.users = users;
 module.exports.me = me;
+module.exports.myStudents = myStudents;

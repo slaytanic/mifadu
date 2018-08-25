@@ -20,6 +20,7 @@ const evaluationSchema = new Schema(
     score3: Number,
     score4: Number,
     score5: Number,
+    observations: String,
     targetUser: { type: Schema.Types.ObjectId, ref: 'User' },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
   },

@@ -50,6 +50,12 @@ export function getUsers() {
   });
 }
 
+export function getMyStudents() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: '{ myStudents { id, firstName, lastName, email, completedProfile, idNumber } }',
+  });
+}
+
 export function getSubjects() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query: '{ subjects { id, name, code } }',
@@ -79,6 +85,18 @@ export function getAssignment(id) {
 export function getAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query: 'query { assignments { id, name, shortDescription } }',
+  });
+}
+
+export function getPendingAssignments() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'query { pendingAssignments { id, name, shortDescription, endsAt } }',
+  });
+}
+
+export function getCompletedAssignments() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'query { completedAssignments { id, name, shortDescription, endsAt } }',
   });
 }
 

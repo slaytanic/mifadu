@@ -1,6 +1,6 @@
 import React from 'react';
 // import { Switch, Route } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -13,7 +13,7 @@ import CustomTable from 'components/CustomTable/CustomTable';
 import Button from 'components/CustomButtons/Button';
 import Modal from 'components/Modal/Modal';
 
-import { getAssignments, deleteAssignment } from 'data/service';
+import { getPendingAssignments, getCompletedAssignments, deleteAssignment } from 'data/service';
 
 const styles = {};
 
@@ -33,9 +33,16 @@ class AssignmentsSection extends React.Component {
   }
 
   getAssignments = () => {
-    getAssignments().then(res => {
-      this.setState({ assignments: res.data.data.assignments });
-    });
+    const { match } = this.props;
+    if (match.params.action === 'complete') {
+      getCompletedAssignments().then(res => {
+        this.setState({ assignments: res.data.data.completedAssignments });
+      });
+    } else if (match.params.action === 'pending') {
+      getPendingAssignments().then(res => {
+        this.setState({ assignments: res.data.data.pendingAssignments });
+      });
+    }
   };
 
   handleDelete = key => () => {
@@ -70,7 +77,8 @@ class AssignmentsSection extends React.Component {
           tableHeaderColor="primary"
           tableHead={[
             { label: 'Nombre', key: 'name' },
-            { label: 'Descripción corta', key: 'shortDescription' },
+            { label: 'Descripción', key: 'shortDescription' },
+            { label: 'Fecha de entrega', key: 'endsAt' },
           ]}
           tableData={assignments}
           actions={[
@@ -101,4 +109,4 @@ class AssignmentsSection extends React.Component {
   }
 }
 
-export default withStyles(styles)(AssignmentsSection);
+export default withRouter(withStyles(styles)(AssignmentsSection));

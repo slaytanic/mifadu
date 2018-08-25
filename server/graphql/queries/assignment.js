@@ -24,11 +24,51 @@ function assignments(obj, args, context) {
   return Assignment.find({});
 }
 
-function pendingAssignments(obj, args, context) {
-  return Assignment.find({ requiredWork });
+function pendingAssignments(obj, args, { req }) {
+  return new Promise((resolve, reject) => {
+    Assignment.find({ workshop: req.user.workshop }, (err, docs) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(
+        docs.filter((d) => {
+          if (d.requiredWork && d.requiredWork.length > 0) {
+            const assignmentWork = d.requiredWork.map(rw => rw.assignmentWork.find(aw => aw.user.equals(req.user._id)));
+            return (
+              assignmentWork.filter(
+                aw => aw && (aw.attachment || aw.content.length > 0),
+              ).length < 1
+            );
+          }
+          return true;
+        }),
+      );
+    });
+  });
 }
 
-function completedAssignments(obj, args, context) {}
+function completedAssignments(obj, args, { req }) {
+  return new Promise((resolve, reject) => {
+    Assignment.find({ workshop: req.user.workshop }, (err, docs) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(
+        docs.filter((d) => {
+          if (d.requiredWork && d.requiredWork.length > 0) {
+            const assignmentWork = d.requiredWork.map(rw => rw.assignmentWork.find(aw => aw.user.equals(req.user._id)));
+            return (
+              assignmentWork.filter(
+                aw => aw && (aw.attachment || aw.content.length > 0),
+              ).length > 0
+            );
+          }
+          return false;
+        }),
+      );
+    });
+  });
+}
 
 module.exports.assignment = assignment;
 module.exports.assignments = assignments;
