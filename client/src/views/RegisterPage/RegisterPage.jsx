@@ -200,13 +200,13 @@ class RegisterPage extends React.Component {
             });
           } else {
             this.props.setCurrentUser(response.data.data.createOrUpdateUser);
-            if (!this.state.externalProvider) {
-              loginUser(user.email, user.password).then(() => {
-                this.props.history.push('/');
-              });
-            } else {
+            // if (!this.state.externalProvider) {
+              // loginUser(user.email, user.password).then(() => {
+                // this.props.history.push('/');
+              // });
+            // } else {
               this.props.history.push('/');
-            }
+            // }
           }
         })
         .catch(() => {});

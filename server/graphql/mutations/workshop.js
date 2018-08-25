@@ -1,7 +1,7 @@
 const Workshop = require('../../models/workshop');
 
-function createWorkshop(obj, { input }, context) {
-  return Workshop.create(input);
+function createWorkshop(obj, { input }, { req }) {
+  return Workshop.create({ ...input, workshop: req.user.workshop });
 }
 
 function updateWorkshop(obj, { id, input }, context) {

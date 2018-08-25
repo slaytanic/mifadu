@@ -47,6 +47,7 @@ const assignmentSchema = new Schema(
     requiredWork: [requiredWorkSchema],
     attachment: fileSchema,
     evaluations: [evaluationSchema],
+    workshop: { type: Schema.Types.ObjectId, ref: 'Tag' },
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     user: { type: Schema.Types.ObjectId, ref: 'User' },
   },

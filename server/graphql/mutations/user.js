@@ -18,22 +18,33 @@ function createOrUpdateUser(obj, { input }, { req }) {
         const authorized = canUpdateUser(req.user, doc);
         if (authorized === true) {
           doc.set(input);
-          doc.save((saveErr) => {
+          return doc.save((saveErr) => {
             if (saveErr) {
               return reject(saveErr);
             }
-            return resolve(doc);
+            return req.login(doc, (loginErr) => {
+              if (loginErr) {
+                return reject(loginErr);
+              }
+
+              return resolve(doc);
+            });
           });
-        } else {
-          return reject(authorized);
         }
+        return reject(authorized);
       }
       const user = new User(input);
       return user.save((saveErr) => {
         if (saveErr) {
           return reject(saveErr);
         }
-        return resolve(user);
+        return req.login(user, (loginErr) => {
+          if (loginErr) {
+            return reject(loginErr);
+          }
+
+          return resolve(user);
+        });
       });
     });
   });
