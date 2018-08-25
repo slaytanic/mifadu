@@ -24,6 +24,7 @@ const userSchema = new Schema(
     previousYearOnThisChair: String,
     website: String,
     aboutMe: String,
+    profilePicture: String,
     admin: { type: Boolean, default: true },
   },
   { timestamps: true },

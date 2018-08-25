@@ -55,6 +55,13 @@ const assignmentSchema = new Schema(
   { timestamps: true },
 );
 
+assignmentSchema.statics.pendingEvaluationByUser = function pendingEvaluationByUser(
+  user,
+  cb,
+) {
+  return this.find({ name: new RegExp(name, 'i') }, cb);
+};
+
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 
 module.exports = Assignment;
