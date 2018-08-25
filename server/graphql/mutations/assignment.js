@@ -99,7 +99,9 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
 
     assignmentWork.push({
       content: newAssignmentWork.content,
-      attachment: newAssignmentWork.attachment || oldAssignmentWork.attachment,
+      attachment:
+        newAssignmentWork.attachment
+        || (oldAssignmentWork && oldAssignmentWork.attachment),
       user: req.user._id,
     });
     rw.set({ assignmentWork });

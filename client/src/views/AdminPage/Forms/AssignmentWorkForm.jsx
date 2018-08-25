@@ -47,6 +47,7 @@ class AssignmentWorkForm extends React.Component {
             score3: 0.0,
             score4: 0.0,
             score5: 0.0,
+            observations: '',
           };
         }
         assignment.requiredWork = assignment.requiredWork.map(rw => {
@@ -298,6 +299,20 @@ class AssignmentWorkForm extends React.Component {
           />
           {assignment.evaluation.score5}
         </p>
+        <CustomInput
+          id="observations"
+          labelText="Observaciones"
+          formControlProps={{
+            fullWidth: true,
+          }}
+          inputProps={{
+            multiline: true,
+            rows: 4,
+            value: assignment.evaluation.observations,
+            onChange: this.handleChange('assignment', 'evaluation', 'observations'),
+          }}
+          error={this.hasError('observations')}
+        />
         <Button
           // variant="contained"
           color="primary"
