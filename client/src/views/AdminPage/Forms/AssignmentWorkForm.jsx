@@ -180,6 +180,9 @@ class AssignmentWorkForm extends React.Component {
         </p>
         <p>{assignment.description}</p>
         <p>
+          <b>Consigna</b>: <a href={assignment.attachment.url}>{assignment.attachment.name}</a>
+        </p>
+        <p>
           <b>Fecha de entrega:</b> {assignment.endsAt && assignment.endsAt.toString()}
         </p>
         <p>

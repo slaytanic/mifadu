@@ -48,7 +48,12 @@ import logo from 'logo.svg';
 import profilePageStyle from 'assets/jss/material-kit-react/views/profilePage';
 import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardStyle';
 
-import { getMyStudents, getPendingAssignments, getCompletedAssignments } from '../../data/service';
+import {
+  getMyStudents,
+  getPendingAssignments,
+  getCompletedAssignments,
+  getMyWorkshops,
+} from '../../data/service';
 
 // import AssignmentsSection from './Sections/AssignmentsSection';
 // import UsersSection from './Sections/UsersSection';
@@ -79,6 +84,7 @@ class DashboardPage extends React.Component {
     userCount: 0,
     pendingCount: 0,
     completedCount: 0,
+    workshops: [],
   };
 
   componentDidMount() {
@@ -91,11 +97,14 @@ class DashboardPage extends React.Component {
     getCompletedAssignments().then(res => {
       this.setState({ completedCount: res.data.data.completedAssignments.length });
     });
+    getMyWorkshops().then(res => {
+      this.setState({ workshops: res.data.data.myWorkshops });
+    });
   }
 
   render() {
     const { classes, user, logoutUser, ...rest } = this.props;
-    const { userCount, pendingCount, completedCount } = this.state;
+    const { userCount, pendingCount, completedCount, workshops } = this.state;
     const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
     const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
 
@@ -194,12 +203,12 @@ class DashboardPage extends React.Component {
                       <CardIcon color="primary">
                         <Icon>person</Icon>
                       </CardIcon>
-                      <p className={classes.cardCategory}>Estudiantes</p>
+                      <p className={classes.cardCategory}>Miembros del taller</p>
                       <h3 className={classes.cardTitle}>{userCount}</h3>
                     </CardHeader>
                     <CardFooter stats>
                       <div className={classes.stats}>
-                        <Link to="/users">Ver estudiantes</Link>
+                        <Link to="/users">Ver miembros del taller</Link>
                       </div>
                     </CardFooter>
                   </Card>
@@ -258,9 +267,11 @@ class DashboardPage extends React.Component {
 
               <div className={classes.description}>
                 {/* <p>Lalalalala lal al la lla lal la la lal la la la lallalala</p> */}
-                <Button color="primary" component={Link} to="/assignments/new">
-                  Crear nuevo Trabajo Práctico
-                </Button>
+                {workshops.map(() => (
+                  <Button color="primary" component={Link} to="/assignments/new">
+                    Crear nuevo Trabajo Práctico
+                  </Button>
+                ))}
               </div>
               {/* <Switch>
                 <Route path="/" exact render={() => mainView} />

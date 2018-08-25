@@ -8,5 +8,10 @@ function workshops(obj, args, context) {
   return Workshop.find({});
 }
 
+function myWorkshops(obj, args, { req }) {
+  return Workshop.find({ tutors: req.user._id });
+}
+
 module.exports.workshop = workshop;
 module.exports.workshops = workshops;
+module.exports.myWorkshops = myWorkshops;

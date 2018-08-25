@@ -25,8 +25,10 @@ class App extends Component {
   };
 
   logoutUser = () => {
+    const { history } = this.props;
     logoutUser().then(() => {
       this.setCurrentUser(null);
+      history.push('/');
     });
   };
 

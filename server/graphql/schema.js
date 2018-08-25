@@ -14,7 +14,7 @@ const { university, universitys } = require('./queries/university');
 const {
   user, users, me, myStudents,
 } = require('./queries/user');
-const { workshop, workshops } = require('./queries/workshop');
+const { workshop, workshops, myWorkshops } = require('./queries/workshop');
 
 const {
   createAssignment,
@@ -261,6 +261,7 @@ const typeDefs = `
 
     workshop(id: ID!): Workshop
     workshops: [Workshop]
+    myWorkshops: [Workshop]
   }
 
   type Mutation {
@@ -333,6 +334,7 @@ const resolvers = {
 
     workshop,
     workshops,
+    myWorkshops,
   },
   Mutation: {
     createAssignment,
