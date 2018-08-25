@@ -159,7 +159,11 @@ class DashboardPage extends React.Component {
       <div>
         <Header
           // color="transparent"
-          brand={<Link to="/">MiFADU</Link>}
+          brand={
+            <Link to="/">
+              <img src={logo} alt="MiFADU" height={48} />
+            </Link>
+          }
           rightLinks={<HeaderLinks user={user} logoutUser={logoutUser} />}
           fixed
           changeColorOnScroll={{

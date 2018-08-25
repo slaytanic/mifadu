@@ -19,6 +19,8 @@ import Parallax from 'components/Parallax/Parallax';
 import landingPageStyle from 'assets/jss/material-kit-react/views/landingPage';
 
 // Sections for this page
+import logo from 'logo.svg';
+import AssignmentSection from './Sections/AssignmentSection';
 import AssignmentsSection from './Sections/AssignmentsSection';
 // import AssignmentSection from "./Sections/AssignmentSection";
 import AssignmentForm from './Forms/AssignmentForm';
@@ -42,7 +44,7 @@ const styles = {
   },
   subtitle: {
     color: '#fff',
-  }
+  },
 };
 
 class AdminPage extends React.Component {
@@ -82,7 +84,11 @@ class AdminPage extends React.Component {
     return (
       <div>
         <Header
-          brand={<Link to="/">MiFADU</Link>}
+          brand={
+            <Link to="/">
+              <img src={logo} alt="MiFADU" height={48} />
+            </Link>
+          }
           rightLinks={<HeaderLinks user={user} logoutUser={logoutUser} />}
           fixed
           changeColorOnScroll={{
@@ -124,7 +130,9 @@ class AdminPage extends React.Component {
                 path="/assignments/:id?/:action(submit)"
                 render={() => <AssignmentWorkForm />}
               />
-              <Route path="/assignments/:id?/:action" render={() => <AssignmentForm />} />
+
+              <Route path="/assignments/:id?/:action(new|edit)" render={() => <AssignmentForm />} />
+              <Route path="/assignments/:id" render={() => <AssignmentSection />} />
             </Switch>
           </div>
         </div>
