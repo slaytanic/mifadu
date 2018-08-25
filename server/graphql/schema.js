@@ -94,16 +94,25 @@ const typeDefs = `
     evaluationVariable: String
     tags: [Tag]
     requiredWork: [RequiredWork]
+    evaluation: Evaluation
     updatedAt: DateTime
     createdAt: DateTime
   }
 
   input EvaluationInput {
-    score1: Int
-    score2: Int
-    score3: Int
-    score4: Int
-    score5: Int
+    score1: Float
+    score2: Float
+    score3: Float
+    score4: Float
+    score5: Float
+  }
+
+  type Evaluation {
+    score1: Float
+    score2: Float
+    score3: Float
+    score4: Float
+    score5: Float
   }
 
   input AssignmentWorkInput {

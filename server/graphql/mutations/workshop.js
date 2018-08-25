@@ -1,14 +1,14 @@
 const Workshop = require('../../models/workshop');
 
-function createWorkshop(obj, { input }, { req }) {
-  return Workshop.create({ ...input, workshop: req.user.workshop });
+function createWorkshop(obj, { input }) {
+  return Workshop.create(input);
 }
 
-function updateWorkshop(obj, { id, input }, context) {
+function updateWorkshop(obj, { id, input }) {
   return Workshop.findOneAndUpdate({ _id: id }, input, { new: true });
 }
 
-function deleteWorkshop(obj, { id }, context) {
+function deleteWorkshop(obj, { id }) {
   return Workshop.findOneAndRemove({ _id: id });
 }
 

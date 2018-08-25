@@ -13,6 +13,7 @@ const userSchema = new Schema(
     email: String,
     googleId: String,
     facebookId: String,
+    twitterId: String,
     password: String,
     receiveNews: { type: Boolean, default: false },
     acceptedTerms: { type: Boolean, default: false },
@@ -24,7 +25,6 @@ const userSchema = new Schema(
     website: String,
     aboutMe: String,
     admin: { type: Boolean, default: true },
-    tutor: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

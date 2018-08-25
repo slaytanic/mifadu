@@ -89,7 +89,7 @@ class LoginPage extends React.Component {
                       </Button>
                     </div>
                   </CardHeader>
-                  <p className={classes.divider}>...o e-mail</p>
+                  <p className={classes.divider}>o E-Mail</p>
                   <ErrorList errors={this.state.errors} />
                   <CardBody>
                     <CustomInput

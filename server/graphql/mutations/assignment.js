@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+const stripExt = require('../../lib/stripExt');
 const cloudinary = require('../../cloudinary');
 
 const Assignment = require('../../models/assignment');
@@ -7,7 +8,10 @@ const Assignment = require('../../models/assignment');
 function createAssignment(obj, { input }, { req }) {
   if (req.files && req.files.length > 0) {
     return new Promise((resolve, reject) => {
-      const assignment = new Assignment(input);
+      const assignment = new Assignment({
+        ...input,
+        workshop: req.user.workshop,
+      });
       assignment.save((err, doc) => {
         if (err) {
           fs.unlink(req.files[0].path);
@@ -16,10 +20,7 @@ function createAssignment(obj, { input }, { req }) {
         return cloudinary.v2.uploader.upload(
           req.files[0].path,
           {
-            public_id: `${doc.attachment._id}/${doc.attachment.name.substring(
-              0,
-              doc.attachment.name.lastIndexOf('.'),
-            )}`,
+            public_id: `${doc.attachment._id}/${stripExt(doc.attachment.name)}`,
             overwrite: true,
           },
           (uploadErr, uploadRes) => {
@@ -43,8 +44,8 @@ async function updateAssignment(obj, { id, input }, { req }) {
     return new Error('Assignment not found');
   }
   return new Promise((resolve, reject) => {
-    assignment.set(input);
-    if (!req.files || !req.files) {
+    assignment.set({ ...input, workshop: req.user.workshop });
+    if (!req.files || req.files.length < 1) {
       return resolve(assignment.save());
     }
     return assignment.save((err, doc) => {
@@ -55,11 +56,8 @@ async function updateAssignment(obj, { id, input }, { req }) {
       return cloudinary.v2.uploader.upload(
         req.files[0].path,
         {
-          public_id: `${
-            doc.attachment._id
-          }/${req.files[0].originalname.substring(
-            0,
-            req.files[0].originalname.lastIndexOf('.'),
+          public_id: `${doc.attachment._id}/${stripExt(
+            req.files[0].originalname,
           )}`,
           overwrite: true,
         },
@@ -81,7 +79,6 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
   if (assignment === undefined) {
     return new Error('Assignment not found');
   }
-  console.log(input);
   assignment.requiredWork.forEach((rw) => {
     if (!input.assignmentWork) {
       return;
@@ -96,32 +93,15 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
     const assignmentWork = rw.assignmentWork.filter(
       aw => aw.user.toString() !== req.user._id,
     );
+    const oldAssignmentWork = rw.assignmentWork.find(
+      aw => aw.user.toString() === req.user._id,
+    );
 
-    //   cloudinary.v2.uploader.upload(
-    //     req.files.find(a = ).path,
-    //     {
-    //       public_id: `${
-    //         doc.attachment._id
-    //       }/${req.files[0].originalname.substring(
-    //         0,
-    //         req.files[0].originalname.lastIndexOf('.'),
-    //       )}`,
-    //       overwrite: true,
-    //     },
-    // }
-    // console.log(
-    //  'files',
-    //  req.files.find(f => f.fieldname === newAssignmentWork.requiredWorkId),
-    // );
-    // if (assignmentWork.attachment) {
-    //   const upload = cloudinary.v2.uploader.upload(req.files.find(f => (f.fieldname === assignmentWork.requiredWorkId) ).path, { public_id:  }
-    // }
     assignmentWork.push({
       content: newAssignmentWork.content,
-      attachment: newAssignmentWork.attachment,
+      attachment: newAssignmentWork.attachment || oldAssignmentWork.attachment,
       user: req.user._id,
     });
-    // console.log(assignmentWork);
     rw.set({ assignmentWork });
   });
 
@@ -146,7 +126,7 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
           const requiredWork = doc.requiredWork.id(requiredWorkId);
           const assignmentWork = requiredWork.assignmentWork.find(aw => aw.user.equals(req.user._id));
           const upload = await cloudinary.v2.uploader.upload(f.path, {
-            public_id: `${assignmentWork._id}/${f.originalname}`,
+            public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
             overwrite: true,
           });
           assignmentWork.attachment.set({ url: upload.secure_url });

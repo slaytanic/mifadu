@@ -41,7 +41,13 @@ class AssignmentWorkForm extends React.Component {
       getAssignment(match.params.id).then(res => {
         const { assignment } = res.data.data;
         if (!assignment.evaluation) {
-          assignment.evaluation = { score1: 1, score2: 1, score3: 1, score4: 1, score5: 1 };
+          assignment.evaluation = {
+            score1: 0.0,
+            score2: 0.0,
+            score3: 0.0,
+            score4: 0.0,
+            score5: 0.0,
+          };
         }
         assignment.requiredWork = assignment.requiredWork.map(rw => {
           if (rw.assignmentWork) {
@@ -59,7 +65,7 @@ class AssignmentWorkForm extends React.Component {
     if (event.target) {
       value = event.target.value;
     } else {
-      value = parseInt(event[0]);
+      value = event[0];
     }
 
     if (id) {
@@ -239,8 +245,8 @@ class AssignmentWorkForm extends React.Component {
           <Nouislider
             start={[assignment.evaluation.score1]}
             connect={[true, false]}
-            step={1}
-            range={{ min: 1, max: 5 }}
+            step={0.5}
+            range={{ min: 0, max: 2 }}
             onChange={this.handleChange('assignment', 'evaluation', 'score1')}
           />
           {assignment.evaluation.score1}
@@ -250,8 +256,8 @@ class AssignmentWorkForm extends React.Component {
           <Nouislider
             start={[assignment.evaluation.score2]}
             connect={[true, false]}
-            step={1}
-            range={{ min: 1, max: 5 }}
+            step={0.5}
+            range={{ min: 0, max: 2 }}
             onChange={this.handleChange('assignment', 'evaluation', 'score2')}
           />
           {assignment.evaluation.score2}
@@ -261,8 +267,8 @@ class AssignmentWorkForm extends React.Component {
           <Nouislider
             start={[assignment.evaluation.score3]}
             connect={[true, false]}
-            step={1}
-            range={{ min: 1, max: 5 }}
+            step={0.5}
+            range={{ min: 0, max: 2 }}
             onChange={this.handleChange('assignment', 'evaluation', 'score3')}
           />
           {assignment.evaluation.score3}
@@ -272,8 +278,8 @@ class AssignmentWorkForm extends React.Component {
           <Nouislider
             start={[assignment.evaluation.score4]}
             connect={[true, false]}
-            step={1}
-            range={{ min: 1, max: 5 }}
+            step={0.5}
+            range={{ min: 0, max: 2 }}
             onChange={this.handleChange('assignment', 'evaluation', 'score4')}
           />
           {assignment.evaluation.score4}
@@ -283,8 +289,8 @@ class AssignmentWorkForm extends React.Component {
           <Nouislider
             start={[assignment.evaluation.score5]}
             connect={[true, false]}
-            step={1}
-            range={{ min: 1, max: 5 }}
+            step={0.5}
+            range={{ min: 0, max: 2 }}
             onChange={this.handleChange('assignment', 'evaluation', 'score5')}
           />
           {assignment.evaluation.score5}
