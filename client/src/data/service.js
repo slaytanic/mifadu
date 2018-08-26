@@ -4,7 +4,7 @@ const GRAPHQL_ENDPOINT = '/graphql';
 
 export function getMe() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: '{ me { firstName, lastName, email, completedProfile } }',
+    query: '{ me { id, firstName, lastName, email, completedProfile } }',
   });
 }
 
@@ -99,13 +99,15 @@ export function getAssignmentWithWorks(id) {
 
 export function getAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: 'query { assignments { id, name, shortDescription, workshop { tutors { id }} } }',
+    query:
+      'query { assignments { id, name, shortDescription, endsAt, workshop { tutors { id }} } }',
   });
 }
 
 export function getPendingAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: 'query { pendingAssignments { id, name, shortDescription, endsAt } }',
+    query:
+      'query { pendingAssignments { id, name, shortDescription, endsAt, workshop { tutors { id }} } }',
   });
 }
 
@@ -118,7 +120,8 @@ export function getPendingEvaluationAssignments() {
 
 export function getCompletedAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: 'query { completedAssignments { id, name, shortDescription, endsAt } }',
+    query:
+      'query { completedAssignments { id, name, shortDescription, endsAt, workshop { tutors { id }} } }',
   });
 }
 

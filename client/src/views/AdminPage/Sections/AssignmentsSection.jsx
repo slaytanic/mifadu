@@ -73,6 +73,8 @@ class AssignmentsSection extends React.Component {
     const { classes, user } = this.props;
     const { assignments, modal } = this.state;
 
+    console.log('user', user, 'assignments', assignments);
+
     return (
       <div className={classes.root}>
         <Modal
@@ -89,30 +91,58 @@ class AssignmentsSection extends React.Component {
             { label: 'Nombre', key: 'name' },
             { label: 'Descripción', key: 'shortDescription' },
             { label: 'Fecha de entrega', key: 'endsAt' },
+            // { label: '', key: 'actions' },
           ]}
-          tableData={assignments}
-          actions={[
-            key => (
-              <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
-                <AssignmentReturn />
-              </Button>
-            ),
-            key => (
-              <Button color="transparent" component={Link} to={`/assignments/${key}`}>
-                <Info />
-              </Button>
-            ),
-            key => (
-              <Button color="transparent" component={Link} to={`/assignments/${key}/edit`}>
-                <Edit />
-              </Button>
-            ),
-            key => (
-              <Button color="transparent" onClick={this.handleDelete(key)}>
-                <Delete />
-              </Button>
-            ),
-          ]}
+          tableData={assignments.map(a => ({
+            ...a,
+            actions: a.workshop.tutors.map(t => t.id).includes(user.id)
+              ? [
+                  key => (
+                    <Button color="transparent" component={Link} to={`/assignments/${key}`}>
+                      <Info />
+                    </Button>
+                  ),
+                  key => (
+                    <Button color="transparent" component={Link} to={`/assignments/${key}/edit`}>
+                      <Edit />
+                    </Button>
+                  ),
+                  key => (
+                    <Button color="transparent" onClick={this.handleDelete(key)}>
+                      <Delete />
+                    </Button>
+                  ),
+                ]
+              : [
+                  key => (
+                    <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
+                      <AssignmentReturn />
+                    </Button>
+                  ),
+                ],
+          }))}
+          // actions={[
+          //   key => (
+          //     <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
+          //       <AssignmentReturn />
+          //     </Button>
+          //   ),
+          //   key => (
+          //     <Button color="transparent" component={Link} to={`/assignments/${key}`}>
+          //       <Info />
+          //     </Button>
+          //   ),
+          //   key => (
+          //     <Button color="transparent" component={Link} to={`/assignments/${key}/edit`}>
+          //       <Edit />
+          //     </Button>
+          //   ),
+          //   key => (
+          //     <Button color="transparent" onClick={this.handleDelete(key)}>
+          //       <Delete />
+          //     </Button>
+          //   ),
+          // ]}
         />
       </div>
     );
