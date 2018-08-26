@@ -99,8 +99,28 @@ class DashboardPage extends React.Component {
       this.setState({ workshops: wRes.data.data.myWorkshops });
       if (wRes.data.data.myWorkshops.length > 0) {
         getPendingEvaluationAssignments().then(res => {
+          const assignmentWorks = [];
+          const assignments = res.data.data.pendingEvaluationAssignments;
+          assignments.forEach(a => {
+            const students = {};
+            a.requiredWork.forEach(rw => {
+              rw.assignmentWorks.forEach(aw => {
+                if (aw.user) {
+                  students[aw.user.id] = `${aw.user.firstName} ${aw.user.lastName}`;
+                }
+              });
+            });
+            Object.keys(students).forEach(key => {
+              assignmentWorks.push({
+                assignmentId: a.id,
+                assignmentName: a.name,
+                studentName: students[key],
+                studentId: key,
+              });
+            });
+          });
           this.setState({
-            pendingEvaluationCount: res.data.data.pendingEvaluationAssignments.length,
+            pendingEvaluationCount: assignmentWorks.length,
           });
         });
         getCompletedEvaluationAssignments().then(res => {

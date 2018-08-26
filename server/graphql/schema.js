@@ -15,7 +15,7 @@ const { subject, subjects } = require('./queries/subject');
 const { tag, tags } = require('./queries/tag');
 const { university, universitys } = require('./queries/university');
 const {
-  user, users, me, myStudents,
+  userByRef, user, users, me, myStudents,
 } = require('./queries/user');
 const { workshop, workshops, myWorkshops } = require('./queries/workshop');
 
@@ -24,6 +24,7 @@ const {
   updateAssignment,
   deleteAssignment,
   submitAssignmentWork,
+  submitAssignmentEvaluation,
 } = require('./mutations/assignment');
 const { createChair, updateChair, deleteChair } = require('./mutations/chair');
 const {
@@ -122,12 +123,15 @@ const typeDefs = `
   }
 
   type Evaluation {
+    id: ID!
     score1: Float
     score2: Float
     score3: Float
     score4: Float
     score5: Float
     observations: String
+    user: User
+    targetUser: User
   }
 
   input AssignmentWorkInput {
@@ -139,6 +143,11 @@ const typeDefs = `
   input SubmitWorkInput {
     evaluation: EvaluationInput
     assignmentWork: [AssignmentWorkInput]
+  }
+
+  input SubmitAssignmentEvaluationInput {
+    targetUser: ID!
+    evaluation: EvaluationInput
   }
 
   type AssignmentWork {
@@ -281,6 +290,7 @@ const typeDefs = `
     deleteAssignment(id: ID!): Assignment
 
     submitAssignmentWork(id: ID!, input: SubmitWorkInput!): Assignment
+    submitAssignmentEvaluation(id: ID!, input: SubmitAssignmentEvaluationInput!): Assignment
 
     createChair(input: ChairInput!): Chair
     updateChair(id: ID!, input: ChairInput!): Chair
@@ -320,6 +330,10 @@ const resolvers = {
   },
   AssignmentWork: {
     user,
+  },
+  Evaluation: {
+    user,
+    targetUser: userByRef('targetUser'),
   },
   Tag: {
     assignments,
@@ -362,6 +376,7 @@ const resolvers = {
     updateAssignment,
     deleteAssignment,
     submitAssignmentWork,
+    submitAssignmentEvaluation,
 
     createChair,
     updateChair,

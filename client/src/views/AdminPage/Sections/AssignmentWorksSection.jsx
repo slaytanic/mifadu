@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import Info from '@material-ui/icons/Info';
+import Assessment from '@material-ui/icons/Assessment';
 import Delete from '@material-ui/icons/Delete';
 import Edit from '@material-ui/icons/Edit';
 
@@ -58,18 +58,20 @@ class AssignmentsSection extends React.Component {
     const { assignments } = this.state;
     const assignmentWorks = [];
     assignments.forEach(a => {
-      const students = new Set();
+      const students = {};
       a.requiredWork.forEach(rw => {
         rw.assignmentWorks.forEach(aw => {
           if (aw.user) {
-            students.add(`${aw.user.firstName} ${aw.user.lastName}`);
+            students[aw.user.id] = `${aw.user.firstName} ${aw.user.lastName}`;
           }
         });
       });
-      students.forEach(s => {
+      Object.keys(students).forEach(key => {
         assignmentWorks.push({
+          assignmentId: a.id,
           assignmentName: a.name,
-          studentName: s,
+          studentName: students[key],
+          studentId: key,
         });
       });
     });
@@ -112,26 +114,30 @@ class AssignmentsSection extends React.Component {
           ]}
           tableData={assignmentWorks}
           actions={[
-            key => (
-              <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
-                <Info />
+            (key, item) => (
+              <Button
+                color="transparent"
+                component={Link}
+                to={`/assignments/${item.assignmentId}/evaluate/${item.studentId}`}
+              >
+                <Assessment />
               </Button>
             ),
-            key => (
-              <Button color="transparent" component={Link} to={`/assignments/${key}`}>
-                <Info />
-              </Button>
-            ),
-            key => (
-              <Button color="transparent" component={Link} to={`/assignments/${key}/edit`}>
-                <Edit />
-              </Button>
-            ),
-            key => (
-              <Button color="transparent" onClick={this.handleDelete(key)}>
-                <Delete />
-              </Button>
-            ),
+            // key => (
+            //   <Button color="transparent" component={Link} to={`/assignments/${key}`}>
+            //     <Info />
+            //   </Button>
+            // ),
+            // key => (
+            //   <Button color="transparent" component={Link} to={`/assignments/${key}/edit`}>
+            //     <Edit />
+            //   </Button>
+            // ),
+            // key => (
+            //   <Button color="transparent" onClick={this.handleDelete(key)}>
+            //     <Delete />
+            //   </Button>
+            // ),
           ]}
         />
       </div>

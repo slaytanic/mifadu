@@ -44,6 +44,14 @@ export function deleteUser(id) {
   });
 }
 
+export function getUser(id) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query:
+      'query($id: ID!) { user(id: $id) { id, firstName, lastName, email, completedProfile, idNumber } }',
+    variables: { id },
+  });
+}
+
 export function getUsers() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query: '{ users { id, firstName, lastName, email, completedProfile, idNumber } }',
@@ -90,7 +98,7 @@ export function getAssignment(id) {
 export function getAssignmentWithWorks(id) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description, assignmentWorks { id, content, attachment { name, type, url } } }, endsAt, type, tags { id, name }, evaluationVariable, attachment { id, type, name, url }, evaluations { id, user, targetUser, score1, score2, score3, score4, score5, observations } } }',
+      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description, assignmentWorks { id, user { id }, content, attachment { name, type, url } } }, endsAt, type, tags { id, name }, evaluationVariable, attachment { id, type, name, url }, evaluations { id, user { id }, targetUser { id }, score1, score2, score3, score4, score5, observations } } }',
     variables: {
       id,
     },
@@ -114,7 +122,7 @@ export function getPendingAssignments() {
 export function getPendingEvaluationAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'query { pendingEvaluationAssignments { id, name, shortDescription, endsAt, requiredWork { assignmentWorks { user { firstName, lastName } } } } }',
+      'query { pendingEvaluationAssignments { id, name, shortDescription, endsAt, requiredWork { assignmentWorks { user { id, firstName, lastName } } } } }',
   });
 }
 
@@ -127,7 +135,8 @@ export function getCompletedAssignments() {
 
 export function getCompletedEvaluationAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: 'query { completedEvaluationAssignments { id, name, shortDescription, endsAt } }',
+    query:
+      'query { completedEvaluationAssignments { id, name, shortDescription, endsAt, requiredWork { assignmentWorks { user { id, firstName, lastName } } } } }',
   });
 }
 
@@ -238,4 +247,15 @@ export function submitAssignmentWork(id, input) {
   );
 
   return axios.post(GRAPHQL_ENDPOINT, formData);
+}
+
+export function submitAssignmentEvaluation(id, input) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query:
+      'mutation($id: ID!, $input: SubmitAssignmentEvaluationInput!) { submitAssignmentEvaluation(id: $id, input: $input) { id } }',
+    variables: {
+      id,
+      input,
+    },
+  });
 }

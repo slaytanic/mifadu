@@ -1,5 +1,14 @@
 const User = require('../../models/user');
 
+function userByRef(ref) {
+  return (obj, { id }) => {
+    if (obj && obj[ref]) {
+      return User.findOne({ _id: obj[ref] });
+    }
+    return User.findOne({ _id: id });
+  };
+}
+
 function user(obj, args, context) {
   if (obj && obj.user) {
     return User.findOne({ _id: obj.user });
@@ -22,6 +31,7 @@ function myStudents(obj, args, { req }) {
   return User.find({ workshop: req.user.workshop });
 }
 
+module.exports.userByRef = userByRef;
 module.exports.user = user;
 module.exports.users = users;
 module.exports.me = me;

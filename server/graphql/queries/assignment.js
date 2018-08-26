@@ -18,6 +18,8 @@ async function assignment(obj, args, { req }) {
   });
   a.attachment.id = a.attachment._id;
   a.evaluation = a.evaluations.find(e => e.user.equals(req.user._id));
+  a.evaluations = a.evaluations.map(e => ({ ...e, id: e._id }));
+  console.log(a);
   return a;
 }
 

@@ -140,6 +140,23 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
   });
 }
 
+async function submitAssignmentEvaluation(obj, { id, input }, { req }) {
+  const assignment = await Assignment.findOne({ _id: id });
+  if (assignment === undefined) {
+    return new Error('Assignment not found');
+  }
+  const evaluations = (assignment.evaluations || []).filter(
+    e => !e.user.equals(req.user._id),
+  );
+  evaluations.push({
+    ...input.evaluation,
+    user: req.user._id,
+    targetUser: input.targetUser,
+  });
+  assignment.set({ evaluations });
+  return assignment.save();
+}
+
 function deleteAssignment(obj, { id }) {
   return Assignment.findOneAndRemove({ _id: id });
 }
@@ -147,4 +164,5 @@ function deleteAssignment(obj, { id }) {
 module.exports.createAssignment = createAssignment;
 module.exports.updateAssignment = updateAssignment;
 module.exports.submitAssignmentWork = submitAssignmentWork;
+module.exports.submitAssignmentEvaluation = submitAssignmentEvaluation;
 module.exports.deleteAssignment = deleteAssignment;

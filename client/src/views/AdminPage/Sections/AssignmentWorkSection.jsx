@@ -21,7 +21,7 @@ import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
 import Autocomplete from 'components/Autocomplete/Autocomplete';
 
-import { getAssignmentWithWorks } from 'data/service';
+import { getUser, getAssignmentWithWorks, submitAssignmentEvaluation } from 'data/service';
 
 const styles = {
   input: {
@@ -33,30 +33,55 @@ class AssignmentSection extends React.Component {
   state = {
     assignment: null,
     errors: [],
+    targetUser: null,
+    selfEvaluation: {
+      score1: 0.0,
+      score2: 0.0,
+      score3: 0.0,
+      score4: 0.0,
+      score5: 0.0,
+      observations: '',
+    },
+    evaluation: {
+      score1: 0.0,
+      score2: 0.0,
+      score3: 0.0,
+      score4: 0.0,
+      score5: 0.0,
+      observations: '',
+    },
+    requiredWork: [],
   };
 
   componentDidMount() {
-    const { match } = this.props;
-    if (match.params.id) {
-      getAssignmentWithWorks(match.params.id).then(res => {
-        const { assignment } = res.data.data;
-        if (!assignment.evaluation) {
-          assignment.evaluation = {
-            score1: 0.0,
-            score2: 0.0,
-            score3: 0.0,
-            score4: 0.0,
-            score5: 0.0,
-            observations: '',
-          };
-        }
-        assignment.requiredWork = assignment.requiredWork.map(rw => {
-          if (rw.assignmentWork) {
-            return rw;
+    const { match, user } = this.props;
+    console.log('user', user);
+
+    if (match.params.userId) {
+      getUser(match.params.userId).then(userRes => {
+        this.setState({ targetUser: userRes.data.data.user }, () => {
+          if (match.params.id) {
+            getAssignmentWithWorks(match.params.id).then(res => {
+              const { assignment } = res.data.data;
+              const { targetUser } = this.state;
+
+              const selfEvaluation = assignment.evaluations.find(
+                e => e.user.id === targetUser.id && e.targetUser.id === targetUser.id,
+              );
+              if (selfEvaluation) {
+                this.setState({ selfEvaluation });
+              }
+              const evaluation = assignment.evaluations.find(
+                e => e.targetUser.id === targetUser.id && e.user.id === user.id,
+              );
+              if (evaluation) {
+                this.setState({ evaluation });
+              }
+
+              this.setState({ assignment });
+            });
           }
-          return { ...rw, assignmentWork: { content: '', attachment: null } };
         });
-        this.setState({ assignment });
       });
     }
   }
@@ -133,18 +158,14 @@ class AssignmentSection extends React.Component {
 
   handleSubmit = () => {
     const { history } = this.props;
-    const { assignment } = this.state;
+    const { assignment, evaluation, targetUser } = this.state;
 
-    // submitAssignmentWork(assignment.id, {
-    //   evaluation: assignment.evaluation,
-    //   assignmentWork: assignment.requiredWork.map(rw => ({
-    //     requiredWorkId: rw.id,
-    //     content: rw.assignmentWork.content,
-    //     attachment: rw.assignmentWork.attachment,
-    //   })),
-    // }).then(res => {
-    //   history.push(`/assignments/complete`);
-    // });
+    submitAssignmentEvaluation(assignment.id, {
+      evaluation,
+      targetUser: targetUser.id,
+    }).then(res => {
+      history.push(`/assignments/completedEvaluation`);
+    });
   };
 
   acceptFor = type => {
@@ -159,7 +180,7 @@ class AssignmentSection extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { assignment, errors } = this.state;
+    const { assignment, errors, targetUser, evaluation, selfEvaluation } = this.state;
 
     console.log(assignment);
 
@@ -189,6 +210,109 @@ class AssignmentSection extends React.Component {
         <p>
           <b>Etiquetas:</b> {assignment.tags.map(t => t.name).join(', ')}
         </p>
+        {targetUser && (
+          <div>
+            <p>
+              <b>Estudiante:</b> {targetUser.firstName} {targetUser.lastName}
+            </p>
+            <h6>Autoevaluación</h6>
+            <ol>
+              <li>
+                Propuesta Conceptual: <b>{selfEvaluation.score1.toFixed(1)}</b>
+              </li>
+              <li>
+                Proceso <b>{selfEvaluation.score2.toFixed(1)}</b>
+              </li>
+              <li>
+                {assignment.evaluationVariable || 'Variable'}{' '}
+                <b>{selfEvaluation.score3.toFixed(1)}</b>
+              </li>
+              <li>
+                Producto <b>{selfEvaluation.score4.toFixed(1)}</b>
+              </li>
+              <li>
+                Comunicación <b>{selfEvaluation.score5.toFixed(1)}</b>
+              </li>
+            </ol>
+            <p>
+              <b>Observaciones:</b>
+            </p>
+            <p>{selfEvaluation.observations}</p>
+            <h6>Evaluación</h6>
+            <p>
+              1. Propuesta Conceptual
+              <Nouislider
+                start={[evaluation.score1]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('evaluation', 'score1')}
+              />
+              {evaluation.score1}
+            </p>
+            <p>
+              2. Proceso
+              <Nouislider
+                start={[evaluation.score2]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('evaluation', 'score2')}
+              />
+              {evaluation.score2}
+            </p>
+            <p>
+              3. {assignment.evaluationVariable || 'Variable'}
+              <Nouislider
+                start={[evaluation.score3]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('evaluation', 'score3')}
+              />
+              {evaluation.score3}
+            </p>
+            <p>
+              4. Producto
+              <Nouislider
+                start={[evaluation.score4]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('evaluation', 'score4')}
+              />
+              {evaluation.score4}
+            </p>
+            <p>
+              5. Comunicación
+              <Nouislider
+                start={[evaluation.score5]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('evaluation', 'score5')}
+              />
+              {evaluation.score5}
+            </p>
+            <CustomInput
+              id="observations"
+              labelText="Observaciones"
+              formControlProps={{
+                fullWidth: true,
+              }}
+              inputProps={{
+                multiline: true,
+                rows: 4,
+                value: evaluation.observations,
+                onChange: this.handleChange('evaluation', 'observations'),
+              }}
+              error={this.hasError('observations')}
+            />
+            <Button onClick={this.handleSubmit} fullWidth>
+              Guardar
+            </Button>
+          </div>
+        )}
       </div>
     );
   }

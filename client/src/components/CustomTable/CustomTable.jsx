@@ -40,7 +40,7 @@ function CustomTable({ ...props }) {
                 </TableCell>
               ))}
               <TableCell className={classes.tableCell} key="actions">
-                {(prop.actions || actions).map(action => action(prop.id || index))}
+                {(prop.actions || actions).map(action => action(prop.id || index, prop))}
               </TableCell>
             </TableRow>
           ))}

@@ -124,12 +124,12 @@ class AdminPage extends React.Component {
                 path="/assignments/:id?/:action(submit)"
                 render={() => <AssignmentWorkForm />}
               />
+              <Route
+                path="/assignments/:id/:action(evaluate)/:userId"
+                render={() => <AssignmentWorkSection user={user} />}
+              />
               <Route path="/assignments/:id?/:action(new|edit)" render={() => <AssignmentForm />} />
               <Route path="/assignments/:id" render={() => <AssignmentSection />} />
-              <Route
-                path="/assignments/:id/:assignmentWorkId"
-                render={() => <AssignmentWorkSection />}
-              />
               <Route path="/assignments" render={() => <AssignmentsSection user={user} />} />
             </Switch>
           </div>
