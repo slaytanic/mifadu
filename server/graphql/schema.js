@@ -4,8 +4,11 @@ const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date');
 const {
   assignment,
   assignments,
+  myAssignments,
   pendingAssignments,
   completedAssignments,
+  pendingEvaluationAssignments,
+  completedEvaluationAssignments,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
@@ -87,6 +90,7 @@ const typeDefs = `
     type: String
     description: String
     assignmentWork: AssignmentWork
+    assignmentWorks: [AssignmentWork]
   }
 
   type Assignment {
@@ -102,6 +106,8 @@ const typeDefs = `
     tags: [Tag]
     requiredWork: [RequiredWork]
     evaluation: Evaluation
+    evaluations: [Evaluation]
+    workshop: Workshop
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -137,7 +143,7 @@ const typeDefs = `
 
   type AssignmentWork {
     id: ID!
-    user: [User]
+    user: User
     attachment: File
     content: String
   }
@@ -192,6 +198,7 @@ const typeDefs = `
   input UserInput {
     firstName: String!
     lastName: String!
+    fullName: String!
     completedProfile: Boolean!
     acceptedTerms: Boolean!
     receiveNews: Boolean!
@@ -232,6 +239,7 @@ const typeDefs = `
   type Workshop {
     id: ID!
     name: String
+    tutors: [User]
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -239,8 +247,11 @@ const typeDefs = `
   type Query {
     assignment(id: ID!): Assignment
     assignments: [Assignment]
+    myAssignments: [Assignment]
     pendingAssignments: [Assignment]
     completedAssignments: [Assignment]
+    pendingEvaluationAssignments: [Assignment]
+    completedEvaluationAssignments: [Assignment]
 
     chair(id: ID!): Chair
     chairs: [Chair]
@@ -305,15 +316,25 @@ const resolvers = {
   DateTime: GraphQLDateTime,
   Assignment: {
     tags,
+    workshop,
+  },
+  AssignmentWork: {
+    user,
   },
   Tag: {
     assignments,
   },
+  Workshop: {
+    tutors: users,
+  },
   Query: {
     assignment,
     assignments,
+    myAssignments,
     pendingAssignments,
     completedAssignments,
+    pendingEvaluationAssignments,
+    completedEvaluationAssignments,
 
     chair,
     chairs,

@@ -1,10 +1,16 @@
 const User = require('../../models/user');
 
 function user(obj, args, context) {
-  return User.find({ _id: args.id });
+  if (obj && obj.user) {
+    return User.findOne({ _id: obj.user });
+  }
+  return User.findOne({ _id: args.id });
 }
 
 function users(obj, args, context) {
+  if (obj && obj.tutors) {
+    return User.find({ _id: { $in: obj.tutors } });
+  }
   return User.find({});
 }
 

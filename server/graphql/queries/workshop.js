@@ -1,7 +1,10 @@
 const Workshop = require('../../models/workshop');
 
 function workshop(obj, args, context) {
-  return Workshop.find({ _id: args.id });
+  if (obj && obj.workshop) {
+    return Workshop.findOne({ _id: obj.workshop });
+  }
+  return Workshop.findOne({ _id: args.id });
 }
 
 function workshops(obj, args, context) {

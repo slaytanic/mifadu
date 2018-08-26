@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import AssignmentReturn from '@material-ui/icons/AssignmentReturn';
 import Info from '@material-ui/icons/Info';
 import Delete from '@material-ui/icons/Delete';
 import Edit from '@material-ui/icons/Edit';
@@ -15,9 +14,8 @@ import Button from 'components/CustomButtons/Button';
 import Modal from 'components/Modal/Modal';
 
 import {
-  getMyAssignments,
-  getPendingAssignments,
-  getCompletedAssignments,
+  getPendingEvaluationAssignments,
+  getCompletedEvaluationAssignments,
   deleteAssignment,
 } from 'data/service';
 
@@ -30,6 +28,7 @@ class AssignmentsSection extends React.Component {
 
   state = {
     assignments: [],
+    assignmentWorks: [],
     modal: false,
     selectedAssignmentId: '',
   };
@@ -40,19 +39,41 @@ class AssignmentsSection extends React.Component {
 
   getAssignments = () => {
     const { match } = this.props;
-    if (match.params.action === 'complete') {
-      getCompletedAssignments().then(res => {
-        this.setState({ assignments: res.data.data.completedAssignments });
+    if (match.params.action === 'completedEvaluation') {
+      getCompletedEvaluationAssignments().then(res => {
+        this.setState({ assignments: res.data.data.completedEvaluationAssignments }, () => {
+          this.populateAssignmentWorks();
+        });
       });
-    } else if (match.params.action === 'pending') {
-      getPendingAssignments().then(res => {
-        this.setState({ assignments: res.data.data.pendingAssignments });
-      });
-    } else {
-      getMyAssignments().then(res => {
-        this.setState({ assignments: res.data.data.myAssignments });
+    } else if (match.params.action === 'pendingEvaluation') {
+      getPendingEvaluationAssignments().then(res => {
+        this.setState({ assignments: res.data.data.pendingEvaluationAssignments }, () => {
+          this.populateAssignmentWorks();
+        });
       });
     }
+  };
+
+  populateAssignmentWorks = () => {
+    const { assignments } = this.state;
+    const assignmentWorks = [];
+    assignments.forEach(a => {
+      const students = new Set();
+      a.requiredWork.forEach(rw => {
+        rw.assignmentWorks.forEach(aw => {
+          if (aw.user) {
+            students.add(`${aw.user.firstName} ${aw.user.lastName}`);
+          }
+        });
+      });
+      students.forEach(s => {
+        assignmentWorks.push({
+          assignmentName: a.name,
+          studentName: s,
+        });
+      });
+    });
+    this.setState({ assignmentWorks });
   };
 
   handleDelete = key => () => {
@@ -70,8 +91,8 @@ class AssignmentsSection extends React.Component {
   };
 
   render() {
-    const { classes, user } = this.props;
-    const { assignments, modal } = this.state;
+    const { classes } = this.props;
+    const { assignmentWorks, modal } = this.state;
 
     return (
       <div className={classes.root}>
@@ -86,15 +107,14 @@ class AssignmentsSection extends React.Component {
         <CustomTable
           tableHeaderColor="primary"
           tableHead={[
-            { label: 'Nombre', key: 'name' },
-            { label: 'Descripción', key: 'shortDescription' },
-            { label: 'Fecha de entrega', key: 'endsAt' },
+            { label: 'Trabajo Práctico', key: 'assignmentName' },
+            { label: 'Estudiante', key: 'studentName' },
           ]}
-          tableData={assignments}
+          tableData={assignmentWorks}
           actions={[
             key => (
               <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
-                <AssignmentReturn />
+                <Info />
               </Button>
             ),
             key => (

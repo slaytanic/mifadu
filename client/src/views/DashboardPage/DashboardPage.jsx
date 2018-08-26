@@ -52,6 +52,8 @@ import {
   getMyStudents,
   getPendingAssignments,
   getCompletedAssignments,
+  getPendingEvaluationAssignments,
+  getCompletedEvaluationAssignments,
   getMyWorkshops,
 } from '../../data/service';
 
@@ -84,6 +86,8 @@ class DashboardPage extends React.Component {
     userCount: 0,
     pendingCount: 0,
     completedCount: 0,
+    pendingEvaluationCount: 0,
+    completedEvaluationCount: 0,
     workshops: [],
   };
 
@@ -91,20 +95,40 @@ class DashboardPage extends React.Component {
     getMyStudents().then(res => {
       this.setState({ userCount: res.data.data.myStudents.length });
     });
-    getPendingAssignments().then(res => {
-      this.setState({ pendingCount: res.data.data.pendingAssignments.length });
-    });
-    getCompletedAssignments().then(res => {
-      this.setState({ completedCount: res.data.data.completedAssignments.length });
-    });
-    getMyWorkshops().then(res => {
-      this.setState({ workshops: res.data.data.myWorkshops });
+    getMyWorkshops().then(wRes => {
+      this.setState({ workshops: wRes.data.data.myWorkshops });
+      if (wRes.data.data.myWorkshops.length > 0) {
+        getPendingEvaluationAssignments().then(res => {
+          this.setState({
+            pendingEvaluationCount: res.data.data.pendingEvaluationAssignments.length,
+          });
+        });
+        getCompletedEvaluationAssignments().then(res => {
+          this.setState({
+            completedEvaluationCount: res.data.data.completedEvaluationAssignments.length,
+          });
+        });
+      } else {
+        getPendingAssignments().then(res => {
+          this.setState({ pendingCount: res.data.data.pendingAssignments.length });
+        });
+        getCompletedAssignments().then(res => {
+          this.setState({ completedCount: res.data.data.completedAssignments.length });
+        });
+      }
     });
   }
 
   render() {
     const { classes, user, logoutUser, ...rest } = this.props;
-    const { userCount, pendingCount, completedCount, workshops } = this.state;
+    const {
+      userCount,
+      pendingCount,
+      completedCount,
+      pendingEvaluationCount,
+      completedEvaluationCount,
+      workshops,
+    } = this.state;
     const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
     const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
 
@@ -217,38 +241,80 @@ class DashboardPage extends React.Component {
                     </CardFooter>
                   </Card>
                 </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <Card className={classes.card}>
-                    <CardHeader color="warning" stats icon>
-                      <CardIcon color="warning">
-                        <Icon>content_copy</Icon>
-                      </CardIcon>
-                      <p className={classes.cardCategory}>Entregas pendientes</p>
-                      <h3 className={classes.cardTitle}>{pendingCount}</h3>
-                    </CardHeader>
-                    <CardFooter stats>
-                      <div className={classes.stats}>
-                        <Link to="/assignments/pending">Ver entregas pendientes</Link>
-                      </div>
-                    </CardFooter>
-                  </Card>
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <Card className={classes.card}>
-                    <CardHeader color="success" stats icon>
-                      <CardIcon color="success">
-                        <Icon>content_copy</Icon>
-                      </CardIcon>
-                      <p className={classes.cardCategory}>Entregas realizadas</p>
-                      <h3 className={classes.cardTitle}>{completedCount}</h3>
-                    </CardHeader>
-                    <CardFooter stats>
-                      <div className={classes.stats}>
-                        <Link to="/assignments/complete">Ver entregas realizadas</Link>
-                      </div>
-                    </CardFooter>
-                  </Card>
-                </GridItem>
+                {workshops.length > 0 ? (
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="warning" stats icon>
+                        <CardIcon color="warning">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>Evaluaciones pendientes</p>
+                        <h3 className={classes.cardTitle}>{pendingEvaluationCount}</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          <Link to="/assignments/pendingEvaluation">
+                            Ver evaluaciones pendientes
+                          </Link>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                ) : (
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="warning" stats icon>
+                        <CardIcon color="warning">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>Entregas pendientes</p>
+                        <h3 className={classes.cardTitle}>{pendingCount}</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          <Link to="/assignments/pending">Ver entregas pendientes</Link>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                )}
+                {workshops.length > 0 ? (
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="success" stats icon>
+                        <CardIcon color="success">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>Evaluaciones realizadas</p>
+                        <h3 className={classes.cardTitle}>{completedEvaluationCount}</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          <Link to="/assignments/completedEvaluation">
+                            Ver evaluaciones realizadas
+                          </Link>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                ) : (
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="success" stats icon>
+                        <CardIcon color="success">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>Entregas realizadas</p>
+                        <h3 className={classes.cardTitle}>{completedCount}</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          <Link to="/assignments/complete">Ver entregas realizadas</Link>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                )}
                 {/* <GridItem xs={12} sm={12} md={4}>
                   <Card className={classes.card}>
                     <CardHeader color="warning" stats icon>

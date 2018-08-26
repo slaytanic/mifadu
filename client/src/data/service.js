@@ -72,7 +72,8 @@ export function getMyWorkshops() {
 
 export function getMyAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: '{ myAssignments { id, name } }',
+    query:
+      'query { myAssignments { id, name, shortDescription, endsAt, workshop { tutors { id }} } }',
   });
 }
 
@@ -86,9 +87,19 @@ export function getAssignment(id) {
   });
 }
 
+export function getAssignmentWithWorks(id) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query:
+      'query($id: ID!) { assignment(id: $id) { id, name, shortDescription, description, requiredWork { id, type, description, assignmentWorks { id, content, attachment { name, type, url } } }, endsAt, type, tags { id, name }, evaluationVariable, attachment { id, type, name, url }, evaluations { id, user, targetUser, score1, score2, score3, score4, score5, observations } } }',
+    variables: {
+      id,
+    },
+  });
+}
+
 export function getAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: 'query { assignments { id, name, shortDescription } }',
+    query: 'query { assignments { id, name, shortDescription, workshop { tutors { id }} } }',
   });
 }
 
@@ -98,9 +109,22 @@ export function getPendingAssignments() {
   });
 }
 
+export function getPendingEvaluationAssignments() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query:
+      'query { pendingEvaluationAssignments { id, name, shortDescription, endsAt, requiredWork { assignmentWorks { user { firstName, lastName } } } } }',
+  });
+}
+
 export function getCompletedAssignments() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query: 'query { completedAssignments { id, name, shortDescription, endsAt } }',
+  });
+}
+
+export function getCompletedEvaluationAssignments() {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'query { completedEvaluationAssignments { id, name, shortDescription, endsAt } }',
   });
 }
 

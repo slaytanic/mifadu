@@ -12,7 +12,7 @@ import Header from 'components/Header/Header';
 import Footer from 'components/Footer/Footer';
 import GridContainer from 'components/Grid/GridContainer';
 import GridItem from 'components/Grid/GridItem';
-import Button from 'components/CustomButtons/Button';
+// import Button from 'components/CustomButtons/Button';
 import HeaderLinks from 'components/Header/HeaderLinks';
 import Parallax from 'components/Parallax/Parallax';
 
@@ -22,15 +22,11 @@ import landingPageStyle from 'assets/jss/material-kit-react/views/landingPage';
 import logo from 'logo.svg';
 import AssignmentSection from './Sections/AssignmentSection';
 import AssignmentsSection from './Sections/AssignmentsSection';
-// import AssignmentSection from "./Sections/AssignmentSection";
+import AssignmentWorkSection from './Sections/AssignmentWorkSection';
+import AssignmentWorksSection from './Sections/AssignmentWorksSection';
 import AssignmentForm from './Forms/AssignmentForm';
 import AssignmentWorkForm from './Forms/AssignmentWorkForm';
 import UsersSection from './Sections/UsersSection';
-// import ProductSection from "./Sections/ProductSection";
-// import TeamSection from "./Sections/TeamSection";
-// import WorkSection from "./Sections/WorkSection";
-
-// import { container, title } from 'assets/jss/material-kit-react.jsx';
 
 const styles = {
   ...landingPageStyle,
@@ -68,6 +64,10 @@ class AdminPage extends React.Component {
         subtitle = 'Pendientes de entrega';
       } else if (match.params.action === 'complete') {
         subtitle = 'Entregados';
+      } else if (match.params.action === 'pendingEvaluation') {
+        subtitle = 'Pendientes de evaluacion';
+      } else if (match.params.action === 'completedEvaluation') {
+        subtitle = 'Evaluados';
       } else if (match.params.id) {
         title = 'Trabajo práctico';
         subtitle = 'Detalle';
@@ -109,30 +109,28 @@ class AdminPage extends React.Component {
         </Parallax>
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container}>
-            {/* <Button component={Link} to="/assignments">
-              TPs
-            </Button>
-
-            <Button component={Link} to="/assignments/new">
-              Crear TP
-            </Button>
-            <Button component={Link} to="/users">
-              Usuarios
-            </Button> */}
             <Switch>
               <Route path="/users/:id?/:action" render={() => <UsersSection />} />
               <Route path="/users" render={() => <UsersSection />} />
               <Route
                 path="/assignments/:action(complete|pending)"
-                render={() => <AssignmentsSection />}
+                render={() => <AssignmentsSection user={user} />}
+              />
+              <Route
+                path="/assignments/:action(completedEvaluation|pendingEvaluation)"
+                render={() => <AssignmentWorksSection />}
               />
               <Route
                 path="/assignments/:id?/:action(submit)"
                 render={() => <AssignmentWorkForm />}
               />
-
               <Route path="/assignments/:id?/:action(new|edit)" render={() => <AssignmentForm />} />
               <Route path="/assignments/:id" render={() => <AssignmentSection />} />
+              <Route
+                path="/assignments/:id/:assignmentWorkId"
+                render={() => <AssignmentWorkSection />}
+              />
+              <Route path="/assignments" render={() => <AssignmentsSection user={user} />} />
             </Switch>
           </div>
         </div>

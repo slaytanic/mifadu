@@ -58,6 +58,10 @@ userSchema.methods.validPassword = function validPassword(password, done) {
   });
 };
 
+userSchema.virtual('fullName').get(() => `${this.firstName} ${this.lastName}`);
+
+userSchema.set('toJSON', { virtuals: true });
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

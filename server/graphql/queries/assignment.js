@@ -13,6 +13,7 @@ async function assignment(obj, args, { req }) {
       ...rw,
       id: rw._id,
       assignmentWork,
+      assignmentWorks: rw.assignmentWork,
     };
   });
   a.attachment.id = a.attachment._id;
@@ -22,6 +23,10 @@ async function assignment(obj, args, { req }) {
 
 function assignments(obj, args, context) {
   return Assignment.find({});
+}
+
+function myAssignments(obj, args, { req }) {
+  return Assignment.forUser(req.user);
 }
 
 function pendingAssignments(obj, args, { req }) {
@@ -70,7 +75,18 @@ function completedAssignments(obj, args, { req }) {
   });
 }
 
+function pendingEvaluationAssignments(obj, args, { req }) {
+  return Assignment.pendingEvaluationByUser(req.user);
+}
+
+function completedEvaluationAssignments(obj, args, { req }) {
+  return Assignment.completedEvaluationByUser(req.user);
+}
+
 module.exports.assignment = assignment;
 module.exports.assignments = assignments;
+module.exports.myAssignments = myAssignments;
 module.exports.pendingAssignments = pendingAssignments;
 module.exports.completedAssignments = completedAssignments;
+module.exports.pendingEvaluationAssignments = pendingEvaluationAssignments;
+module.exports.completedEvaluationAssignments = completedEvaluationAssignments;
