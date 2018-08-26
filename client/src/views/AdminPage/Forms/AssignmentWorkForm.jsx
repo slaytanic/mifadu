@@ -33,6 +33,7 @@ class AssignmentWorkForm extends React.Component {
   state = {
     assignment: null,
     errors: [],
+    loading: false,
   };
 
   componentDidMount() {
@@ -135,6 +136,8 @@ class AssignmentWorkForm extends React.Component {
     const { history } = this.props;
     const { assignment } = this.state;
 
+    this.setState({ loading: true });
+
     submitAssignmentWork(assignment.id, {
       evaluation: assignment.evaluation,
       assignmentWork: assignment.requiredWork.map(rw => ({
@@ -142,9 +145,14 @@ class AssignmentWorkForm extends React.Component {
         content: rw.assignmentWork.content,
         attachment: rw.assignmentWork.attachment,
       })),
-    }).then(res => {
-      history.push(`/assignments/complete`);
-    });
+    })
+      .then(res => {
+        this.setState({ loading: false });
+        history.push(`/assignments/complete`);
+      })
+      .catch(() => {
+        this.setState({ loading: false });
+      });
   };
 
   acceptFor = type => {
@@ -159,9 +167,7 @@ class AssignmentWorkForm extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { assignment, errors } = this.state;
-
-    console.log(assignment);
+    const { assignment, errors, loading } = this.state;
 
     if (!assignment) {
       return <div />;
@@ -317,6 +323,7 @@ class AssignmentWorkForm extends React.Component {
           // variant="contained"
           color="primary"
           // className={classes.button}
+          loading={loading}
           onClick={this.handleSubmit}
           fullWidth
         >

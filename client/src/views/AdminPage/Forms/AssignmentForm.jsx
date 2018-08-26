@@ -50,6 +50,7 @@ class AssignmentForm extends React.Component {
     },
     errors: [],
     tags: [],
+    loading: false,
   };
 
   componentDidMount() {
@@ -172,19 +173,30 @@ class AssignmentForm extends React.Component {
 
     assignment.tags = assignment.tags.map(t => t.value);
 
+    this.setState({ loading: true });
     if (id) {
       updateAssignment(
         id,
         Object.keys(assignment)
           .filter(k => k !== 'id')
           .reduce((o, k) => ({ ...o, [k]: assignment[k] }), {}),
-      ).then(res => {
-        history.push(`/assignments/${res.data.data.updateAssignment.id}`);
-      });
+      )
+        .then(res => {
+          this.setState({ loading: false });
+          history.push(`/assignments/${res.data.data.updateAssignment.id}`);
+        })
+        .catch(() => {
+          this.setState({ loading: false });
+        });
     } else {
-      createAssignment(assignment).then(res => {
-        history.push(`/assignments/${res.data.data.createAssignment.id}`);
-      });
+      createAssignment(assignment)
+        .then(res => {
+          this.setState({ loading: false });
+          history.push(`/assignments/${res.data.data.createAssignment.id}`);
+        })
+        .catch(() => {
+          this.setState({ loading: false });
+        });
     }
   };
 
@@ -208,7 +220,7 @@ class AssignmentForm extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { assignment, errors, tags } = this.state;
+    const { assignment, errors, tags, loading } = this.state;
     return (
       <div className={classes.root}>
         <ErrorList errors={errors} />
@@ -423,6 +435,7 @@ class AssignmentForm extends React.Component {
           // className={classes.button}
           onClick={this.handleSubmit}
           fullWidth
+          loading={loading}
         >
           {assignment.id ? 'Guardar cambios' : 'Dar de alta'}
         </Button>
