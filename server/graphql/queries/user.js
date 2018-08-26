@@ -10,6 +10,7 @@ function userByRef(ref) {
 }
 
 function user(obj, args, context) {
+  console.log('user obj', obj);
   if (obj && obj.user) {
     return User.findOne({ _id: obj.user });
   }

@@ -6,7 +6,11 @@ async function assignment(obj, args, { req }) {
   a.requiredWork = a.requiredWork.map((rw) => {
     const assignmentWork = rw.assignmentWork.find(aw => aw.user.equals(req.user._id));
     if (!assignmentWork) {
-      return { ...rw, id: rw._id };
+      return {
+        ...rw,
+        id: rw._id,
+        assignmentWorks: rw.assignmentWork.map(aw => ({ ...aw, id: aw._id })),
+      };
     }
     assignmentWork.id = assignmentWork._id;
     return {

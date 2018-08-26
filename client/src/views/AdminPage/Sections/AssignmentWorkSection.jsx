@@ -78,7 +78,18 @@ class AssignmentSection extends React.Component {
                 this.setState({ evaluation });
               }
 
-              this.setState({ assignment });
+              const requiredWork = [];
+              console.log('requiredWork', assignment.requiredWork);
+              assignment.requiredWork.forEach(rw => {
+                const assignmentWork = rw.assignmentWorks.find(
+                  aw => aw.user && aw.user.id === targetUser.id,
+                );
+                if (assignmentWork) {
+                  requiredWork.push({ ...rw, ...assignmentWork });
+                }
+              });
+
+              this.setState({ assignment, requiredWork });
             });
           }
         });
@@ -180,7 +191,7 @@ class AssignmentSection extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { assignment, errors, targetUser, evaluation, selfEvaluation } = this.state;
+    const { assignment, errors, targetUser, evaluation, selfEvaluation, requiredWork } = this.state;
 
     console.log(assignment);
 
@@ -215,6 +226,20 @@ class AssignmentSection extends React.Component {
             <p>
               <b>Estudiante:</b> {targetUser.firstName} {targetUser.lastName}
             </p>
+            <h6>Componentes de entrega</h6>
+            <ul>
+              {requiredWork.map(rw => (
+                <li>
+                  <b>
+                    {rw.description} ({rw.type}
+                    ):
+                  </b>
+                  <a href={rw.content.length > 0 ? rw.content : rw.attachment && rw.attachment.url}>
+                    Link
+                  </a>
+                </li>
+              ))}
+            </ul>
             <h6>Autoevaluación</h6>
             <ol>
               <li>

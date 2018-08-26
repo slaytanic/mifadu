@@ -36,6 +36,7 @@ const requiredWorkSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
+    // toObject: { getters: true },
   },
 );
 
