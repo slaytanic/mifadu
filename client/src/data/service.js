@@ -250,6 +250,8 @@ export function submitAssignmentWork(id, input) {
 }
 
 export function submitAssignmentEvaluation(id, input) {
+  const sanitizedInput = { ...input };
+  sanitizedInput.evaluation = Object.keys(sanitizedInput.evaluation).filter(key => key !== 'id').map(key => sanitizedInput.evaluation[key]);
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
       'mutation($id: ID!, $input: SubmitAssignmentEvaluationInput!) { submitAssignmentEvaluation(id: $id, input: $input) { id } }',
