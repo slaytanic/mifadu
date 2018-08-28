@@ -17,7 +17,7 @@ export function logoutUser() {
 export function loginUser(email, password) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'mutation($email: String!, $password: String!) { loginUser(email: $email, password: $password) { firstName, lastName, email, completedProfile } }',
+      'mutation($email: String!, $password: String!) { loginUser(email: $email, password: $password) { id, firstName, lastName, email, completedProfile } }',
     variables: {
       email,
       password,
@@ -28,7 +28,7 @@ export function loginUser(email, password) {
 export function createOrUpdateUser(input) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'mutation($input: UserInput!) { createOrUpdateUser(input: $input) { firstName, lastName, email, completedProfile } }',
+      'mutation($input: UserInput!) { createOrUpdateUser(input: $input) { id, firstName, lastName, email, completedProfile } }',
     variables: {
       input,
     },
@@ -250,14 +250,16 @@ export function submitAssignmentWork(id, input) {
 }
 
 export function submitAssignmentEvaluation(id, input) {
-  const sanitizedInput = { ...input };
-  sanitizedInput.evaluation = Object.keys(sanitizedInput.evaluation).filter(key => key !== 'id').map(key => sanitizedInput.evaluation[key]);
+  const sanitizedEvaluation = Object.keys(input.evaluation)
+    .filter(key => !['id', 'user', 'targetUser'].includes(key))
+    .reduce((obj, key) => ({ ...obj, [key]: input.evaluation[key] }), {});
+
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
       'mutation($id: ID!, $input: SubmitAssignmentEvaluationInput!) { submitAssignmentEvaluation(id: $id, input: $input) { id } }',
     variables: {
       id,
-      input,
+      input: { ...input, evaluation: sanitizedEvaluation },
     },
   });
 }

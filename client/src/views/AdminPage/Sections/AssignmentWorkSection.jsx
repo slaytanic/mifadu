@@ -193,7 +193,8 @@ class AssignmentSection extends React.Component {
     const { classes } = this.props;
     const { assignment, errors, targetUser, evaluation, selfEvaluation, requiredWork } = this.state;
 
-    console.log(assignment);
+    console.log('render assignmentwork', assignment);
+    console.log('render evaluation', evaluation);
 
     if (!assignment) {
       return <div />;
