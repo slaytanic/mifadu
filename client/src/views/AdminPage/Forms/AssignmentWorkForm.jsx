@@ -9,17 +9,19 @@ import withStyles from '@material-ui/core/styles/withStyles';
 // import InputAdornment from '@material-ui/core/InputAdornment';
 // import FormControl from '@material-ui/core/FormControl';
 // import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
+// import MenuItem from '@material-ui/core/MenuItem';
 // import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
-import FormHelperText from '@material-ui/core/FormHelperText';
+// import FormHelperText from '@material-ui/core/FormHelperText';
 // import Button from '@material-ui/core/Button';
 
 import CustomInput from 'components/CustomInput/CustomInput';
-import CustomSelect from 'components/CustomSelect/CustomSelect';
+// import CustomSelect from 'components/CustomSelect/CustomSelect';
 import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
-import Autocomplete from 'components/Autocomplete/Autocomplete';
+import GridContainer from 'components/Grid/GridContainer';
+import GridItem from 'components/Grid/GridItem';
+// import Autocomplete from 'components/Autocomplete/Autocomplete';
 
 // import { RadarChart, CircularGridLines } from 'react-vis';
 import { CircularGridLines } from 'react-vis';
@@ -30,6 +32,9 @@ import { getAssignment, submitAssignmentWork } from 'data/service';
 const styles = {
   input: {
     display: 'none',
+  },
+  slider: {
+    marginBottom: '3em',
   },
 };
 
@@ -254,9 +259,9 @@ class AssignmentWorkForm extends React.Component {
           <p>Este trabajo práctico no tiene componentes de entrega</p>
         )}
         <h6>Autoevaluación</h6>
-        <div>
-          <div>
-            <p>
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={6}>
+            <p className={classes.slider}>
               1. Propuesta Conceptual
               <Nouislider
                 start={[assignment.evaluation.score1]}
@@ -265,9 +270,9 @@ class AssignmentWorkForm extends React.Component {
                 range={{ min: 0, max: 2 }}
                 onChange={this.handleChange('assignment', 'evaluation', 'score1')}
               />
-              {assignment.evaluation.score1}
+              {/* {assignment.evaluation.score1} */}
             </p>
-            <p>
+            <p className={classes.slider}>
               2. Proceso
               <Nouislider
                 start={[assignment.evaluation.score2]}
@@ -276,9 +281,9 @@ class AssignmentWorkForm extends React.Component {
                 range={{ min: 0, max: 2 }}
                 onChange={this.handleChange('assignment', 'evaluation', 'score2')}
               />
-              {assignment.evaluation.score2}
+              {/* {assignment.evaluation.score2} */}
             </p>
-            <p>
+            <p className={classes.slider}>
               3. {assignment.evaluationVariable || 'Variable'}
               <Nouislider
                 start={[assignment.evaluation.score3]}
@@ -287,9 +292,9 @@ class AssignmentWorkForm extends React.Component {
                 range={{ min: 0, max: 2 }}
                 onChange={this.handleChange('assignment', 'evaluation', 'score3')}
               />
-              {assignment.evaluation.score3}
+              {/* {assignment.evaluation.score3} */}
             </p>
-            <p>
+            <p className={classes.slider}>
               4. Producto
               <Nouislider
                 start={[assignment.evaluation.score4]}
@@ -298,9 +303,9 @@ class AssignmentWorkForm extends React.Component {
                 range={{ min: 0, max: 2 }}
                 onChange={this.handleChange('assignment', 'evaluation', 'score4')}
               />
-              {assignment.evaluation.score4}
+              {/* {assignment.evaluation.score4} */}
             </p>
-            <p>
+            <p className={classes.slider}>
               5. Comunicación
               <Nouislider
                 start={[assignment.evaluation.score5]}
@@ -309,10 +314,10 @@ class AssignmentWorkForm extends React.Component {
                 range={{ min: 0, max: 2 }}
                 onChange={this.handleChange('assignment', 'evaluation', 'score5')}
               />
-              {assignment.evaluation.score5}
+              {/* {assignment.evaluation.score5} */}
             </p>
-          </div>
-          <div>
+          </GridItem>
+          <GridItem xs={12} sm={12} md={6}>
             <RadarChart
               data={[assignment.evaluation]}
               // tickFormat={t => wideFormat(t)}
@@ -339,8 +344,8 @@ class AssignmentWorkForm extends React.Component {
             >
               <CircularGridLines tickValues={[...new Array(5)].map((v, i) => i / 4 - 1)} />
             </RadarChart>
-          </div>
-        </div>
+          </GridItem>
+        </GridContainer>
         <CustomInput
           id="observations"
           labelText="Observaciones"

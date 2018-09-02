@@ -32,7 +32,8 @@ import LabelSeries from 'react-vis/dist/plot/series/label-series';
 import DecorativeAxis from 'react-vis/dist/plot/axis/decorative-axis';
 
 const predefinedClassName = 'rv-radar-chart';
-const DEFAULT_FORMAT = format('.2r');
+// const DEFAULT_FORMAT = format('.2r');
+const DEFAULT_FORMAT = format('.1f');
 /**
  * Generate axes for each of the domains
  * @param {Object} props
