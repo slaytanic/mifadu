@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 
 import 'assets/scss/material-kit-react.css?v=1.1.0'; // eslint-disable-line import/no-unresolved
+import 'react-vis/dist/style.css';
 
 import App from './App';
 

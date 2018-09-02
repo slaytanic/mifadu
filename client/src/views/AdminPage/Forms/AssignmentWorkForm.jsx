@@ -21,6 +21,10 @@ import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
 import Autocomplete from 'components/Autocomplete/Autocomplete';
 
+// import { RadarChart, CircularGridLines } from 'react-vis';
+import { CircularGridLines } from 'react-vis';
+import RadarChart from 'components/RadarChart/RadarChart';
+
 import { getAssignment, submitAssignmentWork } from 'data/service';
 
 const styles = {
@@ -250,61 +254,93 @@ class AssignmentWorkForm extends React.Component {
           <p>Este trabajo práctico no tiene componentes de entrega</p>
         )}
         <h6>Autoevaluación</h6>
-        <p>
-          1. Propuesta Conceptual
-          <Nouislider
-            start={[assignment.evaluation.score1]}
-            connect={[true, false]}
-            step={0.5}
-            range={{ min: 0, max: 2 }}
-            onChange={this.handleChange('assignment', 'evaluation', 'score1')}
-          />
-          {assignment.evaluation.score1}
-        </p>
-        <p>
-          2. Proceso
-          <Nouislider
-            start={[assignment.evaluation.score2]}
-            connect={[true, false]}
-            step={0.5}
-            range={{ min: 0, max: 2 }}
-            onChange={this.handleChange('assignment', 'evaluation', 'score2')}
-          />
-          {assignment.evaluation.score2}
-        </p>
-        <p>
-          3. {assignment.evaluationVariable || 'Variable'}
-          <Nouislider
-            start={[assignment.evaluation.score3]}
-            connect={[true, false]}
-            step={0.5}
-            range={{ min: 0, max: 2 }}
-            onChange={this.handleChange('assignment', 'evaluation', 'score3')}
-          />
-          {assignment.evaluation.score3}
-        </p>
-        <p>
-          4. Producto
-          <Nouislider
-            start={[assignment.evaluation.score4]}
-            connect={[true, false]}
-            step={0.5}
-            range={{ min: 0, max: 2 }}
-            onChange={this.handleChange('assignment', 'evaluation', 'score4')}
-          />
-          {assignment.evaluation.score4}
-        </p>
-        <p>
-          5. Comunicación
-          <Nouislider
-            start={[assignment.evaluation.score5]}
-            connect={[true, false]}
-            step={0.5}
-            range={{ min: 0, max: 2 }}
-            onChange={this.handleChange('assignment', 'evaluation', 'score5')}
-          />
-          {assignment.evaluation.score5}
-        </p>
+        <div>
+          <div>
+            <p>
+              1. Propuesta Conceptual
+              <Nouislider
+                start={[assignment.evaluation.score1]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('assignment', 'evaluation', 'score1')}
+              />
+              {assignment.evaluation.score1}
+            </p>
+            <p>
+              2. Proceso
+              <Nouislider
+                start={[assignment.evaluation.score2]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('assignment', 'evaluation', 'score2')}
+              />
+              {assignment.evaluation.score2}
+            </p>
+            <p>
+              3. {assignment.evaluationVariable || 'Variable'}
+              <Nouislider
+                start={[assignment.evaluation.score3]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('assignment', 'evaluation', 'score3')}
+              />
+              {assignment.evaluation.score3}
+            </p>
+            <p>
+              4. Producto
+              <Nouislider
+                start={[assignment.evaluation.score4]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('assignment', 'evaluation', 'score4')}
+              />
+              {assignment.evaluation.score4}
+            </p>
+            <p>
+              5. Comunicación
+              <Nouislider
+                start={[assignment.evaluation.score5]}
+                connect={[true, false]}
+                step={0.5}
+                range={{ min: 0, max: 2 }}
+                onChange={this.handleChange('assignment', 'evaluation', 'score5')}
+              />
+              {assignment.evaluation.score5}
+            </p>
+          </div>
+          <div>
+            <RadarChart
+              data={[assignment.evaluation]}
+              // tickFormat={t => wideFormat(t)}
+              // startingAngle={0}
+              animation
+              domains={[
+                { name: 'Propuesta Conceptual', domain: [0, 2], getValue: d => d.score1 },
+                { name: 'Proceso', domain: [0, 2], getValue: d => d.score2 },
+                {
+                  name: assignment.evaluationVariable || 'Variable',
+                  domain: [0, 2],
+                  getValue: d => d.score3,
+                },
+                {
+                  name: 'Producto',
+                  domain: [0, 2],
+                  getValue: d => d.score4,
+                },
+                { name: 'Comunicación', domain: [0, 2], getValue: d => d.score5 },
+              ]}
+              margin={{ left: 55, right: 55, top: 55, bottom: 55 }}
+              width={400}
+              height={400}
+            >
+              <CircularGridLines tickValues={[...new Array(5)].map((v, i) => i / 4 - 1)} />
+            </RadarChart>
+          </div>
+        </div>
         <CustomInput
           id="observations"
           labelText="Observaciones"

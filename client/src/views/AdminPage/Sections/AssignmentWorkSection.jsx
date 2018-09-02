@@ -6,20 +6,9 @@ import Nouislider from 'react-nouislider';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-// import InputAdornment from '@material-ui/core/InputAdornment';
-// import FormControl from '@material-ui/core/FormControl';
-// import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-// import Select from '@material-ui/core/Select';
-import Typography from '@material-ui/core/Typography';
-import FormHelperText from '@material-ui/core/FormHelperText';
-// import Button from '@material-ui/core/Button';
-
 import CustomInput from 'components/CustomInput/CustomInput';
-import CustomSelect from 'components/CustomSelect/CustomSelect';
 import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
-import Autocomplete from 'components/Autocomplete/Autocomplete';
 
 import { getUser, getAssignmentWithWorks, submitAssignmentEvaluation } from 'data/service';
 
@@ -55,7 +44,6 @@ class AssignmentSection extends React.Component {
 
   componentDidMount() {
     const { match, user } = this.props;
-    console.log('user', user);
 
     if (match.params.userId) {
       getUser(match.params.userId).then(userRes => {
@@ -79,7 +67,6 @@ class AssignmentSection extends React.Component {
               }
 
               const requiredWork = [];
-              console.log('requiredWork', assignment.requiredWork);
               assignment.requiredWork.forEach(rw => {
                 const assignmentWork = rw.assignmentWorks.find(
                   aw => aw.user && aw.user.id === targetUser.id,
@@ -100,9 +87,9 @@ class AssignmentSection extends React.Component {
   handleChange = (name, sub, key, subkey, id) => event => {
     let value;
     if (event.target) {
-      value = event.target.value;
+      ({ value } = event.target);
     } else {
-      value = event[0];
+      [value] = event;
     }
 
     if (id) {
@@ -174,7 +161,7 @@ class AssignmentSection extends React.Component {
     submitAssignmentEvaluation(assignment.id, {
       evaluation,
       targetUser: targetUser.id,
-    }).then(res => {
+    }).then(() => {
       history.push(`/assignments/completedEvaluation`);
     });
   };
@@ -187,14 +174,13 @@ class AssignmentSection extends React.Component {
     if (type === 'JPG') {
       return 'image/jpeg';
     }
+
+    return 'application/octet-stream';
   };
 
   render() {
     const { classes } = this.props;
     const { assignment, errors, targetUser, evaluation, selfEvaluation, requiredWork } = this.state;
-
-    console.log('render assignmentwork', assignment);
-    console.log('render evaluation', evaluation);
 
     if (!assignment) {
       return <div />;
@@ -345,8 +331,10 @@ class AssignmentSection extends React.Component {
 }
 
 AssignmentSection.propTypes = {
+  user: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
 };
 
 export default withRouter(withStyles(styles)(AssignmentSection));
