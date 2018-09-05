@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Tooltip from '@material-ui/core/Tooltip';
+// import Tooltip from '@material-ui/core/Tooltip';
 
 // @material-ui/icons
-import { Apps, CloudDownload } from '@material-ui/icons';
+// import { Apps, CloudDownload } from '@material-ui/icons';
 
 // core components
 import CustomDropdown from 'components/CustomDropdown/CustomDropdown.jsx';
@@ -31,6 +31,60 @@ console.log('headerLinksStyle', headerLinksStyle);
 
 function HeaderLinks({ ...props }) {
   const { classes, user, logoutUser } = props;
+
+  let links = [];
+  if (user.tutoredWorkshops.length > 0) {
+    links.push(
+      <ListItem className={classes.listItem}>
+        <Button
+          component={Link}
+          to="/assignments/pendingEvaluation"
+          color="transparent"
+          className={classes.navLink}
+        >
+          Pendientes
+        </Button>
+      </ListItem>,
+    );
+    links.push(
+      <ListItem className={classes.listItem}>
+        <Button
+          component={Link}
+          to="/assignments/completedEvaluation"
+          color="transparent"
+          className={classes.navLink}
+        >
+          Evaluados
+        </Button>
+      </ListItem>,
+    );
+  } else {
+    links.push(
+      <ListItem className={classes.listItem}>
+        <Button
+          component={Link}
+          to="/assignments/pending"
+          color="transparent"
+          className={classes.navLink}
+        >
+          Pendientes
+        </Button>
+      </ListItem>,
+    );
+    links.push(
+      <ListItem className={classes.listItem}>
+        <Button
+          component={Link}
+          to="/assignments/complete"
+          color="transparent"
+          className={classes.navLink}
+        >
+          Entregados
+        </Button>
+      </ListItem>,
+    );
+  }
+
   return (
     <List className={classes.list}>
       {/* <ListItem className={classes.listItem}>
@@ -66,66 +120,14 @@ function HeaderLinks({ ...props }) {
           <CloudDownload className={classes.icons} /> Download
         </Button>
       </ListItem> */}
-      <ListItem className={classes.listItem}>
-        <Tooltip
-          id="youtube-tooltip"
-          title="Nuestro canal de YouTube"
-          placement={window.innerWidth > 959 ? 'top' : 'left'}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            href="https://www.youtube.com/channel/UCgvrvNshrfaboi5FDVwOmOw"
-            target="_blank"
-            color="transparent"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + ' fab fa-youtube'} />
-          </Button>
-        </Tooltip>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Tooltip
-          id="facebook-tooltip"
-          title="Nuestro Facebook"
-          placement={window.innerWidth > 959 ? 'top' : 'left'}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            color="transparent"
-            href="https://www.facebook.com/CatedraRondina/"
-            target="_blank"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + ' fab fa-facebook'} />
-          </Button>
-        </Tooltip>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Tooltip
-          id="instagram-tooltip"
-          title="Nuestro Instagram"
-          placement={window.innerWidth > 959 ? 'top' : 'left'}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            color="transparent"
-            href="https://www.instagram.com/catedrarondina/"
-            target="_blank"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + ' fab fa-instagram'} />
-          </Button>
-        </Tooltip>
-      </ListItem>
+      {links}
       <ListItem className={classes.listItem}>
         <CustomDropdown
           left
           caret={false}
           hoverColor="black"
           dropdownHeader={user.email}
-          buttonText={
-            <img src={profileImage} className={classes.img} alt="profile" />
-          }
+          buttonText={<img src={profileImage} className={classes.img} alt="profile" />}
           buttonProps={{
             className: classes.navLink + ' ' + classes.imageDropdownButton,
             color: 'transparent',

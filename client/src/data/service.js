@@ -4,7 +4,7 @@ const GRAPHQL_ENDPOINT = '/graphql';
 
 export function getMe() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: '{ me { id, firstName, lastName, email, completedProfile } }',
+    query: '{ me { id, firstName, lastName, email, completedProfile, tutoredWorkshops { id } } }',
   });
 }
 
@@ -17,7 +17,7 @@ export function logoutUser() {
 export function loginUser(email, password) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'mutation($email: String!, $password: String!) { loginUser(email: $email, password: $password) { id, firstName, lastName, email, completedProfile } }',
+      'mutation($email: String!, $password: String!) { loginUser(email: $email, password: $password) { id, firstName, lastName, email, completedProfile, tutoredWorkshops { id } } }',
     variables: {
       email,
       password,
@@ -28,7 +28,7 @@ export function loginUser(email, password) {
 export function createOrUpdateUser(input) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'mutation($input: UserInput!) { createOrUpdateUser(input: $input) { id, firstName, lastName, email, completedProfile } }',
+      'mutation($input: UserInput!) { createOrUpdateUser(input: $input) { id, firstName, lastName, email, completedProfile, tutoredWorkshops { id } } }',
     variables: {
       input,
     },
@@ -47,20 +47,22 @@ export function deleteUser(id) {
 export function getUser(id) {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'query($id: ID!) { user(id: $id) { id, firstName, lastName, email, completedProfile, idNumber } }',
+      'query($id: ID!) { user(id: $id) { id, firstName, lastName, email, completedProfile, idNumber, tutoredWorkshops { id } } }',
     variables: { id },
   });
 }
 
 export function getUsers() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: '{ users { id, firstName, lastName, email, completedProfile, idNumber } }',
+    query:
+      '{ users { id, firstName, lastName, email, completedProfile, idNumber, tutoredWorkshops { id } } }',
   });
 }
 
 export function getMyStudents() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: '{ myStudents { id, firstName, lastName, email, completedProfile, idNumber } }',
+    query:
+      '{ myStudents { id, firstName, lastName, email, completedProfile, idNumber, tutoredWorkshops { id } } }',
   });
 }
 

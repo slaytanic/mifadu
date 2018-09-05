@@ -239,6 +239,7 @@ const typeDefs = `
     previousYearOnThisChair: String
     website: String
     aboutMe: String
+    tutoredWorkshops: [Workshop]
   }
 
   input WorkshopInput {
@@ -340,6 +341,9 @@ const resolvers = {
   },
   Workshop: {
     tutors: users,
+  },
+  User: {
+    tutoredWorkshops: workshops,
   },
   Query: {
     assignment,

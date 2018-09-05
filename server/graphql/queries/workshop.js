@@ -8,6 +8,9 @@ function workshop(obj, args, context) {
 }
 
 function workshops(obj, args, context) {
+  if (obj && obj._id) {
+    return Workshop.find({ tutors: obj._id });
+  }
   return Workshop.find({});
 }
 
