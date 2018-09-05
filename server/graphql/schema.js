@@ -207,7 +207,6 @@ const typeDefs = `
   input UserInput {
     firstName: String!
     lastName: String!
-    fullName: String!
     completedProfile: Boolean!
     acceptedTerms: Boolean!
     receiveNews: Boolean!
@@ -226,6 +225,7 @@ const typeDefs = `
     id: ID!
     firstName: String
     lastName: String
+    fullName: String!
     completedProfile: Boolean
     acceptedTerms: Boolean
     receiveNews: Boolean
