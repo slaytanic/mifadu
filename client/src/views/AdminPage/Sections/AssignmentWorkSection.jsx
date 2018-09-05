@@ -9,12 +9,20 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import CustomInput from 'components/CustomInput/CustomInput';
 import ErrorList from 'components/ErrorList/ErrorList';
 import Button from 'components/CustomButtons/Button';
+import GridContainer from 'components/Grid/GridContainer';
+import GridItem from 'components/Grid/GridItem';
+
+import { CircularGridLines } from 'react-vis';
+import RadarChart from 'components/RadarChart/RadarChart';
 
 import { getUser, getAssignmentWithWorks, submitAssignmentEvaluation } from 'data/service';
 
 const styles = {
   input: {
     display: 'none',
+  },
+  slider: {
+    marginBottom: '3em',
   },
 };
 
@@ -251,61 +259,93 @@ class AssignmentSection extends React.Component {
             </p>
             <p>{selfEvaluation.observations}</p>
             <h6>Evaluación</h6>
-            <p>
-              1. Propuesta Conceptual
-              <Nouislider
-                start={[evaluation.score1]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('evaluation', 'score1')}
-              />
-              {evaluation.score1}
-            </p>
-            <p>
-              2. Proceso
-              <Nouislider
-                start={[evaluation.score2]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('evaluation', 'score2')}
-              />
-              {evaluation.score2}
-            </p>
-            <p>
-              3. {assignment.evaluationVariable || 'Variable'}
-              <Nouislider
-                start={[evaluation.score3]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('evaluation', 'score3')}
-              />
-              {evaluation.score3}
-            </p>
-            <p>
-              4. Producto
-              <Nouislider
-                start={[evaluation.score4]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('evaluation', 'score4')}
-              />
-              {evaluation.score4}
-            </p>
-            <p>
-              5. Comunicación
-              <Nouislider
-                start={[evaluation.score5]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('evaluation', 'score5')}
-              />
-              {evaluation.score5}
-            </p>
+            <GridContainer>
+              <GridItem xs={12} sm={12} md={6}>
+                <p className={classes.slider}>
+                  1. Propuesta Conceptual
+                  <Nouislider
+                    start={[evaluation.score1]}
+                    connect={[true, false]}
+                    step={0.5}
+                    range={{ min: 0, max: 2 }}
+                    onChange={this.handleChange('evaluation', 'score1')}
+                  />
+                  {/* {evaluation.score1} */}
+                </p>
+                <p className={classes.slider}>
+                  2. Proceso
+                  <Nouislider
+                    start={[evaluation.score2]}
+                    connect={[true, false]}
+                    step={0.5}
+                    range={{ min: 0, max: 2 }}
+                    onChange={this.handleChange('evaluation', 'score2')}
+                  />
+                  {/* {evaluation.score2} */}
+                </p>
+                <p className={classes.slider}>
+                  3. {assignment.evaluationVariable || 'Variable'}
+                  <Nouislider
+                    start={[evaluation.score3]}
+                    connect={[true, false]}
+                    step={0.5}
+                    range={{ min: 0, max: 2 }}
+                    onChange={this.handleChange('evaluation', 'score3')}
+                  />
+                  {/* {evaluation.score3} */}
+                </p>
+                <p className={classes.slider}>
+                  4. Producto
+                  <Nouislider
+                    start={[evaluation.score4]}
+                    connect={[true, false]}
+                    step={0.5}
+                    range={{ min: 0, max: 2 }}
+                    onChange={this.handleChange('evaluation', 'score4')}
+                  />
+                  {/* {evaluation.score4} */}
+                </p>
+                <p className={classes.slider}>
+                  5. Comunicación
+                  <Nouislider
+                    start={[evaluation.score5]}
+                    connect={[true, false]}
+                    step={0.5}
+                    range={{ min: 0, max: 2 }}
+                    onChange={this.handleChange('evaluation', 'score5')}
+                  />
+                  {/* {evaluation.score5} */}
+                </p>
+              </GridItem>
+              <GridItem xs={12} sm={12} md={6}>
+                <RadarChart
+                  data={[selfEvaluation, evaluation]}
+                  // tickFormat={t => wideFormat(t)}
+                  // startingAngle={0}
+                  animation
+                  domains={[
+                    { name: 'Propuesta Conceptual', domain: [0, 2], getValue: d => d.score1 },
+                    { name: 'Proceso', domain: [0, 2], getValue: d => d.score2 },
+                    {
+                      name: assignment.evaluationVariable || 'Variable',
+                      domain: [0, 2],
+                      getValue: d => d.score3,
+                    },
+                    {
+                      name: 'Producto',
+                      domain: [0, 2],
+                      getValue: d => d.score4,
+                    },
+                    { name: 'Comunicación', domain: [0, 2], getValue: d => d.score5 },
+                  ]}
+                  margin={{ left: 55, right: 55, top: 55, bottom: 55 }}
+                  width={400}
+                  height={400}
+                >
+                  <CircularGridLines tickValues={[...new Array(5)].map((v, i) => i / 4 - 1)} />
+                </RadarChart>
+              </GridItem>
+            </GridContainer>
             <CustomInput
               id="observations"
               labelText="Observaciones"
