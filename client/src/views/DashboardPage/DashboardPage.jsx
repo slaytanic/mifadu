@@ -124,10 +124,31 @@ class DashboardPage extends React.Component {
           });
         });
         getCompletedEvaluationAssignments().then(res => {
+          const assignmentWorks = [];
+          const assignments = res.data.data.completedEvaluationAssignments;
+          assignments.forEach(a => {
+            const students = {};
+            a.requiredWork.forEach(rw => {
+              rw.assignmentWorks.forEach(aw => {
+                if (aw.user) {
+                  students[aw.user.id] = `${aw.user.firstName} ${aw.user.lastName}`;
+                }
+              });
+            });
+            Object.keys(students).forEach(key => {
+              assignmentWorks.push({
+                assignmentId: a.id,
+                assignmentName: a.name,
+                studentName: students[key],
+                studentId: key,
+              });
+            });
+          });
           this.setState({
-            completedEvaluationCount: res.data.data.completedEvaluationAssignments.length,
+            completedEvaluationCount: assignmentWorks.length,
           });
         });
+
       } else {
         getPendingAssignments().then(res => {
           this.setState({ pendingCount: res.data.data.pendingAssignments.length });
