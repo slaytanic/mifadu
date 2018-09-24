@@ -9,15 +9,14 @@ function userByRef(ref) {
   };
 }
 
-function user(obj, args, context) {
-  console.log('user obj', obj);
+function user(obj, args) {
   if (obj && obj.user) {
     return User.findOne({ _id: obj.user });
   }
   return User.findOne({ _id: args.id });
 }
 
-function users(obj, args, context) {
+function users(obj) {
   if (obj && obj.tutors) {
     return User.find({ _id: { $in: obj.tutors } });
   }
@@ -25,7 +24,10 @@ function users(obj, args, context) {
 }
 
 function me(obj, args, { req }) {
-  return User.findOne({ email: req.user.email });
+  if (req.user) {
+    return User.findOne({ email: req.user.email });
+  }
+  return null;
 }
 
 function myStudents(obj, args, { req }) {
