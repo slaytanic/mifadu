@@ -1,13 +1,15 @@
-import { FETCH_CURRENT_USER, LOGIN_USER, LOGOUT_USER } from '../actions/action-types';
+import { CURRENT_USER_HAS_LOADED, CURRENT_USER_IS_LOADING } from '../actions/action-types';
 
-const currentUserReducer = (state = null, action) => {
+const initialState = {
+  loggedIn: false,
+};
+
+const currentUserReducer = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_CURRENT_USER:
-      return { ...action.payload };
-    case LOGIN_USER:
-      return { ...action.payload };
-    case LOGOUT_USER:
-      return null;
+    case CURRENT_USER_IS_LOADING:
+      return { ...state, ...action.payload };
+    case CURRENT_USER_HAS_LOADED:
+      return { ...state, ...action.payload };
     default:
       return state;
   }

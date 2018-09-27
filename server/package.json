@@ -1,10 +1,10 @@
 {
-  "name": "server",
-  "version": "0.0.0",
+  "name": "mifadu-server",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
-    "server": "node ./bin/www",
-    "start": "nodemon ./bin/www"
+    "start": "node ./bin/www",
+    "watch": "nodemon ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^3.0.0",
@@ -30,7 +30,7 @@
     "passport-twitter": "^1.0.4",
     "pug": "2.0.0-beta11"
   },
-  "devDependencies": {
+  "optionalDependencies": {
     "eslint": "4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "2.12.0",

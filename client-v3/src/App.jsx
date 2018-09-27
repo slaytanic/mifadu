@@ -21,11 +21,15 @@ class App extends Component {
 
     return (
       <ConnectedRouter history={history}>
-        {currentUser ? (
+        {currentUser.loggedIn ? (
           <Switch>
-            {indexRoutes.map(prop => (
-              <Route path={prop.path} component={prop.component} key={prop.path} />
-            ))}
+            {currentUser.completedProfile ? (
+              indexRoutes.map(prop => (
+                <Route path={prop.path} component={prop.component} key={prop.path} />
+              ))
+            ) : (
+              <Route component={Register} />
+            )}
           </Switch>
         ) : (
           <Switch>
@@ -38,13 +42,9 @@ class App extends Component {
   }
 }
 
-App.defaultProps = {
-  currentUser: null,
-};
-
 App.propTypes = {
   history: PropTypes.object.isRequired,
-  currentUser: PropTypes.object,
+  currentUser: PropTypes.object.isRequired,
   dispatchCurrentUserFetch: PropTypes.func.isRequired,
 };
 
