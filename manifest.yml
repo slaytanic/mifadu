@@ -5,5 +5,5 @@ applications:
   instances: 1
   buildpacks:
     - https://github.com/cloudfoundry/nodejs-buildpack
-  command: yarn server
+  command: yarn start
   path: server
