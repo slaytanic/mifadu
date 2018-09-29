@@ -21,30 +21,33 @@ class App extends Component {
   render() {
     const { history, currentUser } = this.props;
 
-    return (
-      <ConnectedRouter history={history}>
-        {currentUser.loggedIn &&
-          currentUser.completedProfile && (
-            <LoggedIn>
-              <Switch>
-                <Route path="/" component={Home} />
-              </Switch>
-            </LoggedIn>
-          )}
-        {currentUser.loggedIn &&
-          !currentUser.completedProfile && (
+    let main;
+    if (currentUser.loggedIn) {
+      if (currentUser.completedProfile) {
+        main = (
+          <LoggedIn>
             <Switch>
-              <Route component={Register} />
+              <Route path="/" component={Home} />
             </Switch>
-          )}
-        {!currentUser.loggedIn && (
+          </LoggedIn>
+        );
+      } else {
+        main = (
           <Switch>
-            <Route path="/register" component={Register} />
-            <Route component={Login} />
+            <Route component={Register} />
           </Switch>
-        )}
-      </ConnectedRouter>
-    );
+        );
+      }
+    } else {
+      main = (
+        <Switch>
+          <Route path="/register" component={Register} />
+          <Route component={Login} />
+        </Switch>
+      );
+    }
+
+    return <ConnectedRouter history={history}>{main}</ConnectedRouter>;
   }
 }
 
