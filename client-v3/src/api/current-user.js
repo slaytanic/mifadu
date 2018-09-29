@@ -25,3 +25,13 @@ export function logoutUser() {
     query: 'mutation { logoutUser }',
   });
 }
+
+export function createOrUpdateUser(input) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query:
+      'mutation($input: UserInput!) { createOrUpdateUser(input: $input) { id, firstName, lastName, email, completedProfile, tutoredWorkshops { id } } }',
+    variables: {
+      input,
+    },
+  });
+}

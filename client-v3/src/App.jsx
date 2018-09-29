@@ -4,8 +4,11 @@ import { ConnectedRouter } from 'connected-react-router';
 import { Route, Switch } from 'react-router';
 import { connect } from 'react-redux';
 
+import LoggedIn from './layouts/LoggedIn';
+
 import Login from './views/Login/Login';
 import Register from './views/Register/Register';
+import Home from './views/Home/Home';
 
 import indexRoutes from './routes/index';
 import { currentUserFetch } from './actions/current-user';
@@ -22,18 +25,21 @@ class App extends Component {
     return (
       <ConnectedRouter history={history}>
         {currentUser.loggedIn ? (
-          <Switch>
-            {currentUser.completedProfile ? (
-              indexRoutes.map(prop => (
-                <Route path={prop.path} component={prop.component} key={prop.path} />
-              ))
-            ) : (
-              <Route component={Register} />
-            )}
-          </Switch>
+          <LoggedIn>
+            <Switch>
+              {currentUser.completedProfile ? (
+                // indexRoutes.map(prop => (
+                //   <Route path={prop.path} component={prop.component} key={prop.path} />
+                // ))
+                <Route path="/" component={Home} />
+              ) : (
+                <Route component={Register} />
+              )}
+            </Switch>
+          </LoggedIn>
         ) : (
           <Switch>
-            <Route path="/register" compoment={Register} />
+            <Route path="/register" component={Register} />
             <Route component={Login} />
           </Switch>
         )}

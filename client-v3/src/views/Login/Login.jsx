@@ -19,6 +19,7 @@ import CardBody from 'components/material-kit-react/Card/CardBody';
 import CardHeader from 'components/material-kit-react/Card/CardHeader';
 import CardFooter from 'components/material-kit-react/Card/CardFooter';
 import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
+
 import ErrorList from 'components/Error/ErrorList';
 
 import loginPageStyle from 'assets/jss/material-kit-react/views/loginPage';
@@ -31,30 +32,6 @@ class Login extends React.Component {
   state = {
     cardAnimation: 'cardHidden',
   };
-  // constructor(props) {
-  //   super(props);
-  //   // we use this to make the card to appear after the page has been rendered
-  //   this.state = {
-  //     cardAnimation: 'cardHidden',
-  //   };
-  // }
-
-  // handleChange = name => event => {
-  //   this.setState({
-  //     [name]: event.target.value,
-  //   });
-  // };
-
-  // handleLogin = () => {
-  // loginUser(this.state.email, this.state.password).then(res => {
-  //   if (res.data.data.loginUser) {
-  //     this.props.setCurrentUser(res.data.data.loginUser);
-  //     this.props.history.push('/');
-  //   } else {
-  //     this.setState({ errors: [{ message: 'Usuario o clave incorrectos' }] });
-  //   }
-  // });
-  // };
 
   componentDidMount() {
     // we add a hidden class to the card and after 700 ms we delete it and the transition appears
@@ -168,7 +145,7 @@ class Login extends React.Component {
                               color="primary"
                               size="lg"
                               fullWidth
-                              disabled={!dirty || isSubmitting}
+                              disabled={!dirty || isSubmitting || Object.keys(errors).length}
                             >
                               Ingresar
                             </Button>

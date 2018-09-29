@@ -1,6 +1,8 @@
+import { push } from 'connected-react-router';
+
 import { CURRENT_USER_IS_LOADING, CURRENT_USER_HAS_LOADED } from './action-types';
 
-import { getCurrentUser, loginUser, logoutUser } from '../api/current-user';
+import { getCurrentUser, loginUser, logoutUser, createOrUpdateUser } from '../api/current-user';
 
 export function currentUserIsLoading(bool = true) {
   return {
@@ -50,6 +52,18 @@ export function currentUserLogout() {
 
     logoutUser().then(() => {
       dispatch(currentUserHasLoaded(null));
+      dispatch(push('/'));
+    });
+  };
+}
+
+export function currentUserRegister(input) {
+  return dispatch => {
+    dispatch(currentUserIsLoading());
+
+    createOrUpdateUser(input).then(response => {
+      dispatch(currentUserHasLoaded(response.data.data.createOrUpdateUser));
+      dispatch(push('/'));
     });
   };
 }

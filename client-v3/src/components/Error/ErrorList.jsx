@@ -12,14 +12,9 @@ const styles = {
 function ErrorList(props) {
   const { errors, touched, classes } = props;
 
-  console.log('errors', errors);
-  console.log('touched', touched);
-
   const errorKeys = touched
     ? Object.keys(errors).filter(key => Object.keys(touched).includes(key))
     : Object.keys(errors);
-
-  console.log('keys', errorKeys);
 
   return (
     errorKeys.length > 0 && (
