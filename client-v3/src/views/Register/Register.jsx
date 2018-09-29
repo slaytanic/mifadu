@@ -81,6 +81,8 @@ class Register extends React.Component {
     } = this.props;
     const { cardAnimation } = this.state;
 
+    const externalProvider = !!currentUser;
+
     return (
       <div>
         <div
