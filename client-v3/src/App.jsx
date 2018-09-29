@@ -10,7 +10,6 @@ import Login from './views/Login/Login';
 import Register from './views/Register/Register';
 import Home from './views/Home/Home';
 
-import indexRoutes from './routes/index';
 import { currentUserFetch } from './actions/current-user';
 
 class App extends Component {
@@ -24,20 +23,21 @@ class App extends Component {
 
     return (
       <ConnectedRouter history={history}>
-        {currentUser.loggedIn ? (
-          <LoggedIn>
-            <Switch>
-              {currentUser.completedProfile ? (
-                // indexRoutes.map(prop => (
-                //   <Route path={prop.path} component={prop.component} key={prop.path} />
-                // ))
+        {currentUser.loggedIn &&
+          currentUser.completedProfile && (
+            <LoggedIn>
+              <Switch>
                 <Route path="/" component={Home} />
-              ) : (
-                <Route component={Register} />
-              )}
+              </Switch>
+            </LoggedIn>
+          )}
+        {currentUser.loggedIn &&
+          !currentUser.completedProfile && (
+            <Switch>
+              <Route component={Register} />
             </Switch>
-          </LoggedIn>
-        ) : (
+          )}
+        {!currentUser.loggedIn && (
           <Switch>
             <Route path="/register" component={Register} />
             <Route component={Login} />

@@ -192,7 +192,9 @@ class RegisterPage extends React.Component {
     }
 
     if (errors.length < 1) {
-      createOrUpdateUser({ ...user, completedProfile: true })
+      const newUser = { ...user };
+      delete user.id;
+      createOrUpdateUser({ ...newUser, completedProfile: true })
         .then(response => {
           if (response.data.errors) {
             this.setState({
