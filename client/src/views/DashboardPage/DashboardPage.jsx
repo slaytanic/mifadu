@@ -148,7 +148,6 @@ class DashboardPage extends React.Component {
             completedEvaluationCount: assignmentWorks.length,
           });
         });
-
       } else {
         getPendingAssignments().then(res => {
           this.setState({ pendingCount: res.data.data.pendingAssignments.length });
@@ -308,12 +307,12 @@ class DashboardPage extends React.Component {
                         <CardIcon color="warning">
                           <Icon>content_copy</Icon>
                         </CardIcon>
-                        <p className={classes.cardCategory}>Entregas pendientes</p>
+                        <p className={classes.cardCategory}>Entregar TP</p>
                         <h3 className={classes.cardTitle}>{pendingCount}</h3>
                       </CardHeader>
                       <CardFooter stats>
                         <div className={classes.stats}>
-                          <Link to="/assignments/pending">Ver entregas pendientes</Link>
+                          <Link to="/assignments/pending">Subir componentes de entrega</Link>
                         </div>
                       </CardFooter>
                     </Card>

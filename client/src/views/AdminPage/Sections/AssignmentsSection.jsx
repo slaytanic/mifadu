@@ -70,7 +70,7 @@ class AssignmentsSection extends React.Component {
   };
 
   render() {
-    const { classes, user } = this.props;
+    const { classes, user, match } = this.props;
     const { assignments, modal } = this.state;
 
     console.log('user', user, 'assignments', assignments);
@@ -116,7 +116,7 @@ class AssignmentsSection extends React.Component {
               : [
                   key => (
                     <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
-                      <CloudUpload />
+                      {match.params.action === 'complete' ? <Edit /> : <CloudUpload />}
                     </Button>
                   ),
                 ],
