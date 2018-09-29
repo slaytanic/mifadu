@@ -198,10 +198,10 @@ class AssignmentSection extends React.Component {
       <div className={classes.root}>
         <ErrorList errors={errors} />
         <p>
-          <b>Nombre:</b> {assignment.name}
+          <h3>{assignment.name}</h3>
         </p>
         <p>
-          <b>Descripción corta</b>: {assignment.shortDescription}
+          <h4>{assignment.shortDescription}</h4>
         </p>
         <p>
           <b>Descripción:</b>
