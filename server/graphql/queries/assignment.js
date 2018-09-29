@@ -89,6 +89,10 @@ function completedEvaluationAssignments(obj, args, { req }) {
   return Assignment.completedEvaluationByUser(req.user);
 }
 
+function statusTags(obj, args, { req }) {
+  return obj.statusTagsForUser(req.user);
+}
+
 module.exports.assignment = assignment;
 module.exports.assignments = assignments;
 module.exports.myAssignments = myAssignments;
@@ -96,3 +100,4 @@ module.exports.pendingAssignments = pendingAssignments;
 module.exports.completedAssignments = completedAssignments;
 module.exports.pendingEvaluationAssignments = pendingEvaluationAssignments;
 module.exports.completedEvaluationAssignments = completedEvaluationAssignments;
+module.exports.statusTags = statusTags;

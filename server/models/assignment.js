@@ -36,7 +36,6 @@ const requiredWorkSchema = new Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    // toObject: { getters: true },
   },
 );
 
@@ -62,6 +61,35 @@ const assignmentSchema = new Schema(
   },
   { timestamps: true },
 );
+
+assignmentSchema.methods.statusTagsForUser = function statusTagsForUser(user) {
+  const statusTags = [];
+  if (
+    !this.evaluations
+    || !this.evaluations.find(e => e.user.equals(user._id))
+  ) {
+    statusTags.push('pending_evaluation');
+  } else {
+    statusTags.push('completed_evaluation');
+  }
+  if (this.requiredWork) {
+    if (
+      this.requiredWork
+        .map((rw) => {
+          if (rw.assignmentWork.find(aw => aw.user.equals(user._id))) {
+            return true;
+          }
+          return false;
+        })
+        .find(i => i === false)
+    ) {
+      statusTags.push('pending_work');
+    } else {
+      statusTags.push('completed_work');
+    }
+  }
+  return statusTags;
+};
 
 assignmentSchema.statics.forUser = function forUser(user) {
   return this.find({ workshop: user.workshop });

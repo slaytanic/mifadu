@@ -5,6 +5,7 @@ import tagsReducer from './tags';
 import subjectsReducer from './subjects';
 import workshopsReducer from './workshops';
 import usersReducer from './users';
+import studentsReducer from './students';
 
 const rootReducer = combineReducers({
   currentUser: currentUserReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   subjects: subjectsReducer,
   workshops: workshopsReducer,
   users: usersReducer,
+  students: studentsReducer,
 });
 
 export default rootReducer;

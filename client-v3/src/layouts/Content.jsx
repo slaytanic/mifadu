@@ -16,11 +16,12 @@ const styles = {
   ...landingPageStyle,
   container: {
     ...landingPageStyle.container,
-    paddingBottom: '50px',
+    paddingBottom: '20px',
     color: '#000',
   },
-  main: {
-    ...landingPageStyle.main,
+  mainRaised: {
+    ...landingPageStyle.mainRaised,
+    marginTop: '-100px',
   },
   title: {
     ...landingPageStyle.title,

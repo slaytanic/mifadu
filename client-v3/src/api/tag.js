@@ -4,8 +4,13 @@ import { GRAPHQL_ENDPOINT } from './common';
 
 export function getTags() {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query: '{ tags { id, name } }',
+    query: 'query { tags { id, name } }',
   });
 }
 
-export { getTags as default };
+export function createTag(input) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query: 'mutation($input: TagInput!) { createTag(input: $input) { id, name } }',
+    variables: { input },
+  });
+}

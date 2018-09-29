@@ -1,4 +1,4 @@
-import { TAGS_HAS_LOADED, TAGS_IS_LOADING } from '../actions/action-types';
+import { TAGS_HAS_LOADED, TAGS_IS_LOADING, TAG_CREATED } from '../actions/action-types';
 
 const initialState = {
   all: [],
@@ -10,6 +10,8 @@ const tagsReducer = (state = initialState, action) => {
       return { ...state, ...action.payload };
     case TAGS_HAS_LOADED:
       return { ...state, ...action.payload };
+    case TAG_CREATED:
+      return { ...state, all: [...state.all, action.payload] };
     default:
       return state;
   }

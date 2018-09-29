@@ -27,7 +27,7 @@ export function assignmentsFetch() {
   return dispatch => {
     dispatch(assignmentsIsLoading());
 
-    getMyAssignments().then(response => {
+    return getMyAssignments().then(response => {
       dispatch(assignmentsHasLoaded(response.data.data.assignments));
     });
   };
@@ -43,9 +43,7 @@ export function assignmentDeleted(id) {
 }
 
 export function assignmentDelete(id) {
-  return dispatch => {
-    deleteAssignment(id).then(response => {
+  return dispatch => deleteAssignment(id).then(response => {
       dispatch(assignmentDeleted(response.data.data.deleteAssignment.id));
     });
-  };
 }

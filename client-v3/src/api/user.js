@@ -25,10 +25,3 @@ export function getUsers() {
       '{ users { id, firstName, lastName, email, completedProfile, idNumber, tutoredWorkshops { id } } }',
   });
 }
-
-export function getMyStudents() {
-  return axios.post(GRAPHQL_ENDPOINT, {
-    query:
-      '{ myStudents { id, firstName, lastName, email, completedProfile, idNumber, tutoredWorkshops { id } } }',
-  });
-}

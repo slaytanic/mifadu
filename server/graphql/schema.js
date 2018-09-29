@@ -9,6 +9,7 @@ const {
   completedAssignments,
   pendingEvaluationAssignments,
   completedEvaluationAssignments,
+  statusTags,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
@@ -109,6 +110,7 @@ const typeDefs = `
     evaluation: Evaluation
     evaluations: [Evaluation]
     workshop: Workshop
+    statusTags: [String]
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -328,6 +330,7 @@ const resolvers = {
   Assignment: {
     tags,
     workshop,
+    statusTags,
   },
   AssignmentWork: {
     user,

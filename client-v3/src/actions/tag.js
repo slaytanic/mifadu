@@ -1,6 +1,6 @@
-import { TAGS_IS_LOADING, TAGS_HAS_LOADED } from './action-types';
+import { TAGS_IS_LOADING, TAGS_HAS_LOADED, TAG_CREATED } from './action-types';
 
-import { getTags } from '../api/tag';
+import { getTags, createTag } from '../api/tag';
 
 export function tagsIsLoading(bool = true) {
   return {
@@ -23,12 +23,24 @@ export function tagsHasLoaded(tags) {
   };
 }
 
+export function tagCreated(tag) {
+  return {
+    type: TAG_CREATED,
+    payload: {
+      ...tag,
+    },
+  };
+}
+
 export function tagsFetch() {
   return dispatch => {
     dispatch(tagsIsLoading());
 
-    getTags().then(response => {
-      dispatch(tagsHasLoaded(response.data.data.tags));
-    });
+    return getTags().then(response => dispatch(tagsHasLoaded(response.data.data.tags)));
   };
+}
+
+export function tagCreate(input) {
+  return dispatch =>
+    createTag(input).then(response => dispatch(tagCreated(response.data.data.createTag)));
 }

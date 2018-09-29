@@ -6,6 +6,10 @@ import {
 
 const initialState = {
   all: [],
+  pendingEvaluationCount: 0,
+  pendingCount: 0,
+  completedCount: 0,
+  completedEvaluationCount: 0,
 };
 
 const assignmentsReducer = (state = initialState, action) => {

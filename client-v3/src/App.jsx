@@ -12,6 +12,7 @@ import Home from './views/Home/Home';
 import RecoverPassword from './views/RecoverPassword/RecoverPassword';
 import Profile from './views/Profile/Profile';
 import Users from './views/User/Users';
+import Students from './views/Student/Students';
 import AssignmentNew from './views/Assignment/AssignmentNew';
 import AssignmentEdit from './views/Assignment/AssignmentEdit';
 import Assignments from './views/Assignment/Assignments';
@@ -37,7 +38,7 @@ class App extends Component {
           <LoggedIn>
             <Switch>
               <Route path="/profile" component={Profile} />
-              <Route path="/users" component={Users} />
+              <Route path="/students" component={Students} />
               <Route path="/assignments/new" component={AssignmentNew} />
               <Route
                 path="/assignments/:filter(pending|completed|pending_evaluation|completed_evaluation)?"
