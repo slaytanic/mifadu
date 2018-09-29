@@ -2,13 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import Parallax from 'components/material-kit-react/Parallax/Parallax';
-
 import Header from 'components/Header/Header';
 import Footer from 'components/Footer/Footer';
 import HeaderLinks from 'components/Header/HeaderLinks';
-
-import profileBg from 'assets/img/profile-bg.jpg';
 
 import logo from 'logo.svg';
 
@@ -31,7 +27,6 @@ class LoggedIn extends React.Component {
             color: 'white',
           }}
         />
-        <Parallax small filter image={profileBg} />
         {children}
         <Footer />
       </div>

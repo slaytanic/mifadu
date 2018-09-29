@@ -9,6 +9,15 @@ import LoggedIn from './layouts/LoggedIn';
 import Login from './views/Login/Login';
 import Register from './views/Register/Register';
 import Home from './views/Home/Home';
+import RecoverPassword from './views/RecoverPassword/RecoverPassword';
+import Profile from './views/Profile/Profile';
+import Users from './views/User/Users';
+import AssignmentNew from './views/Assignment/AssignmentNew';
+import AssignmentEdit from './views/Assignment/AssignmentEdit';
+import Assignments from './views/Assignment/Assignments';
+import AssignmentScore from './views/Assignment/AssignmentScore';
+import AssignmentSelfScore from './views/Assignment/AssignmentSelfScore';
+import AssignmentSubmit from './views/Assignment/AssignmentSubmit';
 
 import { currentUserFetch } from './actions/current-user';
 
@@ -27,6 +36,16 @@ class App extends Component {
         main = (
           <LoggedIn>
             <Switch>
+              <Route path="/profile" component={Profile} />
+              <Route path="/users" component={Users} />
+              <Route path="/assignments/new" component={AssignmentNew} />
+              <Route
+                path="/assignments/:filter(pending|completed|pending_evaluation|completed_evaluation)?"
+                component={Assignments}
+              />
+              <Route path="/assignment/:id/edit" component={AssignmentEdit} />
+              <Route path="/assignment/:id/submit" component={AssignmentSubmit} />
+              <Route path="/assignment/:id/score" component={AssignmentScore} />
               <Route path="/" component={Home} />
             </Switch>
           </LoggedIn>
@@ -41,6 +60,7 @@ class App extends Component {
     } else {
       main = (
         <Switch>
+          <Route path="/recover_password" component={RecoverPassword} />
           <Route path="/register" component={Register} />
           <Route component={Login} />
         </Switch>

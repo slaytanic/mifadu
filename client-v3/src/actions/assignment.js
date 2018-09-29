@@ -1,6 +1,6 @@
-import { ASSIGNMENTS_IS_LOADING, ASSIGNMENTS_HAS_LOADED } from './action-types';
+import { ASSIGNMENTS_IS_LOADING, ASSIGNMENTS_HAS_LOADED, ASSIGNMENT_DELETED } from './action-types';
 
-import { getAssignments } from '../api/assignment';
+import { getMyAssignments, deleteAssignment } from '../api/assignment';
 
 export function assignmentsIsLoading(bool = true) {
   return {
@@ -16,7 +16,7 @@ export function assignmentsHasLoaded(assignments) {
   return {
     type: ASSIGNMENTS_HAS_LOADED,
     payload: {
-      all: assignments,
+      all: assignments || [],
       isLoading: false,
       loadedAt: Date.now(),
     },
@@ -27,8 +27,25 @@ export function assignmentsFetch() {
   return dispatch => {
     dispatch(assignmentsIsLoading());
 
-    getAssignments().then(response => {
+    getMyAssignments().then(response => {
       dispatch(assignmentsHasLoaded(response.data.data.assignments));
+    });
+  };
+}
+
+export function assignmentDeleted(id) {
+  return {
+    type: ASSIGNMENT_DELETED,
+    payload: {
+      id,
+    },
+  };
+}
+
+export function assignmentDelete(id) {
+  return dispatch => {
+    deleteAssignment(id).then(response => {
+      dispatch(assignmentDeleted(response.data.data.deleteAssignment.id));
     });
   };
 }

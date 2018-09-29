@@ -481,7 +481,7 @@ class RegisterPage extends React.Component {
                         </GridItem>
                       </GridContainer>
                       <CustomInput
-                        labelText="Blog / Sitio personal"
+                        labelText="Blog / Sitio personal (opcional)"
                         id="website"
                         formControlProps={{
                           fullWidth: true,
@@ -498,7 +498,7 @@ class RegisterPage extends React.Component {
                         error={this.hasError('website')}
                       />
                       <CustomInput
-                        labelText="Algo para contarnos de vos"
+                        labelText="Algo para contarnos de vos (opcional)"
                         id="about-me"
                         formControlProps={{
                           fullWidth: true,

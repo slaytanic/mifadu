@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
-import { Persist } from 'formik-persist';
+// import { Persist } from 'formik-persist';
 import * as Yup from 'yup';
 
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -24,8 +24,8 @@ import Card from 'components/material-kit-react/Card/Card';
 import CardBody from 'components/material-kit-react/Card/CardBody';
 import CardHeader from 'components/material-kit-react/Card/CardHeader';
 import CardFooter from 'components/material-kit-react/Card/CardFooter';
-import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
 
+import CustomInput from 'components/CustomInput/CustomInput';
 import CustomSelect from 'components/CustomSelect/CustomSelect';
 import ErrorList from 'components/Error/ErrorList';
 
@@ -83,6 +83,29 @@ class Register extends React.Component {
 
     const externalProvider = !!currentUser;
 
+    const validationSchema = {
+      email: Yup.string()
+        .email('No es un formato de e-mail válido')
+        .required('Debe ingresar un e-mail'),
+      firstName: Yup.string().required('Debe introducir un nombre'),
+      lastName: Yup.string().required('Debe introducir un apellido'),
+      idNumber: Yup.string().required('Debe introducir un DNI'),
+      workshop: Yup.string().required('Debe elegir un taller'),
+      previouslyOnThisChair: Yup.boolean(),
+      previousYearOnThisChair: Yup.string().when('previouslyOnThisChair', {
+        is: true,
+        then: Yup.string().required('Debe introducir un año'),
+      }),
+      acceptedTerms: Yup.boolean().oneOf([true], 'Debe aceptar los términos y condiciones'),
+    };
+
+    if (!externalProvider) {
+      validationSchema.password = Yup.string().required('Debe ingresar una clave');
+      validationSchema.passwordConfirm = Yup.string()
+        .oneOf([Yup.ref('password'), null], 'La confirmación de clave no coincide')
+        .required('Debe confirmar la clave');
+    }
+
     return (
       <div>
         <div
@@ -101,14 +124,14 @@ class Register extends React.Component {
                   </CardHeader>
                   <Formik
                     initialValues={{
-                      email: '',
+                      email: currentUser.email || '',
                       password: '',
                       passwordConfirm: '',
                       firstName: '',
                       lastName: '',
                       idNumber: '',
                       subjects: [],
-                      workshop: null,
+                      workshop: '',
                       previouslyOnThisChair: false,
                       previousYearOnThisChair: '',
                       receiveNews: false,
@@ -117,28 +140,7 @@ class Register extends React.Component {
                       aboutMe: '',
                       completedProfile: true,
                     }}
-                    validationSchema={Yup.object().shape({
-                      email: Yup.string()
-                        .email('No es un formato de e-mail válido')
-                        .required('Debe ingresar un e-mail'),
-                      password: Yup.string().required('Debe ingresar una clave'),
-                      passwordConfirm: Yup.string()
-                        .oneOf([Yup.ref('password'), null], 'La confirmación de clave no coincide')
-                        .required('Debe confirmar la clave'),
-                      firstName: Yup.string().required('Debe introducir un nombre'),
-                      lastName: Yup.string().required('Debe introducir un apellido'),
-                      idNumber: Yup.string().required('Debe introducir un DNI'),
-                      workshop: Yup.string().required('Debe elegir un taller'),
-                      previouslyOnThisChair: Yup.boolean(),
-                      previousYearOnThisChair: Yup.string().when('previouslyOnThisChair', {
-                        is: true,
-                        then: Yup.string().required('Debe introducir un año'),
-                      }),
-                      acceptedTerms: Yup.boolean().oneOf(
-                        [true],
-                        'Debe aceptar los términos y condiciones',
-                      ),
-                    })}
+                    validationSchema={Yup.object().shape(validationSchema)}
                     onSubmit={(values, actions) => {
                       dispatchCurrentUserRegister(
                         filterObjectByKeys(values, ['passwordConfirm'], true),
@@ -155,7 +157,7 @@ class Register extends React.Component {
                       isSubmitting,
                     }) => (
                       <Form>
-                        <Persist name="register-form" debounce={1000} />
+                        {/* <Persist name="register-form" debounce={1000} /> */}
                         <CardBody>
                           <ErrorList errors={errors} touched={touched} />
                           <CustomInput
@@ -164,7 +166,7 @@ class Register extends React.Component {
                               fullWidth: true,
                             }}
                             helperText={
-                              currentUser.externalProvider
+                              externalProvider
                                 ? 'No se puede cambiar debido al uso de un proveedor externo'
                                 : ''
                             }
@@ -174,7 +176,7 @@ class Register extends React.Component {
                               value: values.email,
                               onChange: handleChange,
                               onBlur: handleBlur,
-                              disabled: currentUser.externalProvider,
+                              disabled: externalProvider,
                               type: 'email',
                               endAdornment: (
                                 <InputAdornment position="end">
@@ -183,7 +185,7 @@ class Register extends React.Component {
                               ),
                             }}
                           />
-                          {!currentUser.externalProvider && (
+                          {!externalProvider && (
                             <GridContainer>
                               <GridItem xs={12} sm={12} md={6}>
                                 <CustomInput
@@ -471,7 +473,7 @@ class Register extends React.Component {
                           </Button>
                           <Button
                             type="submit"
-                            disabled={!dirty || isSubmitting || Object.keys(errors).length}
+                            disabled={!dirty || isSubmitting || !!Object.keys(errors).length}
                             simple
                             color="primary"
                             size="lg"

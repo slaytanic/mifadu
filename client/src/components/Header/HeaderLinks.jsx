@@ -32,7 +32,13 @@ console.log('headerLinksStyle', headerLinksStyle);
 function HeaderLinks({ ...props }) {
   const { classes, user, logoutUser } = props;
 
-  let links = [];
+  const links = [
+    <ListItem className={classes.listItem} key="home">
+      <Button component={Link} to="/" color="transparent" className={classes.navLink}>
+        Inicio
+      </Button>
+    </ListItem>,
+  ];
   if (user.tutoredWorkshops.length > 0) {
     links.push(
       <ListItem className={classes.listItem}>

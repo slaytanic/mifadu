@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import AssignmentReturn from '@material-ui/icons/AssignmentReturn';
+import CloudUpload from '@material-ui/icons/CloudUpload';
 import Info from '@material-ui/icons/Info';
 import Delete from '@material-ui/icons/Delete';
 import Edit from '@material-ui/icons/Edit';
@@ -116,7 +116,7 @@ class AssignmentsSection extends React.Component {
               : [
                   key => (
                     <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
-                      <AssignmentReturn />
+                      <CloudUpload />
                     </Button>
                   ),
                 ],
@@ -124,7 +124,7 @@ class AssignmentsSection extends React.Component {
           // actions={[
           //   key => (
           //     <Button color="transparent" component={Link} to={`/assignments/${key}/submit`}>
-          //       <AssignmentReturn />
+          //       <CloudUpload />
           //     </Button>
           //   ),
           //   key => (
