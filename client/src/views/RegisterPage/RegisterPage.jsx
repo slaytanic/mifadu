@@ -193,7 +193,7 @@ class RegisterPage extends React.Component {
 
     if (errors.length < 1) {
       const newUser = { ...user };
-      delete user.id;
+      delete newUser.id;
       createOrUpdateUser({ ...newUser, completedProfile: true })
         .then(response => {
           if (response.data.errors) {
@@ -203,11 +203,11 @@ class RegisterPage extends React.Component {
           } else {
             this.props.setCurrentUser(response.data.data.createOrUpdateUser);
             // if (!this.state.externalProvider) {
-              // loginUser(user.email, user.password).then(() => {
-                // this.props.history.push('/');
-              // });
+            // loginUser(user.email, user.password).then(() => {
+            // this.props.history.push('/');
+            // });
             // } else {
-              this.props.history.push('/');
+            this.props.history.push('/');
             // }
           }
         })
