@@ -90,7 +90,10 @@ function completedEvaluationAssignments(obj, args, { req }) {
 }
 
 function statusTags(obj, args, { req }) {
-  return obj.statusTagsForUser(req.user);
+  if (obj.statusTagsForUser) {
+    return obj.statusTagsForUser(req.user);
+  }
+  return [];
 }
 
 module.exports.assignment = assignment;

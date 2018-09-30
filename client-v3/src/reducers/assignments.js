@@ -1,6 +1,7 @@
 import {
   ASSIGNMENTS_HAS_LOADED,
   ASSIGNMENTS_IS_LOADING,
+  ASSIGNMENT_UPDATED,
   ASSIGNMENT_DELETED,
 } from '../actions/action-types';
 
@@ -46,6 +47,11 @@ const assignmentsReducer = (state = initialState, action) => {
       return { ...state, ...action.payload, ...count(action.payload.all) };
     case ASSIGNMENT_DELETED: {
       const all = state.all.filter(a => a.id !== action.payload.id);
+      return { ...state, all, ...count(all) };
+    }
+    case ASSIGNMENT_UPDATED: {
+      const all = state.all.filter(a => a.id !== action.payload.id);
+      all.push(action.payload);
       return { ...state, all, ...count(all) };
     }
     default:

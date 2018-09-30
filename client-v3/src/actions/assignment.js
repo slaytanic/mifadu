@@ -8,6 +8,7 @@ import {
 
 import {
   getMyAssignments,
+  getAssignment,
   createAssignment,
   updateAssignment,
   deleteAssignment,
@@ -53,6 +54,11 @@ export function assignmentDeleted(id) {
     type: ASSIGNMENT_DELETED,
     payload: id,
   };
+}
+
+export function assignmentFetch(id) {
+  return dispatch =>
+    getAssignment(id).then(response => dispatch(assignmentUpdated(response.data.data.assignment)));
 }
 
 export function assignmentsFetch() {

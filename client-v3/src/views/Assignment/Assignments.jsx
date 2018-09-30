@@ -27,47 +27,62 @@ class Assignments extends React.Component {
     modal: false,
     selectedAssignmentId: '',
     filteredAssignments: [],
+    subtitle: '',
   };
 
   componentDidMount() {
-    const { dispatchAssignmentsFetch, assignments, match } = this.props;
-    dispatchAssignmentsFetch().then(action => {
-      console.log(action);
-      console.log('all', assignments.all);
-      switch (match.params.filter) {
-        case 'pending':
-          this.setState({
-            filteredAssignments: assignments.all.filter(a => a.statusTags.includes('pending_work')),
-          });
-          break;
-        case 'completed':
-          this.setState({
-            filteredAssignments: assignments.all.filter(a =>
-              a.statusTags.includes('completed_work'),
-            ),
-          });
-          break;
-        case 'pending_evaluation':
-          this.setState({
-            filteredAssignments: assignments.all.filter(a =>
-              a.statusTags.includes('pending_evaluation'),
-            ),
-          });
-          break;
-        case 'completed_evaluation':
-          this.setState({
-            filteredAssignments: assignments.all.filter(a =>
-              a.statusTags.includes('completed_evaluation'),
-            ),
-          });
-          break;
-        default:
-          this.setState({
-            filteredAssignments: [...assignments.all],
-          });
-      }
-    });
+    const { dispatchAssignmentsFetch } = this.props;
+    dispatchAssignmentsFetch();
   }
+
+  componentDidUpdate(prevProps) {
+    const { assignments, match } = this.props;
+    if (
+      assignments.loadedAt !== prevProps.assignments.loadedAt ||
+      match.params.filter !== prevProps.match.params.filter
+    ) {
+      this.filterAssignments();
+    }
+  }
+
+  filterAssignments = () => {
+    const { assignments, match } = this.props;
+    switch (match.params.filter) {
+      case 'pending':
+        this.setState({
+          subtitle: 'Pendientes de entrega',
+          filteredAssignments: assignments.all.filter(a => a.statusTags.includes('pending_work')),
+        });
+        break;
+      case 'completed':
+        this.setState({
+          subtitle: 'Entregados',
+          filteredAssignments: assignments.all.filter(a => a.statusTags.includes('completed_work')),
+        });
+        break;
+      case 'pending_evaluation':
+        this.setState({
+          subtitle: 'Pendientes de evaluación',
+          filteredAssignments: assignments.all.filter(a =>
+            a.statusTags.includes('pending_evaluation'),
+          ),
+        });
+        break;
+      case 'completed_evaluation':
+        this.setState({
+          subtitle: 'Pendientes de evaluación',
+          filteredAssignments: assignments.all.filter(a =>
+            a.statusTags.includes('completed_evaluation'),
+          ),
+        });
+        break;
+      default:
+        this.setState({
+          subtitle: 'Todos los trabajos prácticos',
+          filteredAssignments: [...assignments.all],
+        });
+    }
+  };
 
   handleDelete = key => () => {
     this.setState({ modal: true, selectedAssignmentId: key });
@@ -83,27 +98,9 @@ class Assignments extends React.Component {
   };
 
   render() {
-    const { classes, currentUser, match } = this.props;
-    const { filteredAssignments } = this.state;
+    const { classes, currentUser } = this.props;
+    const { filteredAssignments, subtitle } = this.state;
     const { modal } = this.state;
-
-    let subtitle;
-    switch (match.params.filter) {
-      case 'pending':
-        subtitle = 'Pendientes de entrega';
-        break;
-      case 'completed':
-        subtitle = 'Entregados';
-        break;
-      case 'pending_evaluation':
-        subtitle = 'Pendientes de evaluación';
-        break;
-      case 'completed_evaluation':
-        subtitle = 'Evaluados';
-        break;
-      default:
-        subtitle = 'Todos los trabajos prácticos';
-    }
 
     return (
       <Content title="Trabajos prácticos" subtitle={subtitle}>

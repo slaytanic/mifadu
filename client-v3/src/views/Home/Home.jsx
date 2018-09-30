@@ -86,16 +86,17 @@ class Home extends Component {
             </Card>
           </GridItem>
         </GridContainer>
-        <div className={classes.description}>
-          <Button color="primary" component={Link} to="/assignments/new">
-            Crear nuevo Trabajo Práctico
-          </Button>
-          {currentUser.tutoredWorkshops.map(() => (
+        <Button color="primary" component={Link} to="/assignments/new">
+          Crear nuevo Trabajo Práctico
+        </Button>
+        {currentUser.tutoredWorkshops.map(workshop => (
+          <div className={classes.description}>
+            <h3>{workshop.name}</h3>
             <Button color="primary" component={Link} to="/assignments/new">
               Crear nuevo Trabajo Práctico
             </Button>
-          ))}
-        </div>
+          </div>
+        ))}
       </Dashboard>
     );
   }

@@ -71,10 +71,10 @@ function HeaderLinks({ ...props }) {
       </ListItem>,
     );
     links.push(
-      <ListItem className={classes.listItem} key="complete">
+      <ListItem className={classes.listItem} key="completed">
         <Button
           component={Link}
-          to="/assignments/complete"
+          to="/assignments/completed"
           color="transparent"
           className={classes.navLink}
         >

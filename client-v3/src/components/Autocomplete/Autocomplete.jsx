@@ -178,6 +178,7 @@ class IntegrationReactSelect extends React.Component {
     const newValues = await Promise.all(
       value.map(v => (v.__isNew__ ? handleCreate(v.value) : v.value)),
     );
+    console.log(newValues);
     onChange({ target: { name, value: newValues } });
   };
 

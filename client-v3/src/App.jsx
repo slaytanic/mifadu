@@ -13,6 +13,7 @@ import RecoverPassword from './views/RecoverPassword/RecoverPassword';
 import Profile from './views/Profile/Profile';
 import Users from './views/User/Users';
 import Students from './views/Student/Students';
+import Assignment from './views/Assignment/Assignment';
 import AssignmentNew from './views/Assignment/AssignmentNew';
 import AssignmentEdit from './views/Assignment/AssignmentEdit';
 import Assignments from './views/Assignment/Assignments';
@@ -40,13 +41,14 @@ class App extends Component {
               <Route path="/profile" component={Profile} />
               <Route path="/students" component={Students} />
               <Route path="/assignments/new" component={AssignmentNew} />
+              <Route path="/assignments/:id/edit" component={AssignmentEdit} />
+              <Route path="/assignments/:id/submit" component={AssignmentSubmit} />
+              <Route path="/assignments/:id/score" component={AssignmentScore} />
               <Route
                 path="/assignments/:filter(pending|completed|pending_evaluation|completed_evaluation)?"
                 component={Assignments}
               />
-              <Route path="/assignment/:id/edit" component={AssignmentEdit} />
-              <Route path="/assignment/:id/submit" component={AssignmentSubmit} />
-              <Route path="/assignment/:id/score" component={AssignmentScore} />
+              <Route path="/assignments/:id" component={Assignment} />
               <Route path="/" component={Home} />
             </Switch>
           </LoggedIn>
