@@ -1,6 +1,10 @@
 import { push } from 'connected-react-router';
 
-import { CURRENT_USER_IS_LOADING, CURRENT_USER_HAS_LOADED } from './action-types';
+import {
+  CURRENT_USER_IS_LOADING,
+  CURRENT_USER_HAS_LOADED,
+  CURRENT_USER_HAS_ERRORED,
+} from './action-types';
 
 import { getCurrentUser, loginUser, logoutUser, createOrUpdateUser } from '../api/current-user';
 
@@ -26,6 +30,13 @@ export function currentUserHasLoaded(currentUser) {
   };
 }
 
+export function currentUserHasErrored(errors) {
+  return {
+    type: CURRENT_USER_HAS_ERRORED,
+    payload: { isLoading: false, errors },
+  };
+}
+
 export function currentUserFetch() {
   return dispatch => {
     dispatch(currentUserIsLoading());
@@ -40,7 +51,11 @@ export function currentUserLogin(email, password) {
   return dispatch => {
     dispatch(currentUserIsLoading());
 
-    loginUser(email, password).then(response => {
+    return loginUser(email, password).then(response => {
+      if (response.data.errors) {
+        return dispatch(currentUserHasErrored(response.data.errors));
+      }
+
       dispatch(currentUserHasLoaded(response.data.data.loginUser));
     });
   };

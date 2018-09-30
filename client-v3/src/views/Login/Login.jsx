@@ -41,7 +41,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, dispatchCurrentUserLogin } = this.props;
+    const { classes, dispatchCurrentUserLogin, currentUser } = this.props;
     const { cardAnimation } = this.state;
 
     return (
@@ -83,22 +83,30 @@ class Login extends React.Component {
                       .required('Debe ingresar un e-mail'),
                     password: Yup.string().required('Debe ingresar una clave'),
                   })}
-                  onSubmit={(values, actions) => {
-                    dispatchCurrentUserLogin(values.email, values.password);
-                    actions.setSubmitting(false);
-                  }}
+                  onSubmit={(values, actions) =>
+                    dispatchCurrentUserLogin(values.email, values.password).then(action => {
+                      if (action.payload.errors) {
+                        actions.setError('Usuario o clave incorrectos');
+                      }
+                      actions.setSubmitting(false);
+                    })
+                  }
                   render={({
                     values,
                     touched,
                     handleChange,
                     handleBlur,
+                    error,
                     errors,
                     dirty,
                     isSubmitting,
                   }) => (
                     <Form>
                       <CardBody>
-                        <ErrorList errors={errors} touched={touched} />
+                        <ErrorList
+                          errors={{ ...errors, error }}
+                          touched={{ ...touched, error: !!error }}
+                        />
                         <CustomInput
                           labelText="e-mail"
                           id="email"
@@ -199,9 +207,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  dispatchCurrentUserLogin: (email, password) => {
-    dispatch(currentUserLogin(email, password));
-  },
+  dispatchCurrentUserLogin: (email, password) => dispatch(currentUserLogin(email, password)),
 });
 
 export default connect(
