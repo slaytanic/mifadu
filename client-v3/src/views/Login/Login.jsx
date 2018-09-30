@@ -41,7 +41,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, dispatchCurrentUserLogin, currentUser } = this.props;
+    const { classes, dispatchCurrentUserLogin } = this.props;
     const { cardAnimation } = this.state;
 
     return (

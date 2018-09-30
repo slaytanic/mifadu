@@ -20,6 +20,7 @@ import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardS
 import Dashboard from '../../layouts/Dashboard';
 
 import { studentsFetch } from '../../actions/student';
+import { assignmentsFetch } from '../../actions/assignment';
 
 const styles = {
   ...dashboardStyle,
@@ -27,12 +28,15 @@ const styles = {
 
 class Home extends Component {
   componentDidMount() {
-    const { dispatchStudentsFetch } = this.props;
+    const { dispatchStudentsFetch, dispatchAssignmentsFetch } = this.props;
     dispatchStudentsFetch();
+    dispatchAssignmentsFetch();
   }
 
   render() {
-    const { classes, currentUser, students } = this.props;
+    const { classes, currentUser, students, assignments } = this.props;
+
+    const isTutor = !!currentUser.tutoredWorkshops.length;
 
     return (
       <Dashboard>
@@ -57,14 +61,22 @@ class Home extends Component {
             <Card className={classes.card}>
               <CardHeader color="warning" stats icon>
                 <CardIcon color="warning">
-                  <Icon>person</Icon>
+                  <Icon>content_copy</Icon>
                 </CardIcon>
-                <p className={classes.cardCategory}>Miembros del taller</p>
-                <h3 className={classes.cardTitle}>{students.all.length}</h3>
+                <p className={classes.cardCategory}>
+                  {isTutor ? 'Evaluaciones pendientes' : 'Trabajos prácticos pendientes'}
+                </p>
+                <h3 className={classes.cardTitle}>
+                  {isTutor ? assignments.pendingEvaluationCount : assignments.pendingCount}
+                </h3>
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
-                  <Link to="/students">Ver miembros del taller</Link>
+                  {isTutor ? (
+                    <Link to="/assignments/pending_evaluation">Ver evaluaciones pendientes</Link>
+                  ) : (
+                    <Link to="/assignments/pending">Ver trabajos prácticos pendientes</Link>
+                  )}
                 </div>
               </CardFooter>
             </Card>
@@ -73,22 +85,27 @@ class Home extends Component {
             <Card className={classes.card}>
               <CardHeader color="success" stats icon>
                 <CardIcon color="success">
-                  <Icon>person</Icon>
+                  <Icon>content_copy</Icon>
                 </CardIcon>
-                <p className={classes.cardCategory}>Miembros del taller</p>
-                <h3 className={classes.cardTitle}>{students.all.length}</h3>
+                <p className={classes.cardCategory}>
+                  {isTutor ? 'Evaluaciones realizadas' : 'Trabajos prácticos entregados'}
+                </p>
+                <h3 className={classes.cardTitle}>
+                  {isTutor ? assignments.completedEvaluationCount : assignments.completedCount}
+                </h3>
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
-                  <Link to="/students">Ver miembros del taller</Link>
+                  {isTutor ? (
+                    <Link to="/assignments/completed_evaluation">Ver evaluaciones realizadas</Link>
+                  ) : (
+                    <Link to="/assignments/completed">Ver trabajos prácticos entregados</Link>
+                  )}
                 </div>
               </CardFooter>
             </Card>
           </GridItem>
         </GridContainer>
-        <Button color="primary" component={Link} to="/assignments/new">
-          Crear nuevo Trabajo Práctico
-        </Button>
         {currentUser.tutoredWorkshops.map(workshop => (
           <div className={classes.description}>
             <h3>{workshop.name}</h3>
@@ -106,16 +123,20 @@ Home.propTypes = {
   classes: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   students: PropTypes.object.isRequired,
+  assignments: PropTypes.object.isRequired,
   dispatchStudentsFetch: PropTypes.func.isRequired,
+  dispatchAssignmentsFetch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   currentUser: state.currentUser,
   students: state.students,
+  assignments: state.assignments,
 });
 
 const mapDispatchToProps = dispatch => ({
   dispatchStudentsFetch: () => dispatch(studentsFetch()),
+  dispatchAssignmentsFetch: () => dispatch(assignmentsFetch()),
 });
 
 export default connect(

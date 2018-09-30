@@ -1,30 +1,7 @@
 const Assignment = require('../../models/assignment');
 
-async function assignment(obj, args, { req }) {
-  const a = await Assignment.findOne({ _id: args.id }).lean();
-  a.id = a._id;
-  a.requiredWork = a.requiredWork.map((rw) => {
-    const assignmentWork = rw.assignmentWork.find(aw => aw.user.equals(req.user._id));
-    if (!assignmentWork) {
-      return {
-        ...rw,
-        id: rw._id,
-        assignmentWorks: rw.assignmentWork.map(aw => ({ ...aw, id: aw._id })),
-      };
-    }
-    assignmentWork.id = assignmentWork._id;
-    return {
-      ...rw,
-      id: rw._id,
-      assignmentWork,
-      assignmentWorks: rw.assignmentWork,
-    };
-  });
-  a.attachment.id = a.attachment._id;
-  a.evaluation = a.evaluations.find(e => e.user.equals(req.user._id));
-  a.evaluations = a.evaluations.map(e => ({ ...e, id: e._id }));
-  console.log(a);
-  return a;
+function assignment(obj, args, { req }) {
+  return Assignment.findOne({ _id: args.id });
 }
 
 function assignments(obj, args, context) {
@@ -90,10 +67,16 @@ function completedEvaluationAssignments(obj, args, { req }) {
 }
 
 function statusTags(obj, args, { req }) {
-  if (obj.statusTagsForUser) {
-    return obj.statusTagsForUser(req.user);
-  }
-  return [];
+  console.log(obj);
+  return obj.statusTagsForUser(req.user);
+}
+
+function assignmentWork(obj, args, { req }) {
+  return obj.assignmentWorkForUser(req.user);
+}
+
+function selfEvaluation(obj, args, { req }) {
+  return obj.selfEvaluationForUser(req.user);
 }
 
 module.exports.assignment = assignment;
@@ -104,3 +87,5 @@ module.exports.completedAssignments = completedAssignments;
 module.exports.pendingEvaluationAssignments = pendingEvaluationAssignments;
 module.exports.completedEvaluationAssignments = completedEvaluationAssignments;
 module.exports.statusTags = statusTags;
+module.exports.assignmentWork = assignmentWork;
+module.exports.selfEvaluation = selfEvaluation;

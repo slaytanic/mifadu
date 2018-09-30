@@ -31,17 +31,21 @@ const requiredWorkSchema = new Schema(
   {
     type: { type: String, enum: ['JPG', 'PDF', 'Video', 'URL'] },
     description: String,
-    assignmentWork: [assignmentWorkSchema],
+    assignmentWorks: [assignmentWorkSchema],
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
   },
 );
 
-requiredWorkSchema.virtual('assignmentWorks').get(function assignmentWorks() {
-  return this.assignmentWork;
-});
+requiredWorkSchema.methods.assignmentWorkForUser = function assignmentWorkForUser(
+  user,
+) {
+  return (
+    this.assignmentWorks
+    && this.assignmentWorks.find(aw => aw.user.equals(user._id))
+  );
+};
 
 const assignmentSchema = new Schema(
   {
@@ -62,27 +66,34 @@ const assignmentSchema = new Schema(
   { timestamps: true },
 );
 
+assignmentSchema.methods.evaluationForUser = function evaluationForUser(
+  user,
+  targetUser,
+) {
+  if (this.evaluations) {
+    return this.evaluations.find(
+      e => e.targetUser.equals(targetUser._id) && e.user.equals(user._id),
+    );
+  }
+  return null;
+};
+
+assignmentSchema.methods.selfEvaluationForUser = function selfEvaluationForUser(
+  user,
+) {
+  return this.evaluationForUser(user, user);
+};
+
 assignmentSchema.methods.statusTagsForUser = function statusTagsForUser(user) {
   const statusTags = [];
-  if (
-    !this.evaluations
-    || !this.evaluations.find(e => e.user.equals(user._id))
-  ) {
-    statusTags.push('pending_evaluation');
-  } else {
-    statusTags.push('completed_evaluation');
-  }
   if (this.requiredWork) {
-    if (
-      this.requiredWork
-        .map((rw) => {
-          if (rw.assignmentWork.find(aw => aw.user.equals(user._id))) {
-            return true;
-          }
-          return false;
-        })
-        .find(i => i === false)
-    ) {
+    const workDelivered = this.requiredWork
+      .map(
+        rw => rw.assignmentWorks
+          && rw.assignmentWorks.find(aw => aw.user.equals(user._id)),
+      )
+      .filter(aw => aw);
+    if (workDelivered.length < this.requiredWork.length) {
       statusTags.push('pending_work');
     } else {
       statusTags.push('completed_work');

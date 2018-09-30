@@ -11,27 +11,27 @@ import 'assets/css/material-dashboard-react.css?v=1.5.0'; // eslint-disable-line
 import 'assets/scss/material-kit-react.css?v=1.2.0'; // eslint-disable-line import/no-unresolved
 import 'react-vis/dist/style.css';
 
-// import { loadState, saveState } from 'store/local-storage';
+import { loadState, saveState } from 'store/local-storage';
 import rootReducer from 'reducers/index';
 import App from './App';
 
 const history = createBrowserHistory();
 
-// const persistedState = loadState();
+const persistedState = loadState();
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   connectRouter(history)(rootReducer),
-  // persistedState,
+  persistedState,
   composeEnhancer(applyMiddleware(routerMiddleware(history), thunk)),
 );
 
-// store.subscribe(
-//   throttle(() => {
-//     saveState({
-//       currentUser: store.getState().currentUser,
-//     });
-//   }, 1000),
-// );
+store.subscribe(
+  throttle(() => {
+    saveState({
+      currentUser: store.getState().currentUser,
+    });
+  }, 5000),
+);
 
 const render = () => {
   ReactDOM.render(

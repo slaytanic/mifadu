@@ -10,7 +10,6 @@ const defaultAssignmentFields = `
     endsAt
     statusTags
     workshop {
-      name
       tutors {
         id
       }

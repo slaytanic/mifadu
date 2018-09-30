@@ -5,7 +5,7 @@ import { GRAPHQL_ENDPOINT } from './common';
 export function getCurrentUser() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      'query { me { id, firstName, lastName, email, completedProfile, tutoredWorkshops { id } } }',
+      'query { me { id, firstName, lastName, email, completedProfile, tutoredWorkshops { id name } } }',
   });
 }
 

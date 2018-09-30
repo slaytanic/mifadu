@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
+import Button from 'components/material-kit-react/CustomButtons/Button';
+import Badge from 'components/material-kit-react/Badge/Badge';
 
 import Content from 'layouts/Content';
 
@@ -22,10 +26,23 @@ class Assignment extends Component {
         {assignment && (
           <div>
             <h3>{assignment.name}</h3>
+            <p>
+              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                assignment.statusTags.includes('pending_work') && (
+                  <Badge color="warning">Pendiente</Badge>
+                )}
+              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                assignment.statusTags.includes('completed_work') && (
+                  <Badge color="success">Entregado</Badge>
+                )}
+            </p>
             <h4>{assignment.shortDescription}</h4>
             <p>{assignment.description}</p>
             <p>
-              <b>Consigna:</b> <a href={assignment.attachment.url}>{assignment.attachment.name}</a>
+              <b>Consigna:</b>{' '}
+              {assignment.attachment && (
+                <a href={assignment.attachment.url}>{assignment.attachment.name}</a>
+              )}
             </p>
             <p>
               <b>Fecha de entrega:</b> {assignment.endsAt}
@@ -37,16 +54,54 @@ class Assignment extends Component {
               <b>Tipo:</b> {{ Group: 'Grupal', Individual: 'Individual' }[assignment.type]}
             </p>
             <p>
-              <b>Categorías / Etiquetas:</b> {assignment.tags.map(t => t.name).join(', ')}
+              <b>Categorías / Etiquetas:</b>{' '}
+              {assignment.tags ? assignment.tags.map(t => t.name).join(', ') : <i>Ninguna</i>}
             </p>
-            {assignment.requiredWork.map((rw, index) => (
+            {(assignment.requiredWork || []).map((rw, index) => (
               <div key={rw.id}>
                 <h6>Componente de entrega #{index + 1}</h6>
                 <p>
+                  {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                    (rw.assignmentWork ? (
+                      <Badge color="success">Entregado</Badge>
+                    ) : (
+                      <Badge color="warning">Pendiente</Badge>
+                    ))}
+                </p>
+                <p>
                   {rw.description} ({rw.type})
                 </p>
+                <Button
+                  // color="primary"
+                  fullWidth
+                  component={Link}
+                  to={`/assignments/${assignment.id}/submit`}
+                >
+                  Subir componente
+                </Button>
               </div>
             ))}
+            {currentUser.tutoredWorkshops.includes(assignment.workshop) && (
+              <Button
+                color="primary"
+                fullWidth
+                component={Link}
+                to={`/assignments/${assignment.id}/edit`}
+              >
+                Editar trabajo práctico
+              </Button>
+            )}
+            {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+              assignment.statusTags.includes('pending_work') && (
+                <Button
+                  color="primary"
+                  fullWidth
+                  component={Link}
+                  to={`/assignments/${assignment.id}/submit`}
+                >
+                  Realizar entrega
+                </Button>
+              )}
           </div>
         )}
       </Content>

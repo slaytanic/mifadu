@@ -108,7 +108,7 @@ class AssignmentForm extends Component {
             .min(1, 'Debe haber al menos un componente de entrega'),
         })}
         onSubmit={(values, actions) => {
-          if (assignment.id) {
+          if (assignment) {
             return dispatchAssignmentUpdate(assignment.id, values).then(action => {
               actions.setSubmitting(false);
               historyPush(`/assignments/${action.payload.id}`);

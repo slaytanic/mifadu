@@ -10,6 +10,8 @@ const {
   pendingEvaluationAssignments,
   completedEvaluationAssignments,
   statusTags,
+  assignmentWork,
+  selfEvaluation,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
@@ -108,6 +110,7 @@ const typeDefs = `
     tags: [Tag]
     requiredWork: [RequiredWork]
     evaluation: Evaluation
+    selfEvaluation: Evaluation
     evaluations: [Evaluation]
     workshop: Workshop
     statusTags: [String]
@@ -331,9 +334,13 @@ const resolvers = {
     tags,
     workshop,
     statusTags,
+    selfEvaluation,
   },
   AssignmentWork: {
     user,
+  },
+  RequiredWork: {
+    assignmentWork,
   },
   Evaluation: {
     user,
