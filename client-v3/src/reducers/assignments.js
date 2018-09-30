@@ -13,7 +13,7 @@ function count(assignments) {
     completedEvaluationCount: 0,
   };
   assignments.forEach(a => {
-    a.statusTags.forEach(t => {
+    (a.statusTags || []).forEach(t => {
       switch (t) {
         case 'pending_evaluation':
           counters.pendingEvaluationCount += 1;

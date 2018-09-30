@@ -45,6 +45,7 @@ class App extends Component {
               <Route path="/assignments/:id/submit" component={AssignmentSubmit} />
               <Route path="/assignments/:id/score" component={AssignmentScore} />
               <Route
+                exact
                 path="/assignments/:filter(pending|completed|pending_evaluation|completed_evaluation)?"
                 component={Assignments}
               />

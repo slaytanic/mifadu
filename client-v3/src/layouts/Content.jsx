@@ -16,6 +16,7 @@ const styles = {
   ...landingPageStyle,
   container: {
     ...landingPageStyle.container,
+    paddingTop: '10px',
     paddingBottom: '20px',
     color: '#000',
   },

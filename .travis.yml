@@ -8,7 +8,8 @@ before_install:
 cache:
   yarn: true
 script:
-- cd client && yarn && CI=false yarn build && mv build ../server && cd ..
+# - cd client && yarn && CI=false yarn build && mv build ../server && cd ..
+- cd client-v3 && yarn && CI=false yarn build && mv build ../server && cd ..
 - cd server && yarn && cd ..
 # before_deploy:
 # - env

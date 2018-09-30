@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
 import PropTypes from 'prop-types';
 import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
@@ -57,6 +58,7 @@ class AssignmentForm extends Component {
       dispatchAssignmentCreate,
       dispatchAssignmentUpdate,
       assignment,
+      historyPush,
     } = this.props;
 
     const initialValues = {
@@ -107,14 +109,15 @@ class AssignmentForm extends Component {
         })}
         onSubmit={(values, actions) => {
           if (assignment.id) {
-            dispatchAssignmentUpdate(assignment.id, values).then(() => {
+            return dispatchAssignmentUpdate(assignment.id, values).then(action => {
               actions.setSubmitting(false);
-            });
-          } else {
-            dispatchAssignmentCreate(values).then(() => {
-              actions.setSubmitting(false);
+              historyPush(`/assignments/${action.payload.id}`);
             });
           }
+          return dispatchAssignmentCreate(values).then(action => {
+            actions.setSubmitting(false);
+            historyPush(`/assignments/${action.payload.id}`);
+          });
         }}
         render={({
           values,
@@ -356,209 +359,6 @@ class AssignmentForm extends Component {
           </Form>
         )}
       />
-
-      // <div className={classes.root}>
-      //   <ErrorList errors={errors} />
-      //   <GridContainer>
-      //     <GridItem xs={12} sm={12} md={12}>
-      // />
-      //     </GridItem>
-      //     <GridItem xs={12} sm={12} md={8}>
-      //       <CustomInput
-      //         id="short-description"
-      //         labelText="Descripción corta"
-      //         formControlProps={{
-      //           fullWidth: true,
-      //         }}
-      //         inputProps={{
-      //           value: assignment.shortDescription,
-      //           onChange: this.handleChange('assignment', 'shortDescription'),
-      //           // endAdornment: !this.hasError('shortDescription') && (
-      //           //   <InputAdornment position="end">
-      //           //     <PermIdentity className={classes.inputIconsColor} />
-      //           //   </InputAdornment>
-      //           // ),
-      //         }}
-      //         error={this.hasError('shortDescription')}
-      //       />
-      //       <CustomInput
-      //         id="description"
-      //         labelText="Descripción"
-      //         formControlProps={{
-      //           fullWidth: true,
-      //         }}
-      //         inputProps={{
-      //           multiline: true,
-      //           rows: 4,
-      //           value: assignment.description,
-      //           onChange: this.handleChange('assignment', 'description'),
-      //           // endAdornment: !this.hasError('description') && (
-      //           //   <InputAdornment position="end">
-      //           //     {/* <PermIdentity className={classes.inputIconsColor} /> */}
-      //           //   </InputAdornment>
-      //           // ),
-      //         }}
-      //         error={this.hasError('description')}
-      //         helperText="No es consigna"
-      //       />
-      //     </GridItem>
-      //     <GridItem xs={12} sm={12} md={4}>
-      //       <CustomInput
-      //         id="ends-at"
-      //         labelText="Fecha de entrega"
-      //         formControlProps={{
-      //           fullWidth: true,
-      //         }}
-      //         labelProps={{
-      //           shrink: true,
-      //         }}
-      //         inputProps={{
-      //           value: assignment.endsAt,
-      //           onChange: this.handleChange('assignment', 'endsAt'),
-      //           type: 'date',
-      //           // endAdornment: !this.hasError('shortDescription') && (
-      //           //   <InputAdornment position="end">
-      //           //     <PermIdentity className={classes.inputIconsColor} />
-      //           //   </InputAdornment>
-      //           // ),
-      //         }}
-      //         error={this.hasError('endsAt')}
-      //       />
-
-      //       <CustomInput
-      //         id="evaluation-variable"
-      //         labelText="Variable de evaluación"
-      //         formControlProps={{
-      //           fullWidth: true,
-      //         }}
-      //         inputProps={{
-      //           value: assignment.evaluationVariable,
-      //           onChange: this.handleChange('assignment', 'evaluationVariable'),
-      //           // endAdornment: !this.hasError('evaluationVariable') && (
-      //           //   <InputAdornment position="end">
-      //           //     <PermIdentity className={classes.inputIconsColor} />
-      //           //   </InputAdornment>
-      //           // ),
-      //         }}
-      //         error={this.hasError('evaluationVariable')}
-      //       />
-      //       <CustomSelect
-      //         id="type"
-      //         labelText="Tipo"
-      //         formControlProps={{
-      //           fullWidth: true,
-      //         }}
-      //         inputProps={{
-      //           value: assignment.type,
-      //           onChange: this.handleChange('assignment', 'type'),
-      //         }}
-      //         error={this.hasError('type')}
-      //       >
-      //         <MenuItem value="Group">Grupal</MenuItem>
-      //         <MenuItem value="Individual">Individual</MenuItem>
-      //       </CustomSelect>
-      //     </GridItem>
-      //   </GridContainer>
-
-      //   <GridContainer>
-      //     <GridItem xs={12} sm={12} md={4}>
-      //       <label htmlFor="attachment">
-      //         <input
-      //           accept="application/pdf"
-      //           className={classes.input}
-      //           id="attachment"
-      //           multiple
-      //           type="file"
-      //           onChange={this.handleFile}
-      //         />
-      //         <Button component="span" fullWidth>
-      //           Subir consigna
-      //         </Button>
-      //       </label>
-      //     </GridItem>
-      //     <GridItem xs={12} sm={12} md={4}>
-      //       <FormHelperText>La consigna debe estar en formato PDF</FormHelperText>
-      //       {assignment.attachment && (
-      //         <Typography>
-      //           {assignment.attachment.url ? (
-      //             <a href={assignment.attachment.url}>{assignment.attachment.name}</a>
-      //           ) : (
-      //             assignment.attachment.name
-      //           )}
-      //         </Typography>
-      //       )}
-      //     </GridItem>
-      //   </GridContainer>
-
-      //   <h6 className={classes.subtitle}>Componentes de la entrega</h6>
-      //   {assignment.requiredWork.map((requiredWork, index) => (
-      //     <div>
-      //       <CustomInput
-      //         id={`required-work-type-${index}`}
-      //         labelText="Descripción"
-      //         formControlProps={{
-      //           fullWidth: true,
-      //         }}
-      //         inputProps={{
-      //           value: assignment.requiredWork[index].description,
-      //           onChange: this.handleChange('assignment', 'requiredWork', 'description', index),
-      //         }}
-      //         // error={this.hasError('type')}
-      //       />
-      //       <GridContainer>
-      //         <GridItem xs={12} sm={12} md={8}>
-      //           <CustomSelect
-      //             id={`required-work-type-${index}`}
-      //             labelText="Tipo"
-      //             formControlProps={{
-      //               fullWidth: false,
-      //               className: classes.smallInput,
-      //             }}
-      //             inputProps={{
-      //               value: assignment.requiredWork[index].type,
-      //               onChange: this.handleChange('assignment', 'requiredWork', 'type', index),
-      //             }}
-      //             // error={this.hasError('type', index)}
-      //           >
-      //             <MenuItem value="PDF">PDF</MenuItem>
-      //             <MenuItem value="JPG">JPEG</MenuItem>
-      //             <MenuItem value="Video">Video</MenuItem>
-      //             <MenuItem value="URL">URL</MenuItem>
-      //           </CustomSelect>
-      //         </GridItem>
-      //         <GridItem xs={12} sm={12} md={4}>
-      //           <Button onClick={this.handleRemoveRequiredWork(index)} color="danger" fullWidth>
-      //             Quitar componente
-      //           </Button>
-      //         </GridItem>
-      //       </GridContainer>
-      //     </div>
-      //   ))}
-      //   <Button onClick={this.handleAddRequiredWork} color="info" fullWidth>
-      //     Agregar componente
-      //   </Button>
-
-      //   <Autocomplete
-      //     placeholder="Categorías / Etiquetas"
-      //     handleChange={this.handleChange('assignment', 'tags')}
-      //     value={assignment.tags}
-      //     suggestions={tags.map(tag => ({
-      //       label: tag.name,
-      //       value: tag.id,
-      //     }))}
-      //   />
-
-      //   <Button
-      //     // variant="contained"
-      //     color="primary"
-      //     // className={classes.button}
-      //     onClick={this.handleSubmit}
-      //     fullWidth
-      //     loading={loading}
-      //   >
-      //     {assignment.id ? 'Guardar cambios' : 'Dar de alta'}
-      //   </Button>
-      // </div>
     );
   }
 }
@@ -574,6 +374,7 @@ AssignmentForm.propTypes = {
   dispatchTagCreate: PropTypes.func.isRequired,
   dispatchAssignmentCreate: PropTypes.func.isRequired,
   dispatchAssignmentUpdate: PropTypes.func.isRequired,
+  historyPush: PropTypes.func.isRequired,
   assignment: PropTypes.object,
 };
 
@@ -586,6 +387,9 @@ const mapDispatchToProps = dispatch => ({
   dispatchTagCreate: input => dispatch(tagCreate(input)),
   dispatchAssignmentCreate: input => dispatch(assignmentCreate(input)),
   dispatchAssignmentUpdate: (id, input) => dispatch(assignmentUpdate(id, input)),
+  historyPush: path => {
+    dispatch(push(path));
+  },
 });
 
 export default connect(
