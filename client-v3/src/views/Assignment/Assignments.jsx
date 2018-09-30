@@ -26,11 +26,47 @@ class Assignments extends React.Component {
   state = {
     modal: false,
     selectedAssignmentId: '',
+    filteredAssignments: [],
   };
 
   componentDidMount() {
-    const { dispatchAssignmentsFetch } = this.props;
-    dispatchAssignmentsFetch();
+    const { dispatchAssignmentsFetch, assignments, match } = this.props;
+    dispatchAssignmentsFetch().then(action => {
+      console.log(action);
+      console.log('all', assignments.all);
+      switch (match.params.filter) {
+        case 'pending':
+          this.setState({
+            filteredAssignments: assignments.all.filter(a => a.statusTags.includes('pending_work')),
+          });
+          break;
+        case 'completed':
+          this.setState({
+            filteredAssignments: assignments.all.filter(a =>
+              a.statusTags.includes('completed_work'),
+            ),
+          });
+          break;
+        case 'pending_evaluation':
+          this.setState({
+            filteredAssignments: assignments.all.filter(a =>
+              a.statusTags.includes('pending_evaluation'),
+            ),
+          });
+          break;
+        case 'completed_evaluation':
+          this.setState({
+            filteredAssignments: assignments.all.filter(a =>
+              a.statusTags.includes('completed_evaluation'),
+            ),
+          });
+          break;
+        default:
+          this.setState({
+            filteredAssignments: [...assignments.all],
+          });
+      }
+    });
   }
 
   handleDelete = key => () => {
@@ -47,7 +83,8 @@ class Assignments extends React.Component {
   };
 
   render() {
-    const { classes, assignments, currentUser, match } = this.props;
+    const { classes, currentUser, match } = this.props;
+    const { filteredAssignments } = this.state;
     const { modal } = this.state;
 
     let subtitle;
@@ -86,7 +123,7 @@ class Assignments extends React.Component {
               { label: 'Descripción', key: 'shortDescription' },
               { label: 'Fecha de entrega', key: 'endsAt' },
             ]}
-            tableData={assignments.all.map(a => ({
+            tableData={filteredAssignments.map(a => ({
               ...a,
               actions: a.workshop.tutors.map(t => t.id).includes(currentUser.id)
                 ? [

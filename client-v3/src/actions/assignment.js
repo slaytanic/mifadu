@@ -1,6 +1,17 @@
-import { ASSIGNMENTS_IS_LOADING, ASSIGNMENTS_HAS_LOADED, ASSIGNMENT_DELETED } from './action-types';
+import {
+  ASSIGNMENTS_IS_LOADING,
+  ASSIGNMENTS_HAS_LOADED,
+  ASSIGNMENT_CREATED,
+  ASSIGNMENT_UPDATED,
+  ASSIGNMENT_DELETED,
+} from './action-types';
 
-import { getMyAssignments, deleteAssignment } from '../api/assignment';
+import {
+  getMyAssignments,
+  createAssignment,
+  updateAssignment,
+  deleteAssignment,
+} from '../api/assignment';
 
 export function assignmentsIsLoading(bool = true) {
   return {
@@ -23,27 +34,54 @@ export function assignmentsHasLoaded(assignments) {
   };
 }
 
-export function assignmentsFetch() {
-  return dispatch => {
-    dispatch(assignmentsIsLoading());
+export function assignmentCreated(assignment) {
+  return {
+    type: ASSIGNMENT_CREATED,
+    payload: assignment,
+  };
+}
 
-    return getMyAssignments().then(response => {
-      dispatch(assignmentsHasLoaded(response.data.data.assignments));
-    });
+export function assignmentUpdated(assignment) {
+  return {
+    type: ASSIGNMENT_UPDATED,
+    payload: assignment,
   };
 }
 
 export function assignmentDeleted(id) {
   return {
     type: ASSIGNMENT_DELETED,
-    payload: {
-      id,
-    },
+    payload: id,
   };
 }
 
+export function assignmentsFetch() {
+  return dispatch => {
+    dispatch(assignmentsIsLoading());
+
+    return getMyAssignments().then(response =>
+      dispatch(assignmentsHasLoaded(response.data.data.myAssignments)),
+    );
+  };
+}
+
+export function assignmentCreate(input) {
+  return dispatch =>
+    createAssignment(input).then(response =>
+      dispatch(assignmentCreated(response.data.data.createAssignment)),
+    );
+}
+
+export function assignmentUpdate(id, input) {
+  return dispatch =>
+    updateAssignment(id, input).then(response =>
+      dispatch(assignmentUpdated(response.data.data.updateAssignment)),
+    );
+}
+
 export function assignmentDelete(id) {
-  return dispatch => deleteAssignment(id).then(response => {
-      dispatch(assignmentDeleted(response.data.data.deleteAssignment.id));
-    });
+  return dispatch =>
+    deleteAssignment(id).then(response =>
+      dispatch(assignmentDeleted(response.data.data.deleteAssignment.id)),
+    );
 }

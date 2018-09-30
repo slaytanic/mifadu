@@ -7,12 +7,12 @@ import * as Yup from 'yup';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import MenuItem from '@material-ui/core/MenuItem';
-import Typography from '@material-ui/core/Typography';
-import FormHelperText from '@material-ui/core/FormHelperText';
+// import Typography from '@material-ui/core/Typography';
+// import FormHelperText from '@material-ui/core/FormHelperText';
 
 import Button from 'components/material-kit-react/CustomButtons/Button';
-import GridContainer from 'components/material-kit-react/Grid/GridContainer';
-import GridItem from 'components/material-kit-react/Grid/GridItem';
+// import GridContainer from 'components/material-kit-react/Grid/GridContainer';
+// import GridItem from 'components/material-kit-react/Grid/GridItem';
 
 import CustomInput from 'components/CustomInput/CustomInput';
 import CustomSelect from 'components/CustomSelect/CustomSelect';
@@ -20,6 +20,7 @@ import ErrorList from 'components/Error/ErrorList';
 import Autocomplete from 'components/Autocomplete/Autocomplete';
 
 import { tagsFetch, tagCreate } from 'actions/tag';
+import { assignmentCreate, assignmentUpdate } from 'actions/assignment';
 
 const styles = {
   input: {
@@ -45,7 +46,7 @@ class AssignmentForm extends Component {
   };
 
   render() {
-    const { classes, tags } = this.props;
+    const { classes, tags, dispatchAssignmentCreate, dispatchAssignmentUpdate } = this.props;
     // const { assignment, errors, tags, loading } = this.state;
     const assignment = {};
     // const tags = [{ id: '1', name: 'tag' }];
@@ -61,14 +62,20 @@ class AssignmentForm extends Component {
           tags: [],
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string()
-            .email('No es un formato de e-mail válido')
-            .required('Debe ingresar un e-mail'),
-          password: Yup.string().required('Debe ingresar una clave'),
+          name: Yup.string().required('Debe ingresar un nombre para el trabajo practico'),
+          endsAt: Yup.string().required('Debe elegir una fecha de entrega'),
+          type: Yup.string().required('Debe elegir el tipo de trabajo práctico'),
         })}
         onSubmit={(values, actions) => {
-          // dispatchCurrentUserLogin(values.email, values.password);
-          actions.setSubmitting(false);
+          if (assignment.id) {
+            dispatchAssignmentUpdate(assignment.id, values).then(() => {
+              actions.setSubmitting(false);
+            });
+          } else {
+            dispatchAssignmentCreate(values).then(() => {
+              actions.setSubmitting(false);
+            });
+          }
         }}
         render={({ values, touched, handleChange, handleBlur, errors, dirty, isSubmitting }) => (
           <Form>
@@ -176,8 +183,12 @@ class AssignmentForm extends Component {
                 value: tag.id,
               }))}
             />
-
-            <Button color="primary" type="submit" fullWidth>
+            <Button
+              color="primary"
+              type="submit"
+              fullWidth
+              disabled={!dirty || isSubmitting || !!Object.keys(errors).length}
+            >
               {assignment.id ? 'Guardar cambios' : 'Dar de alta'}
             </Button>
           </Form>
@@ -392,8 +403,11 @@ class AssignmentForm extends Component {
 
 AssignmentForm.propTypes = {
   classes: PropTypes.object.isRequired,
+  tags: PropTypes.object.isRequired,
   dispatchTagsFetch: PropTypes.func.isRequired,
   dispatchTagCreate: PropTypes.func.isRequired,
+  dispatchAssignmentCreate: PropTypes.func.isRequired,
+  dispatchAssignmentUpdate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -403,6 +417,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   dispatchTagsFetch: () => dispatch(tagsFetch()),
   dispatchTagCreate: input => dispatch(tagCreate(input)),
+  dispatchAssignmentCreate: input => dispatch(assignmentCreate(input)),
+  dispatchAssignmentUpdate: (id, input) => dispatch(assignmentUpdate(id, input)),
 });
 
 export default connect(

@@ -145,7 +145,7 @@ class Login extends React.Component {
                               color="primary"
                               size="lg"
                               fullWidth
-                              disabled={!dirty || isSubmitting || Object.keys(errors).length}
+                              disabled={!dirty || isSubmitting || !!Object.keys(errors).length}
                             >
                               Ingresar
                             </Button>
