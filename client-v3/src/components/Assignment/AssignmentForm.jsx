@@ -6,14 +6,9 @@ import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
 import withStyles from '@material-ui/core/styles/withStyles';
-
 import MenuItem from '@material-ui/core/MenuItem';
-// import Typography from '@material-ui/core/Typography';
-// import FormHelperText from '@material-ui/core/FormHelperText';
 
 import Button from 'components/material-kit-react/CustomButtons/Button';
-// import GridContainer from 'components/material-kit-react/Grid/GridContainer';
-// import GridItem from 'components/material-kit-react/Grid/GridItem';
 
 import CustomInput from 'components/CustomInput/CustomInput';
 import CustomSelect from 'components/CustomSelect/CustomSelect';

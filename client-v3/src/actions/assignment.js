@@ -12,6 +12,7 @@ import {
   createAssignment,
   updateAssignment,
   deleteAssignment,
+  submitAssignmentWork,
 } from '../api/assignment';
 
 export function assignmentsIsLoading(bool = true) {
@@ -89,5 +90,12 @@ export function assignmentDelete(id) {
   return dispatch =>
     deleteAssignment(id).then(response =>
       dispatch(assignmentDeleted(response.data.data.deleteAssignment.id)),
+    );
+}
+
+export function assignmentWorkSubmit(id, input) {
+  return dispatch =>
+    submitAssignmentWork(id, input).then(response =>
+      dispatch(assignmentUpdated(response.data.data.submitAssignmentWork)),
     );
 }

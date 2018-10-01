@@ -30,6 +30,7 @@ class Modal extends React.Component {
       bodyText,
       titleText,
       open,
+      children,
     } = this.props;
 
     return (
@@ -63,11 +64,12 @@ class Modal extends React.Component {
             <h4 className={classes.modalTitle}>{titleText}</h4>
           </DialogTitle>
           <DialogContent id="modal-slide-description" className={classes.modalBody}>
-            <h5>{bodyText}</h5>
+            {bodyText && <h5>{bodyText}</h5>}
+            {children}
           </DialogContent>
           <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
             <Button onClick={handleCancel}>{cancelText || 'Cancel'}</Button>
-            <Button onClick={handleOk} color="successNoBackground">
+            <Button onClick={handleOk} color="success">
               {okText || 'Ok'}
             </Button>
           </DialogActions>
@@ -80,6 +82,8 @@ class Modal extends React.Component {
 Modal.defaultProps = {
   okText: undefined,
   cancelText: undefined,
+  bodyText: undefined,
+  children: undefined,
 };
 
 Modal.propTypes = {
@@ -88,9 +92,10 @@ Modal.propTypes = {
   handleCancel: PropTypes.func.isRequired,
   okText: PropTypes.string,
   cancelText: PropTypes.string,
-  bodyText: PropTypes.string.isRequired,
+  bodyText: PropTypes.string,
   titleText: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
+  children: PropTypes.node,
 };
 
 export default withStyles(modalStyle)(Modal);

@@ -3,26 +3,91 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import withStyles from '@material-ui/core/styles/withStyles';
+
 import Button from 'components/material-kit-react/CustomButtons/Button';
+import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
 import Badge from 'components/material-kit-react/Badge/Badge';
+
+import Modal from 'components/Modal/Modal';
 
 import Content from 'layouts/Content';
 
-import { assignmentFetch } from 'actions/assignment';
+import { assignmentFetch, assignmentWorkSubmit } from 'actions/assignment';
+
+const styles = {
+  input: {
+    display: 'none',
+  },
+  modalInput: {
+    minWidth: '30em',
+  },
+};
 
 class Assignment extends Component {
+  state = {
+    modal: false,
+    requiredWorkId: '',
+    content: '',
+  };
+
   componentDidMount() {
     const { dispatchAssignmentFetch, match } = this.props;
     dispatchAssignmentFetch(match.params.id);
   }
 
+  handleUpload = requiredWorkId => event => {
+    const { match, dispatchAssignmentWorkSubmit } = this.props;
+    dispatchAssignmentWorkSubmit(match.params.id, {
+      assignmentWork: [{ requiredWorkId, attachment: event.target.files[0] }],
+    });
+  };
+
+  handleChange = name => event => {
+    this.setState({ [name]: event.target.value });
+  };
+
+  handleLink = requiredWorkId => () => {
+    this.setState({ requiredWorkId, modal: true, content: '' });
+  };
+
+  handleOk = () => {
+    const { match, dispatchAssignmentWorkSubmit } = this.props;
+    const { requiredWorkId, content } = this.state;
+    dispatchAssignmentWorkSubmit(match.params.id, {
+      assignmentWork: [{ requiredWorkId, content }],
+    });
+    this.setState({ modal: false });
+  };
+
   render() {
-    const { currentUser, assignments, match } = this.props;
+    const { currentUser, assignments, match, classes } = this.props;
+    const { modal, content } = this.state;
 
     const assignment = assignments.all.find(a => a.id === match.params.id);
 
     return (
       <Content title="Trabajos prácticos" subtitle="Ver trabajo práctico">
+        <Modal
+          open={modal}
+          titleText="Subir componente"
+          bodyText="Ingrese un link"
+          cancelText="Cancelar"
+          handleOk={this.handleOk}
+          handleCancel={() => this.setState({ modal: false })}
+        >
+          <CustomInput
+            labelText="Link"
+            formControlProps={{
+              className: classes.modalInput,
+              fullWidth: true,
+            }}
+            inputProps={{
+              value: content,
+              onChange: this.handleChange('content'),
+            }}
+          />
+        </Modal>
         {assignment && (
           <div>
             <h3>{assignment.name}</h3>
@@ -69,16 +134,35 @@ class Assignment extends Component {
                     ))}
                 </p>
                 <p>
-                  {rw.description} ({rw.type})
+                  {rw.assignmentWork ? (
+                    <a
+                      href={
+                        rw.assignmentWork.content
+                          ? rw.assignmentWork.content
+                          : rw.assignmentWork.attachment.url
+                      }
+                    >
+                      {rw.description} ({rw.type})
+                    </a>
+                  ) : (
+                    `${rw.description} (${rw.type})`
+                  )}
                 </p>
-                <Button
-                  // color="primary"
-                  fullWidth
-                  component={Link}
-                  to={`/assignments/${assignment.id}/submit`}
-                >
-                  Subir componente
-                </Button>
+                {['PDF', 'JPG'].includes(rw.type) ? (
+                  <label htmlFor={`attachment.${rw.id}`}>
+                    <input
+                      accept={rw.type === 'PDF' ? 'application/pdf' : 'image/jpeg'}
+                      className={classes.input}
+                      id={`attachment.${rw.id}`}
+                      name={`attachment.${rw.id}`}
+                      type="file"
+                      onChange={this.handleUpload(rw.id)}
+                    />
+                    <Button component="span">Subir componente</Button>
+                  </label>
+                ) : (
+                  <Button onClick={this.handleLink(rw.id)}>Subir componente</Button>
+                )}
               </div>
             ))}
             {currentUser.tutoredWorkshops.includes(assignment.workshop) && (
@@ -92,14 +176,14 @@ class Assignment extends Component {
               </Button>
             )}
             {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
-              assignment.statusTags.includes('pending_work') && (
+              assignment.statusTags.includes('completed_work') && (
                 <Button
                   color="primary"
                   fullWidth
                   component={Link}
-                  to={`/assignments/${assignment.id}/submit`}
+                  to={`/assignments/${assignment.id}/self_score`}
                 >
-                  Realizar entrega
+                  Autoevaluación
                 </Button>
               )}
           </div>
@@ -111,8 +195,10 @@ class Assignment extends Component {
 
 Assignment.propTypes = {
   currentUser: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   dispatchAssignmentFetch: PropTypes.func.isRequired,
+  dispatchAssignmentWorkSubmit: PropTypes.func.isRequired,
   assignments: PropTypes.object.isRequired,
 };
 
@@ -123,9 +209,10 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   dispatchAssignmentFetch: id => dispatch(assignmentFetch(id)),
+  dispatchAssignmentWorkSubmit: (id, input) => dispatch(assignmentWorkSubmit(id, input)),
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Assignment);
+)(withStyles(styles)(Assignment));

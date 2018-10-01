@@ -146,15 +146,15 @@ class Assignments extends React.Component {
                         <Info />
                       </Button>
                     ),
-                    key => (
-                      <Button
-                        color="transparent"
-                        component={Link}
-                        to={`/assignments/${key}/submit`}
-                      >
-                        <CloudUpload />
-                      </Button>
-                    ),
+                    // key => (
+                    //   <Button
+                    //     color="transparent"
+                    //     component={Link}
+                    //     to={`/assignments/${key}/submit`}
+                    //   >
+                    //     <CloudUpload />
+                    //   </Button>
+                    // ),
                   ],
             }))}
           />

@@ -90,21 +90,21 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
     if (!newAssignmentWork) {
       return;
     }
-    const assignmentWork = rw.assignmentWork.filter(
+    const assignmentWorks = rw.assignmentWorks.filter(
       aw => aw.user.toString() !== req.user._id,
     );
-    const oldAssignmentWork = rw.assignmentWork.find(
+    const oldAssignmentWorks = rw.assignmentWorks.find(
       aw => aw.user.toString() === req.user._id,
     );
 
-    assignmentWork.push({
+    assignmentWorks.push({
       content: newAssignmentWork.content,
       attachment:
         newAssignmentWork.attachment
-        || (oldAssignmentWork && oldAssignmentWork.attachment),
+        || (oldAssignmentWorks && oldAssignmentWorks.attachment),
       user: req.user._id,
     });
-    rw.set({ assignmentWork });
+    rw.set({ assignmentWorks });
   });
 
   assignment.set({
@@ -116,28 +116,33 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
         targetUser: req.user._id,
       }),
   });
-  return new Promise((resolve, reject) => {
-    assignment.save((err, doc) => {
-      if (err) {
-        return reject(err);
-      }
-      let newDoc = doc;
-      if (req.files && req.files.length > 0) {
-        req.files.forEach(async (f) => {
+  return new Promise((resolve, reject) => assignment.save(async (err, doc) => {
+    if (err) {
+      return reject(err);
+    }
+    let newDoc = doc;
+    if (req.files && req.files.length > 0) {
+      await Promise.all(
+        req.files.map(async (f) => {
           const requiredWorkId = f.fieldname;
           const requiredWork = doc.requiredWork.id(requiredWorkId);
-          const assignmentWork = requiredWork.assignmentWork.find(aw => aw.user.equals(req.user._id));
+          const assignmentWork = requiredWork.assignmentWorks.find(aw => aw.user.equals(req.user._id));
           const upload = await cloudinary.v2.uploader.upload(f.path, {
             public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
             overwrite: true,
           });
           assignmentWork.attachment.set({ url: upload.secure_url });
           newDoc = await doc.save();
-        });
-      }
-      return resolve(newDoc);
-    });
-  });
+        }),
+      );
+    }
+    console.log(
+      'newDoc',
+      newDoc.requiredWork.map(rw => rw.assignmentWorks.map(aw => aw.attachment)),
+    );
+    // return resolve(newDoc);
+    return resolve(Assignment.findOne({ _id: id }));
+  }));
 }
 
 async function submitAssignmentEvaluation(obj, { id, input }, { req }) {

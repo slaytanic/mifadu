@@ -67,11 +67,11 @@ function completedEvaluationAssignments(obj, args, { req }) {
 }
 
 function statusTags(obj, args, { req }) {
-  console.log(obj);
   return obj.statusTagsForUser(req.user);
 }
 
 function assignmentWork(obj, args, { req }) {
+  console.log('assignmentWork', obj.assignmentWorks);
   return obj.assignmentWorkForUser(req.user);
 }
 

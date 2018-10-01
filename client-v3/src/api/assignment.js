@@ -219,7 +219,16 @@ export function submitAssignmentWork(id, input) {
   formData.append(
     'request',
     JSON.stringify({
-      query: `mutation($id: ID!, $input: SubmitWorkInput!) { submitAssignmentWork(id: $id, input: $input) { id } }`,
+      query: `
+        mutation($id: ID!, $input: SubmitWorkInput!) {
+          submitAssignmentWork(id: $id, input: $input) {
+            ...defaultAssignmentFields
+            ...detailAssignmentFields
+          }
+        }
+        ${defaultAssignmentFields}
+        ${detailAssignmentFields}
+      `,
       variables: {
         id,
         input: {
