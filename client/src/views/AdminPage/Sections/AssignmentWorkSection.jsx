@@ -255,7 +255,7 @@ class AssignmentSection extends React.Component {
               </li>
             </ol>
             <p>
-              <b>Observaciones:</b>
+              <b>Reflexiones sobre el trabajo práctico:</b>
             </p>
             <p>{selfEvaluation.observations}</p>
             <h6>Evaluación</h6>
@@ -325,18 +325,18 @@ class AssignmentSection extends React.Component {
                   animation
                   domains={[
                     { name: 'Propuesta Conceptual', domain: [0, 2], getValue: d => d.score1 },
-                    { name: 'Proceso', domain: [0, 2], getValue: d => d.score2 },
-                    {
-                      name: assignment.evaluationVariable || 'Variable',
-                      domain: [0, 2],
-                      getValue: d => d.score3,
-                    },
+                    { name: 'Comunicación', domain: [0, 2], getValue: d => d.score5 },
                     {
                       name: 'Producto',
                       domain: [0, 2],
                       getValue: d => d.score4,
                     },
-                    { name: 'Comunicación', domain: [0, 2], getValue: d => d.score5 },
+                    {
+                      name: assignment.evaluationVariable || 'Variable',
+                      domain: [0, 2],
+                      getValue: d => d.score3,
+                    },
+                    { name: 'Proceso', domain: [0, 2], getValue: d => d.score2 },
                   ]}
                   margin={{ left: 55, right: 55, top: 55, bottom: 55 }}
                   width={400}
@@ -348,7 +348,7 @@ class AssignmentSection extends React.Component {
             </GridContainer>
             <CustomInput
               id="observations"
-              labelText="Observaciones"
+              labelText="Reflexiones sobre el trabajo práctico"
               formControlProps={{
                 fullWidth: true,
               }}
