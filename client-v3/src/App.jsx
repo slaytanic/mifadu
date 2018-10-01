@@ -11,7 +11,7 @@ import Register from './views/Register/Register';
 import Home from './views/Home/Home';
 import RecoverPassword from './views/RecoverPassword/RecoverPassword';
 import Profile from './views/Profile/Profile';
-import Users from './views/User/Users';
+// import Users from './views/User/Users';
 import Students from './views/Student/Students';
 import Assignment from './views/Assignment/Assignment';
 import AssignmentNew from './views/Assignment/AssignmentNew';
@@ -19,7 +19,7 @@ import AssignmentEdit from './views/Assignment/AssignmentEdit';
 import Assignments from './views/Assignment/Assignments';
 import AssignmentScore from './views/Assignment/AssignmentScore';
 import AssignmentSelfScore from './views/Assignment/AssignmentSelfScore';
-import AssignmentSubmit from './views/Assignment/AssignmentSubmit';
+// import AssignmentSubmit from './views/Assignment/AssignmentSubmit';
 
 import { currentUserFetch } from './actions/current-user';
 
@@ -42,8 +42,9 @@ class App extends Component {
               <Route path="/students" component={Students} />
               <Route path="/assignments/new" component={AssignmentNew} />
               <Route path="/assignments/:id/edit" component={AssignmentEdit} />
-              <Route path="/assignments/:id/submit" component={AssignmentSubmit} />
-              <Route path="/assignments/:id/score" component={AssignmentScore} />
+              {/* <Route path="/assignments/:id/submit" component={AssignmentSubmit} /> */}
+              <Route path="/assignments/:id/score/:targetUserId" component={AssignmentScore} />
+              <Route path="/assignments/:id/self_score" component={AssignmentSelfScore} />
               <Route
                 exact
                 path="/assignments/:filter(pending|completed|pending_evaluation|completed_evaluation)?"
