@@ -245,6 +245,17 @@ export function submitAssignmentWork(id, input) {
   return axios.post(GRAPHQL_ENDPOINT, formData);
 }
 
+export function submitAssignmentSelfEvaluation(id, input) {
+  return axios.post(GRAPHQL_ENDPOINT, {
+    query:
+      'mutation($id: ID!, $input: EvaluationInput!) { submitAssignmentSelfEvaluation(id: $id, input: $input) { id } }',
+    variables: {
+      id,
+      input,
+    },
+  });
+}
+
 export function submitAssignmentEvaluation(id, input) {
   const sanitizedEvaluation = Object.keys(input.evaluation)
     .filter(key => !['id', 'user', 'targetUser'].includes(key))

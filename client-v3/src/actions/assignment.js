@@ -13,6 +13,7 @@ import {
   updateAssignment,
   deleteAssignment,
   submitAssignmentWork,
+  submitAssignmentSelfEvaluation,
 } from '../api/assignment';
 
 export function assignmentsIsLoading(bool = true) {
@@ -97,5 +98,12 @@ export function assignmentWorkSubmit(id, input) {
   return dispatch =>
     submitAssignmentWork(id, input).then(response =>
       dispatch(assignmentUpdated(response.data.data.submitAssignmentWork)),
+    );
+}
+
+export function assignmentSelfEvaluationSubmit(id, input) {
+  return dispatch =>
+    submitAssignmentSelfEvaluation(id, input).then(response =>
+      dispatch(assignmentUpdated(response.data.data.submitAssignmentSelfEvaluation)),
     );
 }

@@ -136,13 +136,26 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
         }),
       );
     }
-    console.log(
-      'newDoc',
-      newDoc.requiredWork.map(rw => rw.assignmentWorks.map(aw => aw.attachment)),
-    );
     // return resolve(newDoc);
     return resolve(Assignment.findOne({ _id: id }));
   }));
+}
+
+async function submitAssignmentSelfEvaluation(obj, { id, input }, { req }) {
+  const assignment = await Assignment.findOne({ _id: id });
+  if (assignment === undefined) {
+    return new Error('Assignment not found');
+  }
+  const evaluations = (assignment.evaluations || []).filter(
+    e => !e.user.equals(req.user._id),
+  );
+  evaluations.push({
+    ...input,
+    user: req.user._id,
+    targetUser: req.user._id,
+  });
+  assignment.set({ evaluations });
+  return assignment.save();
 }
 
 async function submitAssignmentEvaluation(obj, { id, input }, { req }) {
@@ -169,5 +182,6 @@ function deleteAssignment(obj, { id }) {
 module.exports.createAssignment = createAssignment;
 module.exports.updateAssignment = updateAssignment;
 module.exports.submitAssignmentWork = submitAssignmentWork;
+module.exports.submitAssignmentSelfEvaluation = submitAssignmentSelfEvaluation;
 module.exports.submitAssignmentEvaluation = submitAssignmentEvaluation;
 module.exports.deleteAssignment = deleteAssignment;

@@ -27,6 +27,7 @@ const {
   updateAssignment,
   deleteAssignment,
   submitAssignmentWork,
+  submitAssignmentSelfEvaluation,
   submitAssignmentEvaluation,
 } = require('./mutations/assignment');
 const { createChair, updateChair, deleteChair } = require('./mutations/chair');
@@ -296,6 +297,7 @@ const typeDefs = `
     deleteAssignment(id: ID!): Assignment
 
     submitAssignmentWork(id: ID!, input: SubmitWorkInput!): Assignment
+    submitAssignmentSelfEvaluation(id: ID!, input: EvaluationInput!): Assignment
     submitAssignmentEvaluation(id: ID!, input: SubmitAssignmentEvaluationInput!): Assignment
 
     createChair(input: ChairInput!): Chair
@@ -390,6 +392,7 @@ const resolvers = {
     updateAssignment,
     deleteAssignment,
     submitAssignmentWork,
+    submitAssignmentSelfEvaluation,
     submitAssignmentEvaluation,
 
     createChair,
