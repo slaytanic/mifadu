@@ -57,8 +57,9 @@ class EvaluationForm extends Component {
 
   handleChange = name => event => {
     if (event.target) {
+      const { value } = event.target;
       this.setState(prevState => ({
-        evaluation: { ...prevState.evaluation, [name]: event.target.value },
+        evaluation: { ...prevState.evaluation, [name]: value },
       }));
     } else {
       this.setState(prevState => ({
