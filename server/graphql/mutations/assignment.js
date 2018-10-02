@@ -131,6 +131,7 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
             public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
             overwrite: true,
           });
+          fs.unlink(f.path);
           assignmentWork.attachment.set({ url: upload.secure_url });
           newDoc = await doc.save();
         }),
