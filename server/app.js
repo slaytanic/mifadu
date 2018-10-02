@@ -21,13 +21,14 @@ const upload = multer({
 
 function handleUpload(req, res, next) {
   upload(req, res, () => {
-    // console.log(req.body);
+    console.log('body', req.body);
     // if (!req.files || req.files.length === 0) {
     if (!req.body.request) {
       next();
       return;
     }
     req.body = JSON.parse(req.body.request);
+    console.log('parsed request', req.body.request);
     // req.files.forEach((file) => {
     //   req.body.variables.input[file.fieldname] = file;
     // });
