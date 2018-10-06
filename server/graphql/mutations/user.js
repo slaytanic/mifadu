@@ -84,9 +84,30 @@ function logoutUser(obj, args, { req }) {
   return true;
 }
 
+function recoverPassword(obj, { email }) {
+  return User.recoverPassword(email);
+}
+
+async function resetPassword(obj, { email, password, recoveryToken }) {
+  if (!recoveryToken) {
+    return null;
+  }
+
+  const user = await User.findOne({ email, recoveryToken });
+  if (user) {
+    user.set({ password, recoveryToken: null });
+    await user.save();
+    return loginUser(obj, { email, password });
+  }
+
+  return null;
+}
+
 module.exports.createUser = createUser;
 module.exports.createOrUpdateUser = createOrUpdateUser;
 module.exports.updateUser = updateUser;
 module.exports.deleteUser = deleteUser;
 module.exports.loginUser = loginUser;
 module.exports.logoutUser = logoutUser;
+module.exports.recoverPassword = recoverPassword;
+module.exports.resetPassword = resetPassword;

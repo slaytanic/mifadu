@@ -49,6 +49,8 @@ const {
   deleteUser,
   loginUser,
   logoutUser,
+  recoverPassword,
+  resetPassword,
 } = require('./mutations/user');
 const {
   createWorkshop,
@@ -322,6 +324,8 @@ const typeDefs = `
     deleteUser(id: ID!): User
     loginUser(email: String!, password: String!): User
     logoutUser: Boolean
+    recoverPassword(email: String!): Boolean
+    resetPassword(email: String!, password: String!, recoveryToken: String!): User
 
     createWorkshop(input: WorkshopInput!): Workshop
     updateWorkshop(id: ID!, input: WorkshopInput!): Workshop
@@ -417,6 +421,8 @@ const resolvers = {
     deleteUser,
     loginUser,
     logoutUser,
+    recoverPassword,
+    resetPassword,
 
     createWorkshop,
     updateWorkshop,

@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const uuidv4 = require('uuid/v4');
 
 const { Schema } = mongoose;
 
 const SALT_WORK_FACTOR = 10;
+
+const sendMail = require('../lib/sendMail');
 
 const userSchema = new Schema(
   {
@@ -26,6 +29,7 @@ const userSchema = new Schema(
     aboutMe: String,
     profilePicture: String,
     admin: { type: Boolean, default: true },
+    recoveryToken: String,
   },
   { timestamps: true },
 );
@@ -60,7 +64,25 @@ userSchema.methods.validPassword = function validPassword(password, done) {
 
 userSchema.virtual('fullName').get(() => `${this.firstName} ${this.lastName}`);
 
-userSchema.set('toJSON', { virtuals: true });
+userSchema.static.recoverPassword = async function recoverPassword(email) {
+  const user = await this.findOne({ email });
+  if (user) {
+    const recoveryToken = uuidv4();
+    user.set({ recoveryToken });
+    await user.save();
+    const recoveryLink = `https://${
+      config.hostname
+    }/recover_password/${recoveryToken}`;
+    await sendMail(
+      'no-responder@mifadu.cfapps.io',
+      email,
+      'Recuperar Clave',
+      `Para recuperar su clave haga click en el siguiente link: ${recoveryLink}`,
+      `Para recuperar su clave haga <a href="${recoveryLink}">click aquí</a>`,
+    );
+  }
+  return true;
+};
 
 const User = mongoose.model('User', userSchema);
 
