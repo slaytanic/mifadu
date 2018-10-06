@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const uuidv4 = require('uuid/v4');
+const config = require('../config');
 
 const { Schema } = mongoose;
 
@@ -64,14 +65,14 @@ userSchema.methods.validPassword = function validPassword(password, done) {
 
 userSchema.virtual('fullName').get(() => `${this.firstName} ${this.lastName}`);
 
-userSchema.static.recoverPassword = async function recoverPassword(email) {
+userSchema.statics.recoverPassword = async function recoverPassword(email) {
   const user = await this.findOne({ email });
   if (user) {
     const recoveryToken = uuidv4();
     user.set({ recoveryToken });
     await user.save();
     const recoveryLink = `https://${
-      config.hostname
+      config.url
     }/recover_password/${recoveryToken}`;
     await sendMail(
       'no-responder@mifadu.cfapps.io',

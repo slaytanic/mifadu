@@ -10,6 +10,7 @@ import Login from './views/Login/Login';
 import Register from './views/Register/Register';
 import Home from './views/Home/Home';
 import RecoverPassword from './views/RecoverPassword/RecoverPassword';
+import ResetPassword from './views/ResetPassword/ResetPassword';
 import Profile from './views/Profile/Profile';
 // import Users from './views/User/Users';
 import Students from './views/Student/Students';
@@ -65,6 +66,7 @@ class App extends Component {
     } else {
       main = (
         <Switch>
+          <Route path="/recover_password/:recoveryToken" component={ResetPassword} />
           <Route path="/recover_password" component={RecoverPassword} />
           <Route path="/register" component={Register} />
           <Route component={Login} />

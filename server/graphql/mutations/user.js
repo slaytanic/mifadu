@@ -88,16 +88,16 @@ function recoverPassword(obj, { email }) {
   return User.recoverPassword(email);
 }
 
-async function resetPassword(obj, { email, password, recoveryToken }) {
+async function resetPassword(obj, { password, recoveryToken }, context) {
   if (!recoveryToken) {
     return null;
   }
 
-  const user = await User.findOne({ email, recoveryToken });
+  const user = await User.findOne({ recoveryToken });
   if (user) {
     user.set({ password, recoveryToken: null });
     await user.save();
-    return loginUser(obj, { email, password });
+    return loginUser(obj, { email: user.email, password }, context);
   }
 
   return null;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -7,7 +8,7 @@ import * as Yup from 'yup';
 import withStyles from '@material-ui/core/styles/withStyles';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-import Email from '@material-ui/icons/Email';
+import LockOutlined from '@material-ui/icons/LockOutlined';
 
 import GridContainer from 'components/material-kit-react/Grid/GridContainer';
 import GridItem from 'components/material-kit-react/Grid/GridItem';
@@ -17,7 +18,6 @@ import CardBody from 'components/material-kit-react/Card/CardBody';
 import CardHeader from 'components/material-kit-react/Card/CardHeader';
 import CardFooter from 'components/material-kit-react/Card/CardFooter';
 import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
-import SnackbarContent from 'components/material-kit-react/Snackbar/SnackbarContent';
 
 import ErrorList from 'components/Error/ErrorList';
 
@@ -25,12 +25,11 @@ import loginPageStyle from 'assets/jss/material-kit-react/views/loginPage';
 
 import image from 'assets/img/page_background.png';
 
-import { recoverPassword } from '../../api/current-user';
+import { currentUserResetPassword } from '../../actions/current-user';
 
-class RecoverPassword extends React.Component {
+class ResetPassword extends React.Component {
   state = {
     cardAnimation: 'cardHidden',
-    emailSent: false,
   };
 
   componentDidMount() {
@@ -41,8 +40,10 @@ class RecoverPassword extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { cardAnimation, emailSent } = this.state;
+    const { classes, dispatchCurrentUserResetPassword, match } = this.props;
+    const { cardAnimation } = this.state;
+
+    const { recoveryToken } = match.params;
 
     return (
       <div
@@ -58,27 +59,29 @@ class RecoverPassword extends React.Component {
             <GridItem xs={12} sm={12} md={5}>
               <Card className={classes[cardAnimation]}>
                 <CardHeader color="primary" className={classes.cardHeader}>
-                  <h4>Recuperar clave</h4>
+                  <h4>Ingresar nueva clave</h4>
                 </CardHeader>
-                <p className={classes.divider}>Para recuperar su clave ingrese su e-mail</p>
+                <p className={classes.divider}>Para completar el proceso elija una nueva clave</p>
                 <Formik
                   initialValues={{
-                    email: '',
+                    password: '',
+                    passwordConfirm: '',
                   }}
                   validationSchema={Yup.object().shape({
-                    email: Yup.string()
-                      .email('No es un formato de e-mail válido')
-                      .required('Debe ingresar un e-mail'),
+                    password: Yup.string().required('Debe ingresar una clave'),
+                    passwordConfirm: Yup.string()
+                      .oneOf([Yup.ref('password'), null], 'La confirmación de clave no coincide')
+                      .required('Debe confirmar la clave'),
                   })}
                   onSubmit={(values, actions) =>
-                    recoverPassword(values.email).then(response => {
-                      if (response.data.errors) {
-                        actions.setError('Ha ocurrido un error');
-                      } else {
-                        this.setState({ emailSent: true });
-                      }
-                      actions.setSubmitting(false);
-                    })
+                    dispatchCurrentUserResetPassword(values.password, recoveryToken).then(
+                      action => {
+                        if (action.payload.errors) {
+                          actions.setError('Ha ocurrido un error');
+                        }
+                        actions.setSubmitting(false);
+                      },
+                    )
                   }
                   render={({
                     values,
@@ -92,31 +95,44 @@ class RecoverPassword extends React.Component {
                   }) => (
                     <Form>
                       <CardBody>
-                        {emailSent && (
-                          <SnackbarContent
-                            message="Se ha enviado un e-mail a la dirección provista con instrucciones para recuperar su clave"
-                            color="info"
-                            icon="info_outline"
-                          />
-                        )}
                         <ErrorList
                           errors={{ ...errors, error }}
                           touched={{ ...touched, error: !!error }}
                         />
                         <CustomInput
-                          labelText="e-mail"
-                          id="email"
+                          labelText="Clave"
                           formControlProps={{
                             fullWidth: true,
                           }}
-                          error={!!errors.email && touched.email}
+                          error={!!errors.password && touched.password}
                           inputProps={{
-                            value: values.email,
+                            name: 'password',
+                            type: 'password',
+                            value: values.password,
                             onChange: handleChange,
                             onBlur: handleBlur,
                             endAdornment: (
                               <InputAdornment position="end">
-                                <Email className={classes.inputIconsColor} />
+                                <LockOutlined className={classes.inputIconsColor} />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                        <CustomInput
+                          labelText="Confirmar clave"
+                          formControlProps={{
+                            fullWidth: true,
+                          }}
+                          error={!!errors.passwordConfirm && touched.passwordConfirm}
+                          inputProps={{
+                            name: 'passwordConfirm',
+                            type: 'password',
+                            value: values.passwordConfirm,
+                            onChange: handleChange,
+                            onBlur: handleBlur,
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <LockOutlined className={classes.inputIconsColor} />
                               </InputAdornment>
                             ),
                           }}
@@ -133,7 +149,7 @@ class RecoverPassword extends React.Component {
                           fullWidth
                           disabled={!dirty || isSubmitting || !!Object.keys(errors).length}
                         >
-                          Recuperar Clave
+                          Cambiar Clave
                         </Button>
                       </CardFooter>
                     </Form>
@@ -148,8 +164,18 @@ class RecoverPassword extends React.Component {
   }
 }
 
-RecoverPassword.propTypes = {
+ResetPassword.propTypes = {
   classes: PropTypes.object.isRequired,
+  dispatchCurrentUserResetPassword: PropTypes.func.isRequired,
+  match: PropTypes.object.isRequired,
 };
 
-export default withStyles(loginPageStyle)(RecoverPassword);
+const mapDispatchToProps = dispatch => ({
+  dispatchCurrentUserResetPassword: (password, recoveryToken) =>
+    dispatch(currentUserResetPassword(password, recoveryToken)),
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(withStyles(loginPageStyle)(ResetPassword));

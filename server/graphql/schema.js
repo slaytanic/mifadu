@@ -325,7 +325,7 @@ const typeDefs = `
     loginUser(email: String!, password: String!): User
     logoutUser: Boolean
     recoverPassword(email: String!): Boolean
-    resetPassword(email: String!, password: String!, recoveryToken: String!): User
+    resetPassword(password: String!, recoveryToken: String!): User
 
     createWorkshop(input: WorkshopInput!): Workshop
     updateWorkshop(id: ID!, input: WorkshopInput!): Workshop

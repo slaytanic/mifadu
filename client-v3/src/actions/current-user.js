@@ -6,7 +6,13 @@ import {
   CURRENT_USER_HAS_ERRORED,
 } from './action-types';
 
-import { getCurrentUser, loginUser, logoutUser, createOrUpdateUser } from '../api/current-user';
+import {
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  createOrUpdateUser,
+  resetPassword,
+} from '../api/current-user';
 
 export function currentUserIsLoading(bool = true) {
   return {
@@ -56,7 +62,7 @@ export function currentUserLogin(email, password) {
         return dispatch(currentUserHasErrored(response.data.errors));
       }
 
-      dispatch(currentUserHasLoaded(response.data.data.loginUser));
+      return dispatch(currentUserHasLoaded(response.data.data.loginUser));
     });
   };
 }
@@ -79,6 +85,18 @@ export function currentUserRegister(input) {
     createOrUpdateUser(input).then(response => {
       dispatch(currentUserHasLoaded(response.data.data.createOrUpdateUser));
       dispatch(push('/'));
+    });
+  };
+}
+
+export function currentUserResetPassword(password, recoveryToken) {
+  return dispatch => {
+    dispatch(currentUserIsLoading());
+
+    return resetPassword(password, recoveryToken).then(response => {
+      const action = dispatch(currentUserHasLoaded(response.data.data.resetPassword));
+      dispatch(push('/'));
+      return action;
     });
   };
 }
