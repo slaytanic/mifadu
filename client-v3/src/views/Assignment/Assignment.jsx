@@ -100,6 +100,24 @@ class Assignment extends Component {
                 assignment.statusTags.includes('completed_work') && (
                   <Badge color="success">Entregado</Badge>
                 )}
+              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                assignment.statusTags.includes('self_evaluation_pending') && (
+                  <Badge color="warning">Autoevaluación Pendiente</Badge>
+                )}
+              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                assignment.statusTags.includes('self_evaluation_completed') && (
+                  <Badge color="success">Autoevaluación Realizada</Badge>
+                )}
+              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                assignment.statusTags.includes('self_evaluation_completed') &&
+                assignment.statusTags.includes('evaluation_pending') && (
+                  <Badge color="warning">Evaluación Pendiente</Badge>
+                )}
+              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                assignment.statusTags.includes('self_evaluation_completed') &&
+                assignment.statusTags.includes('evaluation_completed') && (
+                  <Badge color="success">Evaluación Realizada</Badge>
+                )}
             </p>
             <h4>{assignment.shortDescription}</h4>
             <p>{assignment.description}</p>

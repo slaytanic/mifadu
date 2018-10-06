@@ -38,13 +38,8 @@ const requiredWorkSchema = new Schema(
   },
 );
 
-requiredWorkSchema.methods.assignmentWorkForUser = function assignmentWorkForUser(
-  user,
-) {
-  return (
-    this.assignmentWorks
-    && this.assignmentWorks.find(aw => aw.user.equals(user._id))
-  );
+requiredWorkSchema.methods.assignmentWorkForUser = function assignmentWorkForUser(user) {
+  return this.assignmentWorks && this.assignmentWorks.find(aw => aw.user.equals(user._id));
 };
 
 const assignmentSchema = new Schema(
@@ -66,10 +61,7 @@ const assignmentSchema = new Schema(
   { timestamps: true },
 );
 
-assignmentSchema.methods.evaluationForUser = function evaluationForUser(
-  user,
-  targetUser,
-) {
+assignmentSchema.methods.evaluationForUser = function evaluationForUser(user, targetUser) {
   if (this.evaluations) {
     return this.evaluations.find(
       e => e.targetUser.equals(targetUser._id) && e.user.equals(user._id),
@@ -78,20 +70,22 @@ assignmentSchema.methods.evaluationForUser = function evaluationForUser(
   return null;
 };
 
-assignmentSchema.methods.selfEvaluationForUser = function selfEvaluationForUser(
-  user,
-) {
+assignmentSchema.methods.selfEvaluationForUser = function selfEvaluationForUser(user) {
   return this.evaluationForUser(user, user);
+};
+
+assignmentSchema.methods.tutorEvaluationForUser = function tutorEvaluationForUser(user) {
+  if (this.evaluations) {
+    return this.evaluations.find(e => !e.user.equals(user._id) && e.targetUser.equals(user._id));
+  }
+  return null;
 };
 
 assignmentSchema.methods.statusTagsForUser = function statusTagsForUser(user) {
   const statusTags = [];
   if (this.requiredWork) {
     const workDelivered = this.requiredWork
-      .map(
-        rw => rw.assignmentWorks
-          && rw.assignmentWorks.find(aw => aw.user.equals(user._id)),
-      )
+      .map(rw => rw.assignmentWorks && rw.assignmentWorks.find(aw => aw.user.equals(user._id)))
       .filter(aw => aw);
     if (workDelivered.length < this.requiredWork.length) {
       statusTags.push('pending_work');
@@ -99,6 +93,19 @@ assignmentSchema.methods.statusTagsForUser = function statusTagsForUser(user) {
       statusTags.push('completed_work');
     }
   }
+
+  if (this.selfEvaluationForUser(user)) {
+    statusTags.push('self_evaluation_completed');
+  } else {
+    statusTags.push('self_evaluation_pending');
+  }
+
+  if (this.tutorEvaluationForUser(user)) {
+    statusTags.push('evaluation_completed');
+  } else {
+    statusTags.push('evaluation_pending');
+  }
+
   return statusTags;
 };
 
@@ -114,37 +121,27 @@ assignmentSchema.statics.completedByUser = function completedByUser(user) {
   return this.find({ workshop: user.workshop });
 };
 
-assignmentSchema.statics.pendingEvaluationByUser = function pendingEvaluationByUser(
-  user,
-) {
+assignmentSchema.statics.pendingEvaluationByUser = function pendingEvaluationByUser(user) {
   return new Promise((resolve, reject) => {
     this.find({ workshop: user.workshop }, (err, docs) => {
       if (err) {
         return reject(err);
       }
       return resolve(
-        docs.filter(
-          d => (d.evaluations || []).filter(e => e.user.equals(user._id)).length
-            < 1,
-        ),
+        docs.filter(d => (d.evaluations || []).filter(e => e.user.equals(user._id)).length < 1),
       );
     });
   });
 };
 
-assignmentSchema.statics.completedEvaluationByUser = function completedEvaluationByUser(
-  user,
-) {
+assignmentSchema.statics.completedEvaluationByUser = function completedEvaluationByUser(user) {
   return new Promise((resolve, reject) => {
     this.find({ workshop: user.workshop }, (err, docs) => {
       if (err) {
         return reject(err);
       }
       return resolve(
-        docs.filter(
-          d => (d.evaluations || []).filter(e => e.user.equals(user._id)).length
-            > 0,
-        ),
+        docs.filter(d => (d.evaluations || []).filter(e => e.user.equals(user._id)).length > 0),
       );
     });
   });

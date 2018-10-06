@@ -1,21 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
-
-import withStyles from '@material-ui/core/styles/withStyles';
 
 import EvaluationForm from 'components/Assignment/EvaluationForm';
 
 import Content from 'layouts/Content';
 
-import { assignmentFetch, assignmentSelfEvaluationSubmit } from 'actions/assignment';
-
-const styles = {
-  slider: {
-    marginBottom: '3em',
-  },
-};
+import { assignmentFetch } from 'actions/assignment';
 
 class AssignmentSelfScore extends Component {
   componentDidMount() {
@@ -24,14 +15,7 @@ class AssignmentSelfScore extends Component {
   }
 
   render() {
-    const {
-      currentUser,
-      assignments,
-      match,
-      classes,
-      dispatchAssignmentSelfEvaluationSubmit,
-      historyPush,
-    } = this.props;
+    const { assignments, match } = this.props;
 
     const assignment = assignments.all.find(a => a.id === match.params.id);
 
@@ -43,7 +27,7 @@ class AssignmentSelfScore extends Component {
             <h4>{assignment.shortDescription}</h4>
             <p>{assignment.description}</p>
             <h6>Autoevaluación</h6>
-            <EvaluationForm assignment={assignment} />
+            <EvaluationForm assignment={assignment} self />
           </div>
         )}
       </Content>
@@ -52,11 +36,8 @@ class AssignmentSelfScore extends Component {
 }
 
 AssignmentSelfScore.propTypes = {
-  currentUser: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   dispatchAssignmentFetch: PropTypes.func.isRequired,
-  dispatchAssignmentWorkSubmit: PropTypes.func.isRequired,
   assignments: PropTypes.object.isRequired,
 };
 
@@ -67,14 +48,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   dispatchAssignmentFetch: id => dispatch(assignmentFetch(id)),
-  dispatchAssignmentSelfEvaluationSubmit: (id, input) =>
-    dispatch(assignmentSelfEvaluationSubmit(id, input)),
-  historyPush: path => {
-    dispatch(push(path));
-  },
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withStyles(styles)(AssignmentSelfScore));
+)(AssignmentSelfScore);

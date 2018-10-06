@@ -15,8 +15,6 @@ import GridItem from 'components/material-kit-react/Grid/GridItem';
 
 import RadarChart from 'components/RadarChart/RadarChart';
 
-import Content from 'layouts/Content';
-
 import { assignmentFetch, assignmentSelfEvaluationSubmit } from 'actions/assignment';
 
 const styles = {
@@ -30,15 +28,15 @@ class EvaluationForm extends Component {
     super(props);
 
     const { selfEvaluation } = props.assignment;
-    if (selfEvaluation) {
+    if (selfEvaluation && props.self === true) {
       this.state = {
         evaluation: {
-          score1: selfEvaluation.score1,
-          score2: selfEvaluation.score2,
-          score3: selfEvaluation.score3,
-          score4: selfEvaluation.score4,
-          score5: selfEvaluation.score5,
-          observations: selfEvaluation.observations,
+          score1: selfEvaluation.score1 || 0,
+          score2: selfEvaluation.score2 || 0,
+          score3: selfEvaluation.score3 || 0,
+          score4: selfEvaluation.score4 || 0,
+          score5: selfEvaluation.score5 || 0,
+          observations: selfEvaluation.observations || '',
         },
       };
     } else {
@@ -65,6 +63,17 @@ class EvaluationForm extends Component {
       this.setState(prevState => ({
         evaluation: { ...prevState.evaluation, [name]: parseFloat(event[0]) },
       }));
+    }
+  };
+
+  handleSubmit = () => {
+    const { assignment, historyPush, dispatchAssignmentSelfEvaluationSubmit, self } = this.props;
+    const { evaluation } = this.state;
+
+    if (self) {
+      dispatchAssignmentSelfEvaluationSubmit(assignment.id, evaluation).then(() => {
+        historyPush(`/assignments/${assignment.id}`);
+      });
     }
   };
 
@@ -168,13 +177,32 @@ class EvaluationForm extends Component {
             onChange: this.handleChange('observations'),
           }}
         />
-        <Button color="primary" fullWidth component={Link} to={`/assignments/${assignment.id}`}>
-          Completar autoevaluación
-        </Button>
+        <GridContainer>
+          <GridItem xs={12} sm={12} md={6}>
+            <Button
+              simple
+              color="primary"
+              fullWidth
+              component={Link}
+              to={`/assignments/${assignment.id}`}
+            >
+              Cancelar
+            </Button>
+          </GridItem>
+          <GridItem xs={12} sm={12} md={6}>
+            <Button color="primary" fullWidth onClick={this.handleSubmit}>
+              Completar autoevaluación
+            </Button>
+          </GridItem>
+        </GridContainer>
       </div>
     );
   }
 }
+
+EvaluationForm.defaultProps = {
+  self: false,
+};
 
 EvaluationForm.propTypes = {
   currentUser: PropTypes.object.isRequired,
@@ -182,7 +210,8 @@ EvaluationForm.propTypes = {
   match: PropTypes.object.isRequired,
   dispatchAssignmentFetch: PropTypes.func.isRequired,
   dispatchAssignmentWorkSubmit: PropTypes.func.isRequired,
-  assignments: PropTypes.object.isRequired,
+  assignment: PropTypes.object.isRequired,
+  self: PropTypes.boolean,
 };
 
 const mapStateToProps = state => ({

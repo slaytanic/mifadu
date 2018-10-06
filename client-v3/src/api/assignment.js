@@ -54,6 +54,14 @@ fragment detailAssignmentFields on Assignment {
     score5
     observations
   }
+  selfEvaluation {
+    score1
+    score2
+    score3
+    score4
+    score5
+    observations
+  }
 }
 `;
 
@@ -247,8 +255,16 @@ export function submitAssignmentWork(id, input) {
 
 export function submitAssignmentSelfEvaluation(id, input) {
   return axios.post(GRAPHQL_ENDPOINT, {
-    query:
-      'mutation($id: ID!, $input: EvaluationInput!) { submitAssignmentSelfEvaluation(id: $id, input: $input) { id } }',
+    query: `
+      mutation($id: ID!, $input: EvaluationInput!) {
+        submitAssignmentSelfEvaluation(id: $id, input: $input) {
+          ...defaultAssignmentFields
+          ...detailAssignmentFields
+        }
+      }
+      ${defaultAssignmentFields}
+      ${detailAssignmentFields}
+    `,
     variables: {
       id,
       input,
