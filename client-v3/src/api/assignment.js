@@ -14,6 +14,9 @@ const defaultAssignmentFields = `
         id
       }
     }
+    completedWorksCount
+    evaluatedWorksCount
+    pendingEvaluationWorksCount
   }
 `;
 

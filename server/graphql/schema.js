@@ -31,17 +31,9 @@ const {
   submitAssignmentEvaluation,
 } = require('./mutations/assignment');
 const { createChair, updateChair, deleteChair } = require('./mutations/chair');
-const {
-  createSubject,
-  updateSubject,
-  deleteSubject,
-} = require('./mutations/subject');
+const { createSubject, updateSubject, deleteSubject } = require('./mutations/subject');
 const { createTag, updateTag, deleteTag } = require('./mutations/tag');
-const {
-  createUniversity,
-  updateUniversity,
-  deleteUniversity,
-} = require('./mutations/university');
+const { createUniversity, updateUniversity, deleteUniversity } = require('./mutations/university');
 const {
   createUser,
   createOrUpdateUser,
@@ -52,11 +44,7 @@ const {
   recoverPassword,
   resetPassword,
 } = require('./mutations/user');
-const {
-  createWorkshop,
-  updateWorkshop,
-  deleteWorkshop,
-} = require('./mutations/workshop');
+const { createWorkshop, updateWorkshop, deleteWorkshop } = require('./mutations/workshop');
 
 const typeDefs = `
   scalar Date
@@ -117,6 +105,9 @@ const typeDefs = `
     evaluations: [Evaluation]
     workshop: Workshop
     statusTags: [String]
+    completedWorksCount: Int
+    evaluatedWorksCount: Int
+    pendingEvaluationWorksCount: Int
     updatedAt: DateTime
     createdAt: DateTime
   }
