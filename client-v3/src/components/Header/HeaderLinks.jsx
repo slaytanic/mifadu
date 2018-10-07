@@ -37,7 +37,7 @@ function HeaderLinks({ ...props }) {
       <ListItem className={classes.listItem} key="pending-evaluation">
         <Button
           component={Link}
-          to="/assignments/pending_evaluation"
+          to="/evaluations/pending"
           color="transparent"
           className={classes.navLink}
         >
@@ -49,7 +49,7 @@ function HeaderLinks({ ...props }) {
       <ListItem className={classes.listItem} key="completed-evaluation">
         <Button
           component={Link}
-          to="/assignments/completed_evaluation"
+          to="/evaluations/completed"
           color="transparent"
           className={classes.navLink}
         >

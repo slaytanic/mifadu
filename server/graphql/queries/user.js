@@ -9,6 +9,16 @@ function userByRef(ref) {
   };
 }
 
+function usersByRef(ref) {
+  return (obj) => {
+    if (obj && obj[ref]) {
+      console.log('ref', obj[ref]);
+      return User.find({ _id: { $in: obj[ref] } });
+    }
+    return null;
+  };
+}
+
 function user(obj, args) {
   if (obj && obj.user) {
     return User.findOne({ _id: obj.user });
@@ -35,6 +45,7 @@ function myStudents(obj, args, { req }) {
 }
 
 module.exports.userByRef = userByRef;
+module.exports.usersByRef = usersByRef;
 module.exports.user = user;
 module.exports.users = users;
 module.exports.me = me;

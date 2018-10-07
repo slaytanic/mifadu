@@ -150,34 +150,11 @@ assignmentSchema.statics.completedEvaluationByUser = function completedEvaluatio
 };
 
 assignmentSchema.virtual('completedWorksCount').get(function getCompletedWorksCount() {
-  let count = 0;
-  if (this.requiredWork) {
-    const requiredWorkCount = this.requiredWork.length;
-    const usersWithSubmittedWork = [
-      ...new Set(
-        this.requiredWork.flatMap(
-          rw => rw.assignmentWorks && rw.assignmentWorks.map(aw => aw.user),
-        ),
-      ),
-    ];
-    usersWithSubmittedWork.forEach((user) => {
-      const submittedWorkCount = this.requiredWork
-        .map(rw => rw.assignmentWorks && rw.assignmentWorks.find(aw => aw.user.equals(user)))
-        .filter(i => i).length;
-
-      if (submittedWorkCount === requiredWorkCount && this.selfEvaluationForUser({ _id: user })) {
-        count += 1;
-      }
-    });
-  }
-  return count;
+  return this.completedBy.length;
 });
 
 assignmentSchema.virtual('evaluatedWorksCount').get(function getEvaluatedWorksCount() {
-  if (this.evaluations) {
-    return this.evaluations.filter(e => !e.targetUser.equals(e.user)).length;
-  }
-  return 0;
+  return this.usersWithEvaluations.length;
 });
 
 assignmentSchema
@@ -185,6 +162,43 @@ assignmentSchema
   .get(function getPendingEvaluationWorksCount() {
     return this.completedWorksCount - this.evaluatedWorksCount;
   });
+
+assignmentSchema.virtual('completedBy').get(function getCompletedBy() {
+  const requiredWorkCount = this.requiredWork.length;
+  const usersWithSubmittedWork = [
+    ...new Set(
+      this.requiredWork.flatMap(rw => rw.assignmentWorks && rw.assignmentWorks.map(aw => aw.user)),
+    ),
+  ];
+  return usersWithSubmittedWork
+    .map((user) => {
+      const submittedWorkCount = this.requiredWork
+        .map(rw => rw.assignmentWorks && rw.assignmentWorks.find(aw => aw.user.equals(user)))
+        .filter(i => i).length;
+
+      if (submittedWorkCount === requiredWorkCount && this.selfEvaluationForUser({ _id: user })) {
+        return user;
+      }
+      return null;
+    })
+    .filter(i => i);
+});
+
+assignmentSchema.virtual('usersWithoutEvaluations').get(function getUsersWithoutEvaluations() {
+  if (this.evaluations) {
+    return this.completedBy.filter(user => !this.usersWithEvaluations.includes(user.toString()));
+  }
+  return this.completedBy;
+});
+
+assignmentSchema.virtual('usersWithEvaluations').get(function getUsersWithEvaluations() {
+  if (this.evaluations) {
+    return this.evaluations
+      .filter(e => !e.targetUser.equals(e.user))
+      .map(e => e.targetUser.toString());
+  }
+  return [];
+});
 
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 

@@ -18,7 +18,7 @@ const { subject, subjects } = require('./queries/subject');
 const { tag, tags } = require('./queries/tag');
 const { university, universitys } = require('./queries/university');
 const {
-  userByRef, user, users, me, myStudents,
+  userByRef, usersByRef, user, users, me, myStudents,
 } = require('./queries/user');
 const { workshop, workshops, myWorkshops } = require('./queries/workshop');
 
@@ -108,6 +108,9 @@ const typeDefs = `
     completedWorksCount: Int
     evaluatedWorksCount: Int
     pendingEvaluationWorksCount: Int
+    completedBy: [User]
+    usersWithEvaluations: [User]
+    usersWithoutEvaluations: [User]
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -332,6 +335,9 @@ const resolvers = {
     workshop,
     statusTags,
     selfEvaluation,
+    completedBy: usersByRef('completedBy'),
+    usersWithEvaluations: usersByRef('usersWithEvaluations'),
+    usersWithoutEvaluations: usersByRef('usersWithoutEvaluations'),
   },
   AssignmentWork: {
     user,

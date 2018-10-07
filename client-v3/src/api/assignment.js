@@ -17,6 +17,32 @@ const defaultAssignmentFields = `
     completedWorksCount
     evaluatedWorksCount
     pendingEvaluationWorksCount
+    completedBy {
+      id
+      fullName
+    }
+    usersWithoutEvaluations {
+      id
+      fullName
+    }
+    usersWithEvaluations {
+      id
+      fullName
+    }
+    evaluations {
+      score1
+      score2
+      score3
+      score4
+      score5
+      observations
+      targetUser {
+        id
+      }
+      user {
+        id
+      }
+    }
   }
 `;
 
@@ -36,6 +62,18 @@ fragment detailAssignmentFields on Assignment {
         url
       }
     }
+    assignmentWorks {
+      id
+      content
+      attachment {
+        name
+        type
+        url
+      }
+      user {
+        id
+      }
+    }
   }
   type
   tags {
@@ -48,14 +86,6 @@ fragment detailAssignmentFields on Assignment {
     type
     name
     url
-  }
-  evaluation {
-    score1
-    score2
-    score3
-    score4
-    score5
-    observations
   }
   selfEvaluation {
     score1
@@ -276,16 +306,20 @@ export function submitAssignmentSelfEvaluation(id, input) {
 }
 
 export function submitAssignmentEvaluation(id, input) {
-  const sanitizedEvaluation = Object.keys(input.evaluation)
-    .filter(key => !['id', 'user', 'targetUser'].includes(key))
-    .reduce((obj, key) => ({ ...obj, [key]: input.evaluation[key] }), {});
-
   return axios.post(GRAPHQL_ENDPOINT, {
-    query:
-      'mutation($id: ID!, $input: SubmitAssignmentEvaluationInput!) { submitAssignmentEvaluation(id: $id, input: $input) { id } }',
+    query: `
+      mutation($id: ID!, $input: SubmitAssignmentEvaluationInput!) {
+        submitAssignmentEvaluation(id: $id, input: $input) {
+          ...defaultAssignmentFields
+          ...detailAssignmentFields
+        }
+      }
+      ${defaultAssignmentFields}
+      ${detailAssignmentFields}
+    `,
     variables: {
       id,
-      input: { ...input, evaluation: sanitizedEvaluation },
+      input,
     },
   });
 }

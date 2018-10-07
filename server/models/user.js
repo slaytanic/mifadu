@@ -63,7 +63,9 @@ userSchema.methods.validPassword = function validPassword(password, done) {
   });
 };
 
-userSchema.virtual('fullName').get(() => `${this.firstName} ${this.lastName}`);
+userSchema.virtual('fullName').get(function getFullName() {
+  return `${this.firstName} ${this.lastName}`;
+});
 
 userSchema.statics.recoverPassword = async function recoverPassword(email) {
   const user = await this.findOne({ email });
@@ -71,9 +73,7 @@ userSchema.statics.recoverPassword = async function recoverPassword(email) {
     const recoveryToken = uuidv4();
     user.set({ recoveryToken });
     await user.save();
-    const recoveryLink = `https://${
-      config.url
-    }/recover_password/${recoveryToken}`;
+    const recoveryLink = `https://${config.url}/recover_password/${recoveryToken}`;
     await sendMail(
       'no-responder@mifadu.cfapps.io',
       email,

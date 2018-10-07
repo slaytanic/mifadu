@@ -15,7 +15,11 @@ import GridItem from 'components/material-kit-react/Grid/GridItem';
 
 import RadarChart from 'components/RadarChart/RadarChart';
 
-import { assignmentFetch, assignmentSelfEvaluationSubmit } from 'actions/assignment';
+import {
+  assignmentFetch,
+  assignmentEvaluationSubmit,
+  assignmentSelfEvaluationSubmit,
+} from 'actions/assignment';
 
 const styles = {
   slider: {
@@ -26,9 +30,9 @@ const styles = {
 class EvaluationForm extends Component {
   constructor(props) {
     super(props);
-
-    const { selfEvaluation } = props.assignment;
-    if (selfEvaluation && props.self === true) {
+    const { assignment, currentUser, targetUserId, self } = props;
+    const { selfEvaluation, evaluations } = assignment;
+    if (selfEvaluation && self === true) {
       this.state = {
         evaluation: {
           score1: selfEvaluation.score1 || 0,
@@ -37,6 +41,30 @@ class EvaluationForm extends Component {
           score4: selfEvaluation.score4 || 0,
           score5: selfEvaluation.score5 || 0,
           observations: selfEvaluation.observations || '',
+        },
+      };
+    } else if (self !== true && evaluations) {
+      const evaluation = assignment.evaluations.find(
+        e => e.targetUser.id === targetUserId && e.user.id === currentUser.id,
+      );
+      const targetUserEvaluation = assignment.evaluations.find(
+        e => e.targetUser.id === targetUserId && e.user.id === targetUserId,
+      );
+      this.state = {
+        evaluation: {
+          score1: (evaluation && evaluation.score1) || 0,
+          score2: (evaluation && evaluation.score2) || 0,
+          score3: (evaluation && evaluation.score3) || 0,
+          score4: (evaluation && evaluation.score4) || 0,
+          score5: (evaluation && evaluation.score5) || 0,
+          observations: (evaluation && evaluation.observations) || '',
+        },
+        selfEvaluation: {
+          score1: (targetUserEvaluation && targetUserEvaluation.score1) || 0,
+          score2: (targetUserEvaluation && targetUserEvaluation.score2) || 0,
+          score3: (targetUserEvaluation && targetUserEvaluation.score3) || 0,
+          score4: (targetUserEvaluation && targetUserEvaluation.score4) || 0,
+          score5: (targetUserEvaluation && targetUserEvaluation.score5) || 0,
         },
       };
     } else {
@@ -67,19 +95,39 @@ class EvaluationForm extends Component {
   };
 
   handleSubmit = () => {
-    const { assignment, historyPush, dispatchAssignmentSelfEvaluationSubmit, self } = this.props;
+    const {
+      assignment,
+      historyPush,
+      dispatchAssignmentEvaluationSubmit,
+      dispatchAssignmentSelfEvaluationSubmit,
+      self,
+      targetUserId,
+    } = this.props;
     const { evaluation } = this.state;
 
     if (self) {
       dispatchAssignmentSelfEvaluationSubmit(assignment.id, evaluation).then(() => {
         historyPush(`/assignments/${assignment.id}`);
       });
+    } else {
+      dispatchAssignmentEvaluationSubmit(assignment.id, {
+        evaluation,
+        targetUser: targetUserId,
+      }).then(() => {
+        historyPush(`/evaluations/completed`);
+      });
     }
   };
 
   render() {
-    const { assignment, classes, dispatchAssignmentSelfEvaluationSubmit, historyPush } = this.props;
+    const { assignment, classes, self } = this.props;
     const { evaluation } = this.state;
+
+    const chartData = [evaluation];
+    if (self !== true) {
+      const { selfEvaluation } = this.state;
+      chartData.push(selfEvaluation);
+    }
 
     return (
       <div>
@@ -139,7 +187,7 @@ class EvaluationForm extends Component {
           </GridItem>
           <GridItem xs={12} sm={12} md={6}>
             <RadarChart
-              data={[evaluation]}
+              data={chartData}
               animation
               domains={[
                 { name: 'Propuesta Conceptual', domain: [0, 2], getValue: d => d.score1 },
@@ -166,7 +214,7 @@ class EvaluationForm extends Component {
         </GridContainer>
         <CustomInput
           id="observations"
-          labelText="Reflexiones sobre el trabajo práctico"
+          labelText={self ? 'Reflexiones sobre el trabajo práctico' : 'Observaciones'}
           formControlProps={{
             fullWidth: true,
           }}
@@ -184,14 +232,14 @@ class EvaluationForm extends Component {
               color="primary"
               fullWidth
               component={Link}
-              to={`/assignments/${assignment.id}`}
+              to={self ? `/assignments/${assignment.id}` : '/evaluations/pending'}
             >
               Cancelar
             </Button>
           </GridItem>
           <GridItem xs={12} sm={12} md={6}>
             <Button color="primary" fullWidth onClick={this.handleSubmit}>
-              Completar autoevaluación
+              Completar {self ? 'autoevaluación' : 'evaluación'}
             </Button>
           </GridItem>
         </GridContainer>
@@ -202,25 +250,29 @@ class EvaluationForm extends Component {
 
 EvaluationForm.defaultProps = {
   self: false,
+  currentUser: undefined,
+  targetUserId: undefined,
 };
 
 EvaluationForm.propTypes = {
-  currentUser: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired,
-  dispatchAssignmentFetch: PropTypes.func.isRequired,
-  dispatchAssignmentWorkSubmit: PropTypes.func.isRequired,
+  dispatchAssignmentEvaluationSubmit: PropTypes.func.isRequired,
+  dispatchAssignmentSelfEvaluationSubmit: PropTypes.func.isRequired,
+  historyPush: PropTypes.func.isRequired,
   assignment: PropTypes.object.isRequired,
-  self: PropTypes.boolean,
+  currentUser: PropTypes.object,
+  targetUserId: PropTypes.string,
+  self: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
-  currentUser: state.currentUser,
   assignments: state.assignments,
 });
 
 const mapDispatchToProps = dispatch => ({
   dispatchAssignmentFetch: id => dispatch(assignmentFetch(id)),
+  dispatchAssignmentEvaluationSubmit: (id, input) =>
+    dispatch(assignmentEvaluationSubmit(id, input)),
   dispatchAssignmentSelfEvaluationSubmit: (id, input) =>
     dispatch(assignmentSelfEvaluationSubmit(id, input)),
   historyPush: path => {

@@ -73,7 +73,7 @@ class Home extends Component {
               <CardFooter stats>
                 <div className={classes.stats}>
                   {isTutor ? (
-                    <Link to="/assignments/pending_evaluation">Ver evaluaciones pendientes</Link>
+                    <Link to="/evaluations/pending">Ver evaluaciones pendientes</Link>
                   ) : (
                     <Link to="/assignments/pending">Ver trabajos prácticos pendientes</Link>
                   )}
@@ -97,7 +97,7 @@ class Home extends Component {
               <CardFooter stats>
                 <div className={classes.stats}>
                   {isTutor ? (
-                    <Link to="/assignments/completed_evaluation">Ver evaluaciones realizadas</Link>
+                    <Link to="/evaluations/completed">Ver evaluaciones realizadas</Link>
                   ) : (
                     <Link to="/assignments/completed">Ver trabajos prácticos entregados</Link>
                   )}

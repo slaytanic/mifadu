@@ -21,6 +21,8 @@ import Assignments from './views/Assignment/Assignments';
 import AssignmentScore from './views/Assignment/AssignmentScore';
 import AssignmentSelfScore from './views/Assignment/AssignmentSelfScore';
 // import AssignmentSubmit from './views/Assignment/AssignmentSubmit';
+import Evaluation from './views/Evaluation/Evaluation';
+import Evaluations from './views/Evaluation/Evaluations';
 
 import { currentUserFetch } from './actions/current-user';
 
@@ -43,15 +45,16 @@ class App extends Component {
               <Route path="/students" component={Students} />
               <Route path="/assignments/new" component={AssignmentNew} />
               <Route path="/assignments/:id/edit" component={AssignmentEdit} />
-              {/* <Route path="/assignments/:id/submit" component={AssignmentSubmit} /> */}
               <Route path="/assignments/:id/score/:targetUserId" component={AssignmentScore} />
               <Route path="/assignments/:id/self_score" component={AssignmentSelfScore} />
               <Route
                 exact
-                path="/assignments/:filter(pending|completed|pending_evaluation|completed_evaluation)?"
+                path="/assignments/:filter(pending|completed)?"
                 component={Assignments}
               />
               <Route path="/assignments/:id" component={Assignment} />
+              <Route path="/evaluations/:assignmentId/:studentId" component={Evaluation} />
+              <Route path="/evaluations/:filter(pending|completed)?" component={Evaluations} />
               <Route path="/" component={Home} />
             </Switch>
           </LoggedIn>
