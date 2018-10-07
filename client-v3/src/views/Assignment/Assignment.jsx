@@ -92,28 +92,28 @@ class Assignment extends Component {
           <div>
             <h3>{assignment.name}</h3>
             <p>
-              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+              {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
                 assignment.statusTags.includes('pending_work') && (
                   <Badge color="warning">Pendiente</Badge>
                 )}
-              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+              {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
                 assignment.statusTags.includes('completed_work') && (
                   <Badge color="success">Entregado</Badge>
                 )}
-              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+              {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
                 assignment.statusTags.includes('self_evaluation_pending') && (
                   <Badge color="warning">Autoevaluación Pendiente</Badge>
                 )}
-              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+              {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
                 assignment.statusTags.includes('self_evaluation_completed') && (
                   <Badge color="success">Autoevaluación Realizada</Badge>
                 )}
-              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+              {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
                 assignment.statusTags.includes('self_evaluation_completed') &&
                 assignment.statusTags.includes('evaluation_pending') && (
                   <Badge color="warning">Evaluación Pendiente</Badge>
                 )}
-              {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+              {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
                 assignment.statusTags.includes('self_evaluation_completed') &&
                 assignment.statusTags.includes('evaluation_completed') && (
                   <Badge color="success">Evaluación Realizada</Badge>
@@ -144,7 +144,9 @@ class Assignment extends Component {
               <div key={rw.id}>
                 <h6>Componente de entrega #{index + 1}</h6>
                 <p>
-                  {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+                  {!currentUser.tutoredWorkshops
+                    .map(tw => tw.id)
+                    .includes(assignment.workshop.id) &&
                     (rw.assignmentWork ? (
                       <Badge color="success">Entregado</Badge>
                     ) : (
@@ -166,24 +168,25 @@ class Assignment extends Component {
                     `${rw.description} (${rw.type})`
                   )}
                 </p>
-                {['PDF', 'JPG'].includes(rw.type) ? (
-                  <label htmlFor={`attachment.${rw.id}`}>
-                    <input
-                      accept={rw.type === 'PDF' ? 'application/pdf' : 'image/jpeg'}
-                      className={classes.input}
-                      id={`attachment.${rw.id}`}
-                      name={`attachment.${rw.id}`}
-                      type="file"
-                      onChange={this.handleUpload(rw.id)}
-                    />
-                    <Button component="span">Subir componente</Button>
-                  </label>
-                ) : (
-                  <Button onClick={this.handleLink(rw.id)}>Subir componente</Button>
-                )}
+                {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
+                  (['PDF', 'JPG'].includes(rw.type) ? (
+                    <label htmlFor={`attachment.${rw.id}`}>
+                      <input
+                        accept={rw.type === 'PDF' ? 'application/pdf' : 'image/jpeg'}
+                        className={classes.input}
+                        id={`attachment.${rw.id}`}
+                        name={`attachment.${rw.id}`}
+                        type="file"
+                        onChange={this.handleUpload(rw.id)}
+                      />
+                      <Button component="span">Subir componente</Button>
+                    </label>
+                  ) : (
+                    <Button onClick={this.handleLink(rw.id)}>Subir componente</Button>
+                  ))}
               </div>
             ))}
-            {currentUser.tutoredWorkshops.includes(assignment.workshop) && (
+            {currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) && (
               <Button
                 color="primary"
                 fullWidth
@@ -193,7 +196,7 @@ class Assignment extends Component {
                 Editar trabajo práctico
               </Button>
             )}
-            {!currentUser.tutoredWorkshops.includes(assignment.workshop) &&
+            {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
               assignment.statusTags.includes('completed_work') && (
                 <Button
                   color="primary"
