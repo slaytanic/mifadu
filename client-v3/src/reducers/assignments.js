@@ -16,23 +16,23 @@ function count(assignments) {
     counters.pendingEvaluationCount += a.pendingEvaluationWorksCount;
     counters.completedCount += a.completedWorksCount;
     counters.completedEvaluationCount += a.evaluatedWorksCount;
-    // (a.statusTags || []).forEach(t => {
-    //   switch (t) {
-    //     case 'pending_evaluation':
-    //       counters.pendingEvaluationCount += 1;
-    //       break;
-    //     case 'pending_work':
-    //       counters.pendingCount += 1;
-    //       break;
-    //     case 'completed_evaluation':
-    //       counters.completedEvaluationCount += 1;
-    //       break;
-    //     case 'completed_work':
-    //       counters.completedCount += 1;
-    //       break;
-    //     default:
-    //   }
-    // });
+    (a.statusTags || []).forEach(t => {
+      switch (t) {
+        //     case 'pending_evaluation':
+        //       counters.pendingEvaluationCount += 1;
+        //       break;
+        case 'pending_work':
+          counters.pendingCount += 1;
+          break;
+        //     case 'completed_evaluation':
+        //       counters.completedEvaluationCount += 1;
+        //       break;
+        //     case 'completed_work':
+        //       counters.completedCount += 1;
+        //       break;
+        default:
+      }
+    });
   });
   return counters;
 }
