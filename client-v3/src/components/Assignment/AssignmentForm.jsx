@@ -78,7 +78,7 @@ class AssignmentForm extends Component {
       initialValues.tags = (assignment.tags || []).map(t => t.id);
       initialValues.attachment = assignment.attachment;
       initialValues.requiredWork = (assignment.requiredWork || [{ description: '', type: '' }]).map(
-        rw => filterObjectByKeys(rw, ['id', 'assignmentWork'], true),
+        rw => filterObjectByKeys(rw, ['id', 'assignmentWorks', 'assignmentWork'], true),
       );
     }
 
