@@ -167,7 +167,9 @@ assignmentSchema.virtual('completedBy').get(function getCompletedBy() {
   const requiredWorkCount = this.requiredWork.length;
   const usersWithSubmittedWork = [
     ...new Set(
-      this.requiredWork.flatMap(rw => rw.assignmentWorks && rw.assignmentWorks.map(aw => aw.user)),
+      this.requiredWork.flatMap(
+        rw => rw.assignmentWorks && rw.assignmentWorks.map(aw => aw.user.toString()),
+      ),
     ),
   ];
   return usersWithSubmittedWork
