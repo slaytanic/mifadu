@@ -199,7 +199,16 @@ export function createAssignment(input) {
   formData.append(
     'request',
     JSON.stringify({
-      query: `mutation($input: AssignmentInput!) { createAssignment(input: $input) { id } }`,
+      query: `
+        mutation($input: AssignmentInput!) {
+          createAssignment(input: $input) {
+            ...defaultAssignmentFields
+            ...detailAssignmentFields
+          }
+        }
+        ${defaultAssignmentFields}
+        ${detailAssignmentFields}
+      `,
       variables: {
         input: {
           ...input,
@@ -227,7 +236,16 @@ export function updateAssignment(id, input) {
   formData.append(
     'request',
     JSON.stringify({
-      query: `mutation($id: ID!, $input: AssignmentInput!) { updateAssignment(id: $id, input: $input) { id } }`,
+      query: `
+        mutation($id: ID!, $input: AssignmentInput!) {
+          updateAssignment(id: $id, input: $input) {
+            ...defaultAssignmentFields
+            ...detailAssignmentFields
+          }
+        }
+        ${defaultAssignmentFields}
+        ${detailAssignmentFields}
+      `,
       variables: {
         id,
         input: {
