@@ -56,9 +56,7 @@ async function updateAssignment(obj, { id, input }, { req }) {
       return cloudinary.v2.uploader.upload(
         req.files[0].path,
         {
-          public_id: `${doc.attachment._id}/${stripExt(
-            req.files[0].originalname,
-          )}`,
+          public_id: `${doc.attachment._id}/${stripExt(req.files[0].originalname)}`,
           overwrite: true,
         },
         (uploadErr, uploadRes) => {
@@ -84,38 +82,33 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
       return;
     }
 
-    const newAssignmentWork = input.assignmentWork.find(
-      aw => aw.requiredWorkId === rw.id,
-    );
+    const newAssignmentWork = input.assignmentWork.find(aw => aw.requiredWorkId === rw.id);
     if (!newAssignmentWork) {
       return;
     }
-    const assignmentWorks = rw.assignmentWorks.filter(
-      aw => aw.user.toString() !== req.user._id,
-    );
-    const oldAssignmentWorks = rw.assignmentWorks.find(
-      aw => aw.user.toString() === req.user._id,
-    );
+    const assignmentWorks = rw.assignmentWorks.filter(aw => aw.user.toString() !== req.user._id);
+    const oldAssignmentWorks = rw.assignmentWorks.find(aw => aw.user.toString() === req.user._id);
 
     assignmentWorks.push({
       content: newAssignmentWork.content,
       attachment:
-        newAssignmentWork.attachment
-        || (oldAssignmentWorks && oldAssignmentWorks.attachment),
+        newAssignmentWork.attachment || (oldAssignmentWorks && oldAssignmentWorks.attachment),
       user: req.user._id,
     });
     rw.set({ assignmentWorks });
   });
 
-  assignment.set({
-    evaluations: (assignment.evaluations || [])
-      .filter(e => e.user.toString() !== req.user._id)
-      .concat({
-        ...input.evaluation,
-        user: req.user._id,
-        targetUser: req.user._id,
-      }),
-  });
+  if (input.evaluation) {
+    assignment.set({
+      evaluations: (assignment.evaluations || [])
+        .filter(e => e.user.toString() !== req.user._id)
+        .concat({
+          ...input.evaluation,
+          user: req.user._id,
+          targetUser: req.user._id,
+        }),
+    });
+  }
   return new Promise((resolve, reject) => assignment.save(async (err, doc) => {
     if (err) {
       return reject(err);
@@ -147,9 +140,7 @@ async function submitAssignmentSelfEvaluation(obj, { id, input }, { req }) {
   if (assignment === undefined) {
     return new Error('Assignment not found');
   }
-  const evaluations = (assignment.evaluations || []).filter(
-    e => !e.user.equals(req.user._id),
-  );
+  const evaluations = (assignment.evaluations || []).filter(e => !e.user.equals(req.user._id));
   evaluations.push({
     ...input,
     user: req.user._id,
@@ -164,9 +155,7 @@ async function submitAssignmentEvaluation(obj, { id, input }, { req }) {
   if (assignment === undefined) {
     return new Error('Assignment not found');
   }
-  const evaluations = (assignment.evaluations || []).filter(
-    e => !e.user.equals(req.user._id),
-  );
+  const evaluations = (assignment.evaluations || []).filter(e => !e.user.equals(req.user._id));
   evaluations.push({
     ...input.evaluation,
     user: req.user._id,
