@@ -14,7 +14,9 @@ function createAssignment(obj, { input }, { req }) {
       });
       assignment.save((err, doc) => {
         if (err) {
-          fs.unlinkSync(req.files[0].path);
+          req.files.forEach((f) => {
+            fs.unlinkSync(f.path);
+          });
           return reject(err);
         }
         return cloudinary.v2.uploader.upload(
@@ -24,7 +26,9 @@ function createAssignment(obj, { input }, { req }) {
             overwrite: true,
           },
           (uploadErr, uploadRes) => {
-            fs.unlinkSync(req.files[0].path);
+            req.files.forEach((f) => {
+              fs.unlinkSync(f.path);
+            });
             if (uploadErr) {
               return reject(uploadErr);
             }
@@ -42,7 +46,7 @@ async function updateAssignment(obj, { id, input }, { req }) {
   const assignment = await Assignment.findOne({ _id: id });
   if (assignment === undefined) {
     if (req.files && req.files.length > 0) {
-      req.files.forEach(async (f) => {
+      req.files.forEach((f) => {
         fs.unlinkSync(f.path);
       });
     }
@@ -56,7 +60,7 @@ async function updateAssignment(obj, { id, input }, { req }) {
     return assignment.save((err, doc) => {
       if (err) {
         if (req.files && req.files.length > 0) {
-          req.files.forEach(async (f) => {
+          req.files.forEach((f) => {
             fs.unlinkSync(f.path);
           });
         }
@@ -72,7 +76,7 @@ async function updateAssignment(obj, { id, input }, { req }) {
         },
         (uploadErr, uploadRes) => {
           if (req.files && req.files.length > 0) {
-            req.files.forEach(async (f) => {
+            req.files.forEach((f) => {
               fs.unlinkSync(f.path);
             });
           }
@@ -135,10 +139,10 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
       }),
   });
   return new Promise((resolve, reject) => {
-    assignment.save((err, doc) => {
+    assignment.save(async (err, doc) => {
       if (err) {
         if (req.files && req.files.length > 0) {
-          req.files.forEach(async (f) => {
+          req.files.forEach((f) => {
             fs.unlinkSync(f.path);
           });
         }
@@ -146,18 +150,20 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
       }
       let newDoc = doc;
       if (req.files && req.files.length > 0) {
-        req.files.forEach(async (f) => {
-          const requiredWorkId = f.fieldname;
-          const requiredWork = doc.requiredWork.id(requiredWorkId);
-          const assignmentWork = requiredWork.assignmentWork.find(aw => aw.user.equals(req.user._id));
-          const upload = await cloudinary.v2.uploader.upload(f.path, {
-            public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
-            overwrite: true,
-          });
-          fs.unlinkSync(f.path);
-          assignmentWork.attachment.set({ url: upload.secure_url });
-          newDoc = await doc.save();
-        });
+        await Promise.all(
+          req.files.forEach(async (f) => {
+            const requiredWorkId = f.fieldname;
+            const requiredWork = doc.requiredWork.id(requiredWorkId);
+            const assignmentWork = requiredWork.assignmentWork.find(aw => aw.user.equals(req.user._id));
+            const upload = await cloudinary.v2.uploader.upload(f.path, {
+              public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
+              overwrite: true,
+            });
+            fs.unlinkSync(f.path);
+            assignmentWork.attachment.set({ url: upload.secure_url });
+            newDoc = await doc.save();
+          }),
+        );
       }
       return resolve(newDoc);
     });
