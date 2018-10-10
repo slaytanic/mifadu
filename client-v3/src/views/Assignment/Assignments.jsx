@@ -7,6 +7,7 @@ import { withRouter } from 'react-router';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 import CloudUpload from '@material-ui/icons/CloudUpload';
+import CloudDownload from '@material-ui/icons/CloudDownload';
 import Info from '@material-ui/icons/Info';
 import Delete from '@material-ui/icons/Delete';
 import Edit from '@material-ui/icons/Edit';
@@ -137,6 +138,15 @@ class Assignments extends React.Component {
                     key => (
                       <Button color="transparent" onClick={this.handleDelete(key)}>
                         <Delete />
+                      </Button>
+                    ),
+                    key => (
+                      <Button
+                        color="transparent"
+                        // component={Link}
+                        href={`/assignments/download/${key}`}
+                      >
+                        <CloudDownload />
                       </Button>
                     ),
                   ]

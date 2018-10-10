@@ -56,6 +56,10 @@
     "/auth": {
       "target": "http://localhost:3001",
       "secure": false
+    },
+    "/assignments/download": {
+      "target": "http://localhost:3001",
+      "secure": false
     }
   },
   "repository": {

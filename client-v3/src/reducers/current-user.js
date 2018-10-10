@@ -14,7 +14,10 @@ const currentUserReducer = (state = initialState, action) => {
     case CURRENT_USER_IS_LOADING:
       return { ...state, ...action.payload };
     case CURRENT_USER_HAS_LOADED:
-      return { ...state, ...action.payload };
+      if (action.payload.loggedIn === true) {
+        return { ...state, ...action.payload };
+      }
+      return { ...initialState, ...action.payload };
     case CURRENT_USER_HAS_ERRORED:
       return { ...state, ...action.payload };
     default:

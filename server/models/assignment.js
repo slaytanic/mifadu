@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
+const ExcelJS = require('exceljs');
+const path = require('path');
 
 const { Schema } = mongoose;
 
 require('array.prototype.flatmap').shim();
 
+const User = require('./user');
 const fileSchema = require('./fileSchema');
 
 const assignmentWorkSchema = new Schema(
@@ -201,6 +204,66 @@ assignmentSchema.virtual('usersWithEvaluations').get(function getUsersWithEvalua
   }
   return [];
 });
+
+assignmentSchema.methods.exportEvaluations = async function exportEvaluations() {
+  const workbook = new ExcelJS.Workbook();
+  // await workbook.xlsx.readFile(path.join(__dirname, '../data/export.xlsx'));
+  // const worksheet = workbook.getWorksheet('Notas');
+  const worksheet = workbook.addWorksheet('Notas');
+  const users = {};
+  await Promise.all(
+    this.evaluations.map(async (e) => {
+      if (!Object.keys(users).includes(e.targetUser.toString())) {
+        users[e.targetUser.toString()] = await User.findOne({ _id: e.targetUser.toString() });
+      }
+    }),
+  );
+  worksheet.addRow([
+    '',
+    'Alumno',
+    'Docente',
+    'Alumno',
+    'Docente',
+    'Alumno',
+    'Docente',
+    'Alumno',
+    'Docente',
+    'Alumno',
+    'Docente',
+  ]);
+  worksheet.addRow([
+    'Alumno',
+    'Propuesta Conceptual',
+    'Propuesta Conceptual',
+    'Proceso',
+    'Proceso',
+    this.evaluationVariable,
+    this.evaluationVariable,
+    'Producto',
+    'Producto',
+    'Comunicación',
+    'Comunicación',
+  ]);
+  Object.keys(users).forEach((key) => {
+    const user = users[key];
+    const selfEvaluationForUser = this.selfEvaluationForUser(user);
+    const tutorEvaluationForUser = this.tutorEvaluationForUser(user);
+    worksheet.addRow([
+      user.fullName,
+      selfEvaluationForUser.score1,
+      tutorEvaluationForUser.score1,
+      selfEvaluationForUser.score2,
+      tutorEvaluationForUser.score2,
+      selfEvaluationForUser.score3,
+      tutorEvaluationForUser.score3,
+      selfEvaluationForUser.score4,
+      tutorEvaluationForUser.score4,
+      selfEvaluationForUser.score5,
+      tutorEvaluationForUser.score5,
+    ]);
+  });
+  return workbook;
+};
 
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 

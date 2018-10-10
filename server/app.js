@@ -13,6 +13,7 @@ const passport = require('./passport');
 
 const config = require('./config');
 const graphqlSchema = require('./graphql/schema');
+const assignmentsRouter = require('./routes/assignments');
 
 const upload = multer({
   // storage: multer.memoryStorage(),
@@ -55,9 +56,7 @@ mongoose.connection.on('disconnected', () => {
 
 process.on('SIGINT', () => {
   mongoose.connection.close(() => {
-    console.info(
-      'Mongoose default connection disconnected through app termination',
-    );
+    console.info('Mongoose default connection disconnected through app termination');
     process.exit(0);
   });
 });
@@ -87,11 +86,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function redirectToHttps(req, res, next) {
-  if (
-    req.secure
-    || req.get('x-forwarded-proto') === 'https'
-    || config.isLocal
-  ) {
+  if (req.secure || req.get('x-forwarded-proto') === 'https' || config.isLocal) {
     return next();
   }
   return res.redirect(`https://${req.headers.host}${req.url}`);
@@ -119,11 +114,7 @@ app.get(
   },
 );
 
-app.get(
-  '/auth/facebook',
-  redirectToHttps,
-  passport.authenticate('facebook', { scope: ['email'] }),
-);
+app.get('/auth/facebook', redirectToHttps, passport.authenticate('facebook', { scope: ['email'] }));
 
 app.get(
   '/auth/facebook/callback',
@@ -142,6 +133,8 @@ app.get(
     res.redirect('/');
   },
 );
+
+app.use('/assignments', assignmentsRouter);
 
 app.use(redirectToHttps, express.static(path.join(__dirname, 'build')));
 

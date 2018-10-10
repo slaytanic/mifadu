@@ -81,7 +81,7 @@ class Register extends React.Component {
     } = this.props;
     const { cardAnimation } = this.state;
 
-    const externalProvider = !!currentUser;
+    const externalProvider = currentUser.loggedIn;
 
     const validationSchema = {
       email: Yup.string()

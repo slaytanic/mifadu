@@ -34,6 +34,18 @@ function HeaderLinks({ ...props }) {
   ];
   if (currentUser.tutoredWorkshops.length > 0) {
     links.push(
+      <ListItem className={classes.listItem} key="assignments">
+        <Button
+          component={Link}
+          to="/assignments"
+          color="transparent"
+          className={classes.navLink}
+        >
+          Trabajos prácticos
+        </Button>
+      </ListItem>,
+    );
+    links.push(
       <ListItem className={classes.listItem} key="pending-evaluation">
         <Button
           component={Link}
