@@ -1,6 +1,6 @@
 ---
 applications:
-- name: mifadu-beta
+- name: mifadu
   memory: 256M
   instances: 1
   buildpacks:
