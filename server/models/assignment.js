@@ -274,8 +274,30 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
   ]);
   Object.keys(users).forEach((key) => {
     const user = users[key];
-    const selfEvaluationForUser = this.selfEvaluationForUser(user);
-    const tutorEvaluationForUser = this.tutorEvaluationForUser(user);
+    let selfEvaluationForUser = this.selfEvaluationForUser(user);
+    if (!selfEvaluationForUser) {
+      selfEvaluationForUser = {
+        score1: '-',
+        score2: '-',
+        score3: '-',
+        score4: '-',
+        score5: '-',
+        totalScore: '-',
+        finalScore: '-',
+      };
+    }
+    let tutorEvaluationForUser = this.tutorEvaluationForUser(user);
+    if (!tutorEvaluationForUser) {
+      tutorEvaluationForUser = {
+        score1: '-',
+        score2: '-',
+        score3: '-',
+        score4: '-',
+        score5: '-',
+        totalScore: '-',
+        finalScore: '-',
+      };
+    }
     worksheet.addRow(
       [
         user.fullName,
