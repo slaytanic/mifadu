@@ -32,6 +32,17 @@ const evaluationSchema = new Schema(
   { timestamps: true },
 );
 
+evaluationSchema.virtual('totalScore').get(function getTotalScore() {
+  return this.score1 + this.score2 + this.score3 + this.score4 + this.score5;
+});
+
+evaluationSchema.virtual('finalScore').get(function getTotalScore() {
+  if (Math.round(this.totalScore) === 3) {
+    return 2;
+  }
+  return Math.round(this.totalScore);
+});
+
 const requiredWorkSchema = new Schema(
   {
     type: { type: String, enum: ['JPG', 'PDF', 'Video', 'URL'] },
@@ -205,6 +216,16 @@ assignmentSchema.virtual('usersWithEvaluations').get(function getUsersWithEvalua
   return [];
 });
 
+assignmentSchema.methods.linksForUser = function linksForUser(user) {
+  return this.requiredWork.map((rw) => {
+    const assignmentWork = rw.assignmentWorks.find(aw => aw.user.equals(user._id));
+    if (assignmentWork.content && assignmentWork.content.length) {
+      return assignmentWork.content;
+    }
+    return assignmentWork.attachment && assignmentWork.attachment.url;
+  });
+};
+
 assignmentSchema.methods.exportEvaluations = async function exportEvaluations() {
   const workbook = new ExcelJS.Workbook();
   // await workbook.xlsx.readFile(path.join(__dirname, '../data/export.xlsx'));
@@ -230,6 +251,8 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
     'Docente',
     'Alumno',
     'Docente',
+    'Alumno',
+    'Docente',
   ]);
   worksheet.addRow([
     'Alumno',
@@ -243,24 +266,35 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
     'Producto',
     'Comunicación',
     'Comunicación',
+    'Suma',
+    'Suma',
+    'Final',
+    'Final',
+    'Links',
   ]);
   Object.keys(users).forEach((key) => {
     const user = users[key];
     const selfEvaluationForUser = this.selfEvaluationForUser(user);
     const tutorEvaluationForUser = this.tutorEvaluationForUser(user);
-    worksheet.addRow([
-      user.fullName,
-      selfEvaluationForUser.score1,
-      tutorEvaluationForUser.score1,
-      selfEvaluationForUser.score2,
-      tutorEvaluationForUser.score2,
-      selfEvaluationForUser.score3,
-      tutorEvaluationForUser.score3,
-      selfEvaluationForUser.score4,
-      tutorEvaluationForUser.score4,
-      selfEvaluationForUser.score5,
-      tutorEvaluationForUser.score5,
-    ]);
+    worksheet.addRow(
+      [
+        user.fullName,
+        selfEvaluationForUser.score1,
+        tutorEvaluationForUser.score1,
+        selfEvaluationForUser.score2,
+        tutorEvaluationForUser.score2,
+        selfEvaluationForUser.score3,
+        tutorEvaluationForUser.score3,
+        selfEvaluationForUser.score4,
+        tutorEvaluationForUser.score4,
+        selfEvaluationForUser.score5,
+        tutorEvaluationForUser.score5,
+        selfEvaluationForUser.totalScore,
+        tutorEvaluationForUser.totalScore,
+        selfEvaluationForUser.finalScore,
+        tutorEvaluationForUser.finalScore,
+      ].concat(this.linksForUser(user)),
+    );
   });
   return workbook;
 };
