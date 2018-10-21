@@ -62,7 +62,11 @@ class Evaluation extends Component {
             <h6>Componente de entrega #{index + 1}</h6>
             <p>
               {aw.content || aw.attachment ? (
-                <a href={aw.content ? aw.content : aw.attachment.url}>
+                <a
+                  href={aw.content ? aw.content : aw.attachment.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {aw.requiredWorkDescription} ({aw.requiredWorkType})
                 </a>
               ) : (

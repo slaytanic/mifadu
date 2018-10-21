@@ -184,7 +184,9 @@ class AssignmentForm extends Component {
             <span className={classes.filename}>
               {values.attachment &&
                 (values.attachment.url ? (
-                  <a href={values.attachment.url}>{values.attachment.name}</a>
+                  <a href={values.attachment.url} target="_blank" rel="noopener noreferrer">
+                    {values.attachment.name}
+                  </a>
                 ) : (
                   values.attachment.name
                 ))}

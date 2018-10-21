@@ -124,7 +124,9 @@ class Assignment extends Component {
             <p>
               <b>Consigna:</b>{' '}
               {assignment.attachment && (
-                <a href={assignment.attachment.url}>{assignment.attachment.name}</a>
+                <a href={assignment.attachment.url} target="_blank" rel="noopener noreferrer">
+                  {assignment.attachment.name}
+                </a>
               )}
             </p>
             <p>
@@ -161,6 +163,8 @@ class Assignment extends Component {
                           ? rw.assignmentWork.content
                           : rw.assignmentWork.attachment.url
                       }
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       {rw.description} ({rw.type})
                     </a>
