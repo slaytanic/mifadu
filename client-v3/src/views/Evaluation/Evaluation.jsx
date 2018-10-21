@@ -61,9 +61,15 @@ class Evaluation extends Component {
           <div key={aw.id}>
             <h6>Componente de entrega #{index + 1}</h6>
             <p>
-              <a href={aw.content ? aw.content : aw.attachment.url}>
-                {aw.requiredWorkDescription} ({aw.requiredWorkType})
-              </a>
+              {aw.content || aw.attachment ? (
+                <a href={aw.content ? aw.content : aw.attachment.url}>
+                  {aw.requiredWorkDescription} ({aw.requiredWorkType})
+                </a>
+              ) : (
+                <span>
+                  {aw.requiredWorkDescription} ({aw.requiredWorkType})
+                </span>
+              )}
             </p>
           </div>
         ))}
