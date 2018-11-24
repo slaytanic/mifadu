@@ -1,7 +1,27 @@
 const path = require('path');
 
 module.exports = {
-  extends: ['airbnb', 'prettier', 'prettier/react'],
+  parser: 'babel-eslint',
+  env: {
+    es6: true,
+    node: true,
+    browser: true,
+  },
+  parserOptions: {
+    ecmaVersion: 6,
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+  extends: ['airbnb'],
+  settings: {
+    'import/resolver': {
+      node: {
+        paths: path.resolve(__dirname, 'src'),
+      },
+    },
+  },
   rules: {
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
@@ -17,16 +37,13 @@ module.exports = {
     'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
 
     'react/forbid-prop-types': 'off',
+
+    'no-underscore-dangle': ['error', { allow: ['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] }],
   },
-  parser: 'babel-eslint',
-  env: {
-    browser: true,
-  },
-  settings: {
-    'import/resolver': {
-      node: {
-        paths: path.resolve(__dirname, 'src'),
-      },
-    },
-  },
+  // plugins: ["react"],
+  // extends: [
+  //   "eslint:recommended",
+  //   "plugin:react/recommended",
+  //   "plugin:prettier/recommended"
+  // ]
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// material-ui components
+
 import withStyles from '@material-ui/core/styles/withStyles';
 import Slide from '@material-ui/core/Slide';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,10 +8,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
-// @material-ui/icons
+
 import Close from '@material-ui/icons/Close';
-// core components
-import Button from 'components/CustomButtons/Button';
+
+import Button from 'components/material-kit-react/CustomButtons/Button';
 
 import modalStyle from 'assets/jss/material-kit-react/modalStyle';
 
@@ -20,17 +20,6 @@ function Transition(props) {
 }
 
 class Modal extends React.Component {
-  propTypes = {
-    classes: PropTypes.object.isRequired,
-    handleOk: PropTypes.func.isRequired,
-    handleCancel: PropTypes.func.isRequired,
-    okText: PropTypes.string,
-    cancelText: PropTypes.string,
-    bodyText: PropTypes.string.isRequired,
-    titleText: PropTypes.string.isRequired,
-    open: PropTypes.bool.isRequired,
-  };
-
   render() {
     const {
       classes,
@@ -41,6 +30,7 @@ class Modal extends React.Component {
       bodyText,
       titleText,
       open,
+      children,
     } = this.props;
 
     return (
@@ -74,11 +64,12 @@ class Modal extends React.Component {
             <h4 className={classes.modalTitle}>{titleText}</h4>
           </DialogTitle>
           <DialogContent id="modal-slide-description" className={classes.modalBody}>
-            <h5>{bodyText}</h5>
+            {bodyText && <h5>{bodyText}</h5>}
+            {children}
           </DialogContent>
           <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
             <Button onClick={handleCancel}>{cancelText || 'Cancel'}</Button>
-            <Button onClick={handleOk} color="successNoBackground">
+            <Button onClick={handleOk} color="success">
               {okText || 'Ok'}
             </Button>
           </DialogActions>
@@ -87,5 +78,24 @@ class Modal extends React.Component {
     );
   }
 }
+
+Modal.defaultProps = {
+  okText: undefined,
+  cancelText: undefined,
+  bodyText: undefined,
+  children: undefined,
+};
+
+Modal.propTypes = {
+  classes: PropTypes.object.isRequired,
+  handleOk: PropTypes.func.isRequired,
+  handleCancel: PropTypes.func.isRequired,
+  okText: PropTypes.string,
+  cancelText: PropTypes.string,
+  bodyText: PropTypes.string,
+  titleText: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+  children: PropTypes.node,
+};
 
 export default withStyles(modalStyle)(Modal);

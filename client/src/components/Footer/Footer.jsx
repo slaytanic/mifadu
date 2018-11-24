@@ -1,22 +1,17 @@
-/*eslint-disable*/
 import React from 'react';
-// nodejs library to set properties for components
 import PropTypes from 'prop-types';
-// nodejs library that concatenates classes
 import classNames from 'classnames';
+
 import { List, ListItem, withStyles } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 
-// @material-ui/icons
-import Favorite from '@material-ui/icons/Favorite';
+import Button from 'components/material-kit-react/CustomButtons/Button';
 
-import Button from 'components/CustomButtons/Button.jsx';
-
-import footerStyle from 'assets/jss/material-kit-react/components/footerStyle.jsx';
-import tooltip from 'assets/jss/material-kit-react/tooltipsStyle.jsx';
+import footerStyle from 'assets/jss/material-kit-react/components/footerStyle';
+import tooltipsStyle from 'assets/jss/material-kit-react/tooltipsStyle';
 
 const styles = {
-  ...tooltip,
+  ...tooltipsStyle,
   ...footerStyle,
 };
 
@@ -26,17 +21,18 @@ function Footer({ ...props }) {
     [classes.footer]: true,
     [classes.footerWhiteFont]: whiteFont,
   });
-  const aClasses = classNames({
-    [classes.a]: true,
-    [classes.footerWhiteFont]: whiteFont,
-  });
   return (
     <footer className={footerClasses}>
       <div className={classes.container}>
         <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
-              <a href="http://catedrarondina.com.ar/" className={classes.block} target="_blank">
+              <a
+                href="http://catedrarondina.com.ar/"
+                className={classes.block}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 Cátedra Rondina
               </a>
             </ListItem>
@@ -53,7 +49,7 @@ function Footer({ ...props }) {
                   color="transparent"
                   className={classes.navLink}
                 >
-                  <i className={classes.socialIcons + ' fab fa-youtube'} />
+                  <i className={`${classes.socialIcons} fab fa-youtube`} />
                 </Button>
               </Tooltip>
             </ListItem>
@@ -70,7 +66,7 @@ function Footer({ ...props }) {
                   target="_blank"
                   className={classes.navLink}
                 >
-                  <i className={classes.socialIcons + ' fab fa-facebook'} />
+                  <i className={`${classes.socialIcons} fab fa-facebook`} />
                 </Button>
               </Tooltip>
             </ListItem>
@@ -87,38 +83,10 @@ function Footer({ ...props }) {
                   target="_blank"
                   className={classes.navLink}
                 >
-                  <i className={classes.socialIcons + ' fab fa-instagram'} />
+                  <i className={`${classes.socialIcons} fab fa-instagram`} />
                 </Button>
               </Tooltip>
             </ListItem>
-
-            {/* <ListItem className={classes.inlineBlock}>
-              <a
-                href="https://www.creative-tim.com/presentation"
-                className={classes.block}
-                target="_blank"
-              >
-                About us
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a
-                href="http://blog.creative-tim.com/"
-                className={classes.block}
-                target="_blank"
-              >
-                Blog
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a
-                href="https://www.creative-tim.com/license"
-                className={classes.block}
-                target="_blank"
-              >
-                Licenses
-              </a>
-            </ListItem> */}
           </List>
         </div>
         <div className={classes.right}>&copy; {1900 + new Date().getYear()} MiFADU</div>
@@ -126,6 +94,10 @@ function Footer({ ...props }) {
     </footer>
   );
 }
+
+Footer.defaultProps = {
+  whiteFont: false,
+};
 
 Footer.propTypes = {
   classes: PropTypes.object.isRequired,
