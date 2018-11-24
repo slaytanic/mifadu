@@ -1,5 +1,5 @@
 module.exports = {
-  extends: 'airbnb-base', //, 'prettier'],
+  extends: 'airbnb-base',
   rules: {
     // Recommend not to leave any console.log in your code
     // Use console.error, console.warn and console.info instead
