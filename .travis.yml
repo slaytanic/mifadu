@@ -11,7 +11,19 @@ script:
 - cd client && yarn && CI=false yarn build && mv build ../server && cd ..
 - cd server && yarn && cd ..
 deploy:
-  provider: cloudfoundry
+- provider: cloudfoundry
+  api: https://api.run.pivotal.io
+  username: slaytanic@gmail.com
+  password:
+    secure: YbrvukWgRPxA+0S+gVOz6Ww+Rj+lSLzDckxbS9szNM9KP0mXI2251KCUfkCe5MnlWJDnIRlhUJt3QoPFTeHrvdqtNHSIG4pIj6fBqjilEbJwtSN1BUrcxtuoap87WmHJYr+9uq5T1+aMfj6fuG0sycNyz26V4KfO8HLb9Upyp5OvME1hGE6P67GhL90YQs4D2uTxcy2u4QFBAueXTvZUyo6jN1Garj7FmKai9XFubapaRg1rH41fsitZikkCRcxVw25WHRe8WIl7AZmM4mI2A2gx9tVpA6h8df4tbjW6luIETiANUpUl62eUm6LpGmAL1yLWYPoAJWLTfvlM9/mDrmmMvSgz+Pn+j/BT1KFgwq8wL3wBonVvBDBDcviomT5sBJVVyUEvz8IrqjQGB53HXsJvg3f6Syz2QST1tQu4AH3hUkea2QIl+9wXKenw1WkkWzE6l23LcGS+UpmP5mAMr3MOdEnB9jZy9CGgWzpBJl1OlLUBDfxkWYzmgrV80yarg2w5kpyZN0DK3csG533yYOXedrBMQCAgBztwFLugeT0x1oEC+mgQ3BWaUpbkWS5t58kq0pbCYIp6z0AZ40J5QjVtvvd6/bn5YEsOKqfjDJB5ygTwFag9F/M6eHOL02oL9fobcfisRuqwodz/B+OQIC5EaQdTogSwh13dNRHMxXk=
+  organization: MiFADU
+  space: development
+  skip_cleanup: true
+  manifest: manifest-beta.yml
+  on:
+    branch:
+    - beta
+- provider: cloudfoundry
   api: https://api.run.pivotal.io
   username: slaytanic@gmail.com
   password:
@@ -22,4 +34,3 @@ deploy:
   on:
     branch:
     - master
-    - beta

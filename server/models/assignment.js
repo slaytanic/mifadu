@@ -253,6 +253,10 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
     'Docente',
     'Alumno',
     'Docente',
+    'Alumno',
+    'Docente',
+    'Alumno',
+    'Docente',
   ]);
   worksheet.addRow([
     'Alumno',
@@ -270,6 +274,8 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
     'Suma',
     'Final',
     'Final',
+    'Observaciones',
+    'Observaciones',
     'Links',
   ]);
   Object.keys(users).forEach((key) => {
@@ -315,6 +321,8 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
         tutorEvaluationForUser.totalScore,
         selfEvaluationForUser.finalScore,
         tutorEvaluationForUser.finalScore,
+        selfEvaluationForUser.observations,
+        tutorEvaluationForUser.observations,
       ].concat(this.linksForUser(user)),
     );
   });
