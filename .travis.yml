@@ -20,4 +20,6 @@ deploy:
   space: development
   skip_cleanup: true
   on:
-    branch: master
+    branch:
+    - master
+    - beta
