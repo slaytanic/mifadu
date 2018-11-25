@@ -12,7 +12,6 @@ function userByRef(ref) {
 function usersByRef(ref) {
   return (obj) => {
     if (obj && obj[ref]) {
-      console.log('ref', obj[ref]);
       return User.find({ _id: { $in: obj[ref] } });
     }
     return null;

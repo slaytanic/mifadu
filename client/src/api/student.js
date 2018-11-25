@@ -5,7 +5,7 @@ import { GRAPHQL_ENDPOINT } from './common';
 export function getMyStudents() {
   return axios.post(GRAPHQL_ENDPOINT, {
     query:
-      '{ myStudents { id, firstName, lastName, email, completedProfile, idNumber, tutoredWorkshops { id } } }',
+      '{ myStudents { id, firstName, lastName, fullName, email, completedProfile, idNumber, tutoredWorkshops { id } } }',
   });
 }
 

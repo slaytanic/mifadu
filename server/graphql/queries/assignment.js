@@ -9,6 +9,9 @@ function assignments(obj, args, context) {
 }
 
 function myAssignments(obj, args, { req }) {
+  if (obj) {
+    return Assignment.forUser(obj);
+  }
   return Assignment.forUser(req.user);
 }
 
@@ -23,9 +26,7 @@ function pendingAssignments(obj, args, { req }) {
           if (d.requiredWork && d.requiredWork.length > 0) {
             const assignmentWork = d.requiredWork.map(rw => rw.assignmentWork.find(aw => aw.user.equals(req.user._id)));
             return (
-              assignmentWork.filter(
-                aw => aw && (aw.attachment || aw.content.length > 0),
-              ).length < 1
+              assignmentWork.filter(aw => aw && (aw.attachment || aw.content.length > 0)).length < 1
             );
           }
           return true;
@@ -46,9 +47,7 @@ function completedAssignments(obj, args, { req }) {
           if (d.requiredWork && d.requiredWork.length > 0) {
             const assignmentWork = d.requiredWork.map(rw => rw.assignmentWork.find(aw => aw.user.equals(req.user._id)));
             return (
-              assignmentWork.filter(
-                aw => aw && (aw.attachment || aw.content.length > 0),
-              ).length > 0
+              assignmentWork.filter(aw => aw && (aw.attachment || aw.content.length > 0)).length > 0
             );
           }
           return false;

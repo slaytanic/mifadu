@@ -55,7 +55,11 @@ const assignmentsReducer = (state = initialState, action) => {
     case ASSIGNMENT_UPDATED: {
       const all = state.all.filter(a => a.id !== action.payload.id);
       all.push(action.payload);
-      return { ...state, all, ...count(all) };
+      return {
+        ...state,
+        all: all.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1)),
+        ...count(all),
+      };
     }
     default:
       return state;

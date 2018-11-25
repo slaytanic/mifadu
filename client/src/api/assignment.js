@@ -61,6 +61,7 @@ fragment detailAssignmentFields on Assignment {
         name
         type
         url
+        publicId
       }
     }
     assignmentWorks {
@@ -70,6 +71,7 @@ fragment detailAssignmentFields on Assignment {
         name
         type
         url
+        publicId
       }
       user {
         id

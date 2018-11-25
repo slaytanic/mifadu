@@ -60,6 +60,8 @@ const typeDefs = `
     name: String
     type: String
     url: String
+    cloudName: String
+    publicId: String
   }
 
   input AssignmentInput {
@@ -242,6 +244,7 @@ const typeDefs = `
     website: String
     aboutMe: String
     tutoredWorkshops: [Workshop]
+    assignments: [Assignment]
   }
 
   input WorkshopInput {
@@ -357,6 +360,7 @@ const resolvers = {
   },
   User: {
     tutoredWorkshops: workshops,
+    assignments: myAssignments,
   },
   Query: {
     assignment,

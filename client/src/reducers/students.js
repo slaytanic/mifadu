@@ -9,7 +9,13 @@ const studentsReducer = (state = initialState, action) => {
     case STUDENTS_IS_LOADING:
       return { ...state, ...action.payload };
     case STUDENTS_HAS_LOADED:
-      return { ...state, ...action.payload };
+      return {
+        ...state,
+        ...action.payload,
+        all: action.payload.all.sort((a, b) =>
+          a.lastName.toUpperCase() > b.lastName.toUpperCase() ? 1 : -1,
+        ),
+      };
     default:
       return state;
   }

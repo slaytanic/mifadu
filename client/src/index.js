@@ -6,6 +6,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import throttle from 'lodash.throttle';
+import { CloudinaryContext } from 'cloudinary-react';
 
 import 'assets/css/material-dashboard-react.css';
 import 'assets/scss/material-kit-react.scss';
@@ -36,7 +37,9 @@ store.subscribe(
 const render = () => {
   ReactDOM.render(
     <Provider store={store}>
-      <App history={history} />
+      <CloudinaryContext cloudName="mifadu">
+        <App history={history} />
+      </CloudinaryContext>
     </Provider>,
     document.getElementById('root'),
   );

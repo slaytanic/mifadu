@@ -52,7 +52,8 @@ class Home extends Component {
               </CardHeader>
               <CardFooter stats>
                 <div className={classes.stats}>
-                  <Link to="/students">Ver miembros del taller</Link>
+                  {/* <Link to="/students">Ver miembros del taller</Link> */}
+                  <Link to="/works">Ver miembros del taller</Link>
                 </div>
               </CardFooter>
             </Card>

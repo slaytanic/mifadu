@@ -2501,6 +2501,21 @@ clone-deep@^2.0.1:
     kind-of "^6.0.0"
     shallow-clone "^1.0.0"
 
+cloudinary-core@^2.3.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/cloudinary-core/-/cloudinary-core-2.5.0.tgz#580d7255a394f0900879e7eee0d6f3072df99ac5"
+  integrity sha512-lrzdLUzFZPnxpWgIAGtOwfqM2D+rG+fLsgd6KqZwDkQX+DYOUNaJpD3lEqxhoMI90zoT1gP/7+pMh/AscSaQ0w==
+  dependencies:
+    lodash ">=3.0"
+
+cloudinary-react@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/cloudinary-react/-/cloudinary-react-1.0.6.tgz#13b6327ba2ba09225bddab266d4a8feed936ac1b"
+  integrity sha512-x0o28f0wyKJeskt5WKTwK0/eACLt2D1fg+cC/B3nVt5+606wsNr8ORirGbmkWVHP+SAcTR7Hyrf9BFqfagug/w==
+  dependencies:
+    cloudinary-core "^2.3.0"
+    prop-types "^15.6.0"
+
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -6428,7 +6443,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4, lodash@^4.17.5, lodash@~4.17.10:
+lodash@>=3.0, "lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4, lodash@^4.17.5, lodash@~4.17.10:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==

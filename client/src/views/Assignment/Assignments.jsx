@@ -118,11 +118,20 @@ class Assignments extends React.Component {
             tableHeaderColor="primary"
             tableHead={[
               { label: 'Nombre', key: 'name' },
-              { label: 'Descripción', key: 'shortDescription' },
+              // { label: 'Descripción', key: 'shortDescription' },
               { label: 'Fecha de entrega', key: 'endsAt' },
+              { label: 'Entregados', key: 'completedWorksCount' },
+              // { label: 'Sin entregar', key: '' },
+              { label: 'Sin evaluar', key: 'pendingEvaluationWorksCount' },
+              { label: 'Evaluados', key: 'evaluatedWorksCount' },
             ]}
             tableData={filteredAssignments.map(a => ({
-              ...a,
+              ...Object.keys(a).reduce((obj, key) => {
+                switch (key) {
+                  default:
+                    return { ...obj, [key]: a[key] };
+                }
+              }, {}),
               actions: a.workshop.tutors.map(t => t.id).includes(currentUser.id)
                 ? [
                     key => (
