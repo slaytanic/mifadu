@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -7,18 +6,12 @@ import { Image, Transformation } from 'cloudinary-react';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import CloudDownload from '@material-ui/icons/CloudDownload';
-import Info from '@material-ui/icons/Info';
-import Delete from '@material-ui/icons/Delete';
-import Edit from '@material-ui/icons/Edit';
-
 import Button from 'components/material-kit-react/CustomButtons/Button';
 import GridContainer from 'components/material-kit-react/Grid/GridContainer';
 import GridItem from 'components/material-kit-react/Grid/GridItem';
 import Badge from 'components/material-kit-react/Badge/Badge';
 
-import CustomTable from 'components/CustomTable/CustomTable';
-import Modal from 'components/Modal/Modal';
+import EvaluationForm from 'components/Assignment/EvaluationForm';
 
 import Content from 'layouts/Content';
 
@@ -32,7 +25,6 @@ const styles = {
     border: 'none',
     padding: '0 !important',
     font: 'inherit',
-    /*border is optional*/
     // borderBottom: '1px solid #444',
     cursor: 'pointer',
   },
@@ -51,63 +43,17 @@ class Works extends React.Component {
     dispatchAssignmentsFetch();
   }
 
-  // componentDidUpdate(prevProps) {
-  //   const { assignments, match } = this.props;
-  //   if (
-  //     assignments.loadedAt !== prevProps.assignments.loadedAt ||
-  //     match.params.filter !== prevProps.match.params.filter
-  //   ) {
-  //     this.filterAssignments();
-  //   }
-  // }
-
   selectStudent = studentId => () => {
     this.setState({ selectedStudent: studentId, selectedAssignment: null });
   };
 
   selectAssignment = assignmentId => () => {
     const { dispatchAssignmentFetch } = this.props;
-    dispatchAssignmentFetch(assignmentId);
-    this.setState({ selectedAssignment: assignmentId });
-  };
-
-  filterAssignments = () => {
-    const { assignments, match } = this.props;
-    switch (match.params.filter) {
-      case 'pending':
-        this.setState({
-          subtitle: 'Pendientes de entrega',
-          filteredAssignments: assignments.all.filter(a => a.statusTags.includes('pending_work')),
-        });
-        break;
-      case 'completed':
-        this.setState({
-          subtitle: 'Entregados',
-          filteredAssignments: assignments.all.filter(a => a.statusTags.includes('completed_work')),
-        });
-        break;
-      case 'pending_evaluation':
-        this.setState({
-          subtitle: 'Pendientes de evaluación',
-          filteredAssignments: assignments.all.filter(a =>
-            a.statusTags.includes('pending_evaluation'),
-          ),
-        });
-        break;
-      case 'completed_evaluation':
-        this.setState({
-          subtitle: 'Pendientes de evaluación',
-          filteredAssignments: assignments.all.filter(a =>
-            a.statusTags.includes('completed_evaluation'),
-          ),
-        });
-        break;
-      default:
-        this.setState({
-          subtitle: 'Todos los trabajos prácticos',
-          filteredAssignments: [...assignments.all],
-        });
-    }
+    this.setState({ selectedAssignment: null }, () => {
+      dispatchAssignmentFetch(assignmentId).then(() => {
+        this.setState({ selectedAssignment: assignmentId });
+      });
+    });
   };
 
   render() {
@@ -157,69 +103,7 @@ class Works extends React.Component {
               {assignment ? (
                 <div>
                   <h3>{assignment.name}</h3>
-                  {/* <p>
-                    {!currentUser.tutoredWorkshops
-                      .map(tw => tw.id)
-                      .includes(assignment.workshop.id) &&
-                      assignment.statusTags.includes('pending_work') && (
-                        <Badge color="warning">Pendiente</Badge>
-                      )}
-                    {!currentUser.tutoredWorkshops
-                      .map(tw => tw.id)
-                      .includes(assignment.workshop.id) &&
-                      assignment.statusTags.includes('completed_work') && (
-                        <Badge color="success">Entregado</Badge>
-                      )}
-                    {!currentUser.tutoredWorkshops
-                      .map(tw => tw.id)
-                      .includes(assignment.workshop.id) &&
-                      assignment.statusTags.includes('self_evaluation_pending') && (
-                        <Badge color="warning">Autoevaluación Pendiente</Badge>
-                      )}
-                    {!currentUser.tutoredWorkshops
-                      .map(tw => tw.id)
-                      .includes(assignment.workshop.id) &&
-                      assignment.statusTags.includes('self_evaluation_completed') && (
-                        <Badge color="success">Autoevaluación Realizada</Badge>
-                      )}
-                    {!currentUser.tutoredWorkshops
-                      .map(tw => tw.id)
-                      .includes(assignment.workshop.id) &&
-                      assignment.statusTags.includes('self_evaluation_completed') &&
-                      assignment.statusTags.includes('evaluation_pending') && (
-                        <Badge color="warning">Evaluación Pendiente</Badge>
-                      )}
-                    {!currentUser.tutoredWorkshops
-                      .map(tw => tw.id)
-                      .includes(assignment.workshop.id) &&
-                      assignment.statusTags.includes('self_evaluation_completed') &&
-                      assignment.statusTags.includes('evaluation_completed') && (
-                        <Badge color="success">Evaluación Realizada</Badge>
-                      )}
-                  </p> */}
                   <h4>{assignment.shortDescription}</h4>
-                  {/* <p>{assignment.description}</p>
-                  <p>
-                    <b>Consigna:</b>{' '}
-                    {assignment.attachment && (
-                      <a href={assignment.attachment.url} target="_blank" rel="noopener noreferrer">
-                        {assignment.attachment.name}
-                      </a>
-                    )}
-                  </p> */}
-                  {/* <p>
-                    <b>Fecha de entrega:</b> {assignment.endsAt}
-                  </p>
-                  <p>
-                    <b>Variable de evaluación:</b> {assignment.evaluationVariable}
-                  </p>
-                  <p>
-                    <b>Tipo:</b> {{ Group: 'Grupal', Individual: 'Individual' }[assignment.type]}
-                  </p>
-                  <p>
-                    <b>Categorías / Etiquetas:</b>{' '}
-                    {assignment.tags ? assignment.tags.map(t => t.name).join(', ') : <i>Ninguna</i>}
-                  </p> */}
                   {(assignment.requiredWork || []).map((rw, index) => (
                     <div key={rw.id}>
                       <h6>Componente de entrega #{index + 1}</h6>
@@ -303,6 +187,13 @@ class Works extends React.Component {
                         ))}
                     </div>
                   ))}
+                  <h6>Evaluación</h6>
+                  <EvaluationForm
+                    assignment={assignment}
+                    currentUser={currentUser}
+                    targetUserId={selectedStudent}
+                    inPlace={true}
+                  />
                 </div>
               ) : (
                 <p>Elija un trabajo práctico</p>

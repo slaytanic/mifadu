@@ -34,6 +34,7 @@ class EvaluationForm extends Component {
     const { selfEvaluation, evaluations } = assignment;
     if (selfEvaluation && self === true) {
       this.state = {
+        dirty: false,
         evaluation: {
           score1: selfEvaluation.score1 || 0,
           score2: selfEvaluation.score2 || 0,
@@ -51,6 +52,7 @@ class EvaluationForm extends Component {
         e => e.targetUser.id === targetUserId && e.user.id === targetUserId,
       );
       this.state = {
+        dirty: false,
         evaluation: {
           score1: (evaluation && evaluation.score1) || 0,
           score2: (evaluation && evaluation.score2) || 0,
@@ -69,6 +71,7 @@ class EvaluationForm extends Component {
       };
     } else {
       this.state = {
+        dirty: false,
         evaluation: {
           score1: 0,
           score2: 0,
@@ -85,10 +88,12 @@ class EvaluationForm extends Component {
     if (event.target) {
       const { value } = event.target;
       this.setState(prevState => ({
+        dirty: true,
         evaluation: { ...prevState.evaluation, [name]: value },
       }));
     } else {
       this.setState(prevState => ({
+        dirty: true,
         evaluation: { ...prevState.evaluation, [name]: parseFloat(event[0]) },
       }));
     }
@@ -102,26 +107,29 @@ class EvaluationForm extends Component {
       dispatchAssignmentSelfEvaluationSubmit,
       self,
       targetUserId,
+      inPlace,
     } = this.props;
     const { evaluation } = this.state;
 
     if (self) {
       dispatchAssignmentSelfEvaluationSubmit(assignment.id, evaluation).then(() => {
-        historyPush(`/assignments/${assignment.id}`);
+        if (!inPlace) historyPush(`/assignments/${assignment.id}`);
+        this.setState({ dirty: false });
       });
     } else {
       dispatchAssignmentEvaluationSubmit(assignment.id, {
         evaluation,
         targetUser: targetUserId,
       }).then(() => {
-        historyPush(`/evaluations/completed`);
+        if (!inPlace) historyPush(`/evaluations/completed`);
+        this.setState({ dirty: false });
       });
     }
   };
 
   render() {
-    const { assignment, classes, self } = this.props;
-    const { evaluation } = this.state;
+    const { assignment, classes, self, inPlace } = this.props;
+    const { evaluation, dirty } = this.state;
 
     const chartData = [evaluation];
     if (self !== true) {
@@ -225,24 +233,30 @@ class EvaluationForm extends Component {
             onChange: this.handleChange('observations'),
           }}
         />
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={6}>
-            <Button
-              simple
-              color="primary"
-              fullWidth
-              component={Link}
-              to={self ? `/assignments/${assignment.id}` : '/evaluations/pending'}
-            >
-              Cancelar
-            </Button>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={6}>
-            <Button color="primary" fullWidth onClick={this.handleSubmit}>
-              Completar {self ? 'autoevaluación' : 'evaluación'}
-            </Button>
-          </GridItem>
-        </GridContainer>
+        {inPlace ? (
+          <Button color="primary" fullWidth onClick={this.handleSubmit} disabled={!dirty}>
+            Guardar {self ? 'autoevaluación' : 'evaluación'}
+          </Button>
+        ) : (
+          <GridContainer>
+            <GridItem xs={12} sm={12} md={6}>
+              <Button
+                simple
+                color="primary"
+                fullWidth
+                component={Link}
+                to={self ? `/assignments/${assignment.id}` : '/evaluations/pending'}
+              >
+                Cancelar
+              </Button>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={6}>
+              <Button color="primary" fullWidth onClick={this.handleSubmit}>
+                Completar {self ? 'autoevaluación' : 'evaluación'}
+              </Button>
+            </GridItem>
+          </GridContainer>
+        )}
       </div>
     );
   }
@@ -252,6 +266,7 @@ EvaluationForm.defaultProps = {
   self: false,
   currentUser: undefined,
   targetUserId: undefined,
+  inPlace: false,
 };
 
 EvaluationForm.propTypes = {
@@ -263,6 +278,7 @@ EvaluationForm.propTypes = {
   currentUser: PropTypes.object,
   targetUserId: PropTypes.string,
   self: PropTypes.bool,
+  inPlace: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
