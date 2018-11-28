@@ -14,7 +14,7 @@ function count(assignments) {
   };
   assignments.forEach(a => {
     counters.pendingEvaluationCount += a.pendingEvaluationWorksCount;
-    counters.completedCount += a.completedWorksCount;
+    // counters.completedCount += a.completedWorksCount;
     counters.completedEvaluationCount += a.evaluatedWorksCount;
     (a.statusTags || []).forEach(t => {
       switch (t) {
@@ -27,9 +27,9 @@ function count(assignments) {
         //     case 'completed_evaluation':
         //       counters.completedEvaluationCount += 1;
         //       break;
-        //     case 'completed_work':
-        //       counters.completedCount += 1;
-        //       break;
+        case 'completed_work':
+          counters.completedCount += 1;
+          break;
         default:
       }
     });

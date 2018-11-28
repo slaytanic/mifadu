@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import Button from 'components/material-kit-react/CustomButtons/Button';
+// import Button from 'components/material-kit-react/CustomButtons/Button';
+import Button from 'components/CustomButton/CustomButton';
 import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
 import Badge from 'components/material-kit-react/Badge/Badge';
 
@@ -29,6 +30,7 @@ class Assignment extends Component {
     modal: false,
     requiredWorkId: '',
     content: '',
+    submitting: {},
   };
 
   componentDidMount() {
@@ -38,9 +40,27 @@ class Assignment extends Component {
 
   handleUpload = requiredWorkId => event => {
     const { match, dispatchAssignmentWorkSubmit } = this.props;
+    this.setState(prevState => ({
+      submitting: { ...prevState.submitting, [requiredWorkId]: true },
+    }));
+    // console.log(this.state);
     dispatchAssignmentWorkSubmit(match.params.id, {
       assignmentWork: [{ requiredWorkId, attachment: event.target.files[0] }],
+    }).then(() => {
+      this.setState(prevState => ({
+        submitting: { ...prevState.submitting, [requiredWorkId]: false },
+      }));
+      // console.log(this.state);
     });
+  };
+
+  isSubmitting = requiredWorkId => {
+    const { submitting } = this.state;
+    // console.log('sub', submitting);
+    if (submitting[requiredWorkId]) {
+      return submitting[requiredWorkId];
+    }
+    return false;
   };
 
   handleChange = name => event => {
@@ -161,7 +181,7 @@ class Assignment extends Component {
                       href={
                         rw.assignmentWork.content
                           ? rw.assignmentWork.content
-                          : rw.assignmentWork.attachment.url
+                          : rw.assignmentWork.attachment && rw.assignmentWork.attachment.url
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -183,7 +203,9 @@ class Assignment extends Component {
                         type="file"
                         onChange={this.handleUpload(rw.id)}
                       />
-                      <Button component="span">Subir componente</Button>
+                      <Button component="span" loading={this.isSubmitting(rw.id)}>
+                        Subir componente
+                      </Button>
                     </label>
                   ) : (
                     <Button onClick={this.handleLink(rw.id)}>Subir componente</Button>

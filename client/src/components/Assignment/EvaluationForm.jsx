@@ -8,7 +8,8 @@ import { push } from 'connected-react-router';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import Button from 'components/material-kit-react/CustomButtons/Button';
+// import Button from 'components/material-kit-react/CustomButtons/Button';
+import CustomButton from 'components/CustomButton/CustomButton';
 import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
 import GridContainer from 'components/material-kit-react/Grid/GridContainer';
 import GridItem from 'components/material-kit-react/Grid/GridItem';
@@ -34,6 +35,7 @@ class EvaluationForm extends Component {
     const { selfEvaluation, evaluations } = assignment;
     if (selfEvaluation && self === true) {
       this.state = {
+        submitting: false,
         dirty: false,
         evaluation: {
           score1: selfEvaluation.score1 || 0,
@@ -52,6 +54,7 @@ class EvaluationForm extends Component {
         e => e.targetUser.id === targetUserId && e.user.id === targetUserId,
       );
       this.state = {
+        submitting: false,
         dirty: false,
         evaluation: {
           score1: (evaluation && evaluation.score1) || 0,
@@ -71,6 +74,7 @@ class EvaluationForm extends Component {
       };
     } else {
       this.state = {
+        submitting: false,
         dirty: false,
         evaluation: {
           score1: 0,
@@ -111,10 +115,11 @@ class EvaluationForm extends Component {
     } = this.props;
     const { evaluation } = this.state;
 
+    this.setState({ submitting: true });
     if (self) {
       dispatchAssignmentSelfEvaluationSubmit(assignment.id, evaluation).then(() => {
         if (!inPlace) historyPush(`/assignments/${assignment.id}`);
-        this.setState({ dirty: false });
+        this.setState({ submitting: false, dirty: false });
       });
     } else {
       dispatchAssignmentEvaluationSubmit(assignment.id, {
@@ -122,14 +127,14 @@ class EvaluationForm extends Component {
         targetUser: targetUserId,
       }).then(() => {
         if (!inPlace) historyPush(`/evaluations/completed`);
-        this.setState({ dirty: false });
+        this.setState({ submitting: false, dirty: false });
       });
     }
   };
 
   render() {
     const { assignment, classes, self, inPlace } = this.props;
-    const { evaluation, dirty } = this.state;
+    const { evaluation, dirty, submitting } = this.state;
 
     const chartData = [evaluation];
     if (self !== true) {
@@ -234,13 +239,19 @@ class EvaluationForm extends Component {
           }}
         />
         {inPlace ? (
-          <Button color="primary" fullWidth onClick={this.handleSubmit} disabled={!dirty}>
+          <CustomButton
+            color="primary"
+            fullWidth
+            onClick={this.handleSubmit}
+            disabled={!dirty}
+            loading={submitting}
+          >
             Guardar {self ? 'autoevaluación' : 'evaluación'}
-          </Button>
+          </CustomButton>
         ) : (
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
-              <Button
+              <CustomButton
                 simple
                 color="primary"
                 fullWidth
@@ -248,12 +259,12 @@ class EvaluationForm extends Component {
                 to={self ? `/assignments/${assignment.id}` : '/evaluations/pending'}
               >
                 Cancelar
-              </Button>
+              </CustomButton>
             </GridItem>
             <GridItem xs={12} sm={12} md={6}>
-              <Button color="primary" fullWidth onClick={this.handleSubmit}>
+              <CustomButton color="primary" fullWidth onClick={this.handleSubmit}>
                 Completar {self ? 'autoevaluación' : 'evaluación'}
-              </Button>
+              </CustomButton>
             </GridItem>
           </GridContainer>
         )}
