@@ -222,17 +222,17 @@ class Assignment extends Component {
                 Editar trabajo práctico
               </Button>
             )}
-            {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
-              assignment.statusTags.includes('completed_work') && (
-                <Button
-                  color="primary"
-                  fullWidth
-                  component={Link}
-                  to={`/assignments/${assignment.id}/self_score`}
-                >
-                  Autoevaluación
-                </Button>
-              )}
+            {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) && (
+              // assignment.statusTags.includes('completed_work') && (
+              <Button
+                color="primary"
+                fullWidth
+                component={Link}
+                to={`/assignments/${assignment.id}/self_score`}
+              >
+                Autoevaluación
+              </Button>
+            )}
           </div>
         )}
       </Content>

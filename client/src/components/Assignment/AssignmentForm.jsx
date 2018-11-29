@@ -101,6 +101,15 @@ class AssignmentForm extends Component {
             )
             .required('Debe agregar un componente de entrega')
             .min(1, 'Debe haber al menos un componente de entrega'),
+          // attachment: Yup.mixed()
+          //   .test(
+          //     'fileSize',
+          //     'El archivo de la consigna no debe exceder los 5mb',
+          //     value => value.size <= 5 * 1024 * 1024,
+          //   )
+          //   .test('fileType', 'El archivo de la consigna debe estar en formato PDF', value =>
+          //     ['application/pdf'].includes(value.type),
+          //   ),
         })}
         onSubmit={(values, actions) => {
           if (assignment) {
