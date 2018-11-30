@@ -122,7 +122,6 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
       }
       return reject(err);
     }
-    let newDoc = doc;
     if (req.files && req.files.length > 0) {
       await Promise.all(
         req.files.map(async (f) => {
@@ -135,9 +134,9 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
           });
           fs.unlinkSync(f.path);
           assignmentWork.attachment.set({ url: upload.secure_url });
-          newDoc = await doc.save();
         }),
       );
+      await doc.save();
     }
     // return resolve(newDoc);
     return resolve(Assignment.findOne({ _id: id }));
@@ -178,9 +177,20 @@ function deleteAssignment(obj, { id }) {
   return Assignment.findOneAndRemove({ _id: id });
 }
 
+async function assignUserToGroup(obj, { assignmentId, userId, number }, { req }) {
+  const assignment = await Assignment.findOne({ _id: assignmentId });
+  if (userId) {
+    assignment.assignUserToGroup(number, { _id: userId });
+  } else {
+    assignment.assignUserToGroup(number, req.user);
+  }
+  return assignment.save();
+}
+
 module.exports.createAssignment = createAssignment;
 module.exports.updateAssignment = updateAssignment;
 module.exports.submitAssignmentWork = submitAssignmentWork;
 module.exports.submitAssignmentSelfEvaluation = submitAssignmentSelfEvaluation;
 module.exports.submitAssignmentEvaluation = submitAssignmentEvaluation;
 module.exports.deleteAssignment = deleteAssignment;
+module.exports.assignUserToGroup = assignUserToGroup;
