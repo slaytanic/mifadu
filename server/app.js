@@ -24,18 +24,18 @@ const upload = multer({
 
 function handleUpload(req, res, next) {
   findRemoveSync('uploads', { age: { seconds: 1800 } });
-  upload(req, res, () => {
+  return upload(req, res, () => {
     // console.log(req.body);
     // if (!req.files || req.files.length === 0) {
     if (!req.body.request) {
-      next();
-      return;
+      return next();
+      // return;
     }
     req.body = JSON.parse(req.body.request);
     // req.files.forEach((file) => {
     //   req.body.variables.input[file.fieldname] = file;
     // });
-    next();
+    return next();
   });
 }
 

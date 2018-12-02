@@ -75,7 +75,7 @@ const assignmentSchema = new Schema(
     requiredWork: [requiredWorkSchema],
     attachment: fileSchema,
     evaluations: [evaluationSchema],
-    groups: [],
+    groups: [groupSchema],
     workshop: { type: Schema.Types.ObjectId, ref: 'Tag' },
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     user: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -126,7 +126,8 @@ assignmentSchema.methods.statusTagsForUser = function statusTagsForUser(user) {
     const workDelivered = this.requiredWork
       .map(rw => rw.assignmentWorks && rw.assignmentWorks.find(aw => aw.user.equals(user._id)))
       .filter(aw => aw);
-    if (workDelivered.length < this.requiredWork.length) {
+    // if (workDelivered.length < this.requiredWork.length) {
+    if (!workDelivered.length) {
       statusTags.push('pending_work');
     } else {
       statusTags.push('completed_work');
@@ -201,7 +202,7 @@ assignmentSchema
   });
 
 assignmentSchema.virtual('completedBy').get(function getCompletedBy() {
-  const requiredWorkCount = this.requiredWork.length;
+  // const requiredWorkCount = this.requiredWork.length;
   const usersWithSubmittedWork = [
     ...new Set(
       this.requiredWork.flatMap(
@@ -215,7 +216,8 @@ assignmentSchema.virtual('completedBy').get(function getCompletedBy() {
         .map(rw => rw.assignmentWorks && rw.assignmentWorks.find(aw => aw.user.equals(user)))
         .filter(i => i).length;
 
-      if (submittedWorkCount === requiredWorkCount && this.selfEvaluationForUser({ _id: user })) {
+      // if (submittedWorkCount === requiredWorkCount && this.selfEvaluationForUser({ _id: user })) {
+      if (submittedWorkCount > 0 && this.selfEvaluationForUser({ _id: user })) {
         return user;
       }
       return null;
@@ -242,10 +244,13 @@ assignmentSchema.virtual('usersWithEvaluations').get(function getUsersWithEvalua
 assignmentSchema.methods.linksForUser = function linksForUser(user) {
   return this.requiredWork.map((rw) => {
     const assignmentWork = rw.assignmentWorks.find(aw => aw.user.equals(user._id));
-    if (assignmentWork.content && assignmentWork.content.length) {
-      return assignmentWork.content;
+    if (assignmentWork) {
+      if (assignmentWork.content && assignmentWork.content.length) {
+        return assignmentWork.content;
+      }
+      return assignmentWork.attachment && assignmentWork.attachment.url;
     }
-    return assignmentWork.attachment && assignmentWork.attachment.url;
+    return 'N/A';
   });
 };
 
