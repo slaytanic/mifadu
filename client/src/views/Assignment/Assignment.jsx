@@ -159,8 +159,8 @@ class Assignment extends Component {
             <p>
               <b>Tipo:</b> {{ Group: 'Grupal', Individual: 'Individual' }[assignment.type]}
             </p>
-            {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
-              assignment.type === 'Group' && <AssignUserToGroup assignmentId={assignment.id} />}
+            {/* {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
+              assignment.type === 'Group' && <AssignUserToGroup assignmentId={assignment.id} />} */}
             <p>
               <b>Categorías / Etiquetas:</b>{' '}
               {assignment.tags ? assignment.tags.map(t => t.name).join(', ') : <i>Ninguna</i>}

@@ -103,6 +103,22 @@ class Assignments extends React.Component {
     const { filteredAssignments, subtitle } = this.state;
     const { modal } = this.state;
 
+    const isTutor = currentUser.tutoredWorkshops.length > 0;
+    const tableHead = [
+      { label: 'Nombre', key: 'name' },
+      // { label: 'Descripción', key: 'shortDescription' },
+      { label: 'Fecha de entrega', key: 'endsAt' },
+      // { label: 'Entregados', key: 'completedWorksCount' },
+      // { label: 'Sin entregar', key: '' },
+      // { label: 'Sin evaluar', key: 'pendingEvaluationWorksCount' },
+      // { label: 'Evaluados', key: 'evaluatedWorksCount' },
+    ];
+    if (isTutor) {
+      tableHead.push({ label: 'Entregados', key: 'completedWorksCount' });
+      tableHead.push({ label: 'Sin evaluar', key: 'pendingEvaluationWorksCount' });
+      tableHead.push({ label: 'Evaluados', key: 'evaluatedWorksCount' });
+    }
+
     return (
       <Content title="Trabajos prácticos" subtitle={subtitle}>
         <div className={classes.root}>
@@ -116,15 +132,7 @@ class Assignments extends React.Component {
           />
           <CustomTable
             tableHeaderColor="primary"
-            tableHead={[
-              { label: 'Nombre', key: 'name' },
-              { label: 'Descripción', key: 'shortDescription' },
-              { label: 'Fecha de entrega', key: 'endsAt' },
-              // { label: 'Entregados', key: 'completedWorksCount' },
-              // { label: 'Sin entregar', key: '' },
-              // { label: 'Sin evaluar', key: 'pendingEvaluationWorksCount' },
-              // { label: 'Evaluados', key: 'evaluatedWorksCount' },
-            ]}
+            tableHead={tableHead}
             tableData={filteredAssignments.map(a => ({
               ...Object.keys(a).reduce((obj, key) => {
                 switch (key) {
