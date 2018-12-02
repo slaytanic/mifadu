@@ -70,12 +70,15 @@ function statusTags(obj, args, { req }) {
 }
 
 function assignmentWork(obj, args, { req }) {
-  console.log('assignmentWork', obj.assignmentWorks);
   return obj.assignmentWorkForUser(req.user);
 }
 
 function selfEvaluation(obj, args, { req }) {
   return obj.selfEvaluationForUser(req.user);
+}
+
+function myGroup(obj, args, { req }) {
+  return obj.groupForUser(req.user);
 }
 
 module.exports.assignment = assignment;
@@ -88,3 +91,4 @@ module.exports.completedEvaluationAssignments = completedEvaluationAssignments;
 module.exports.statusTags = statusTags;
 module.exports.assignmentWork = assignmentWork;
 module.exports.selfEvaluation = selfEvaluation;
+module.exports.myGroup = myGroup;

@@ -9,6 +9,11 @@ require('array.prototype.flatmap').shim();
 const User = require('./user');
 const fileSchema = require('./fileSchema');
 
+const groupSchema = new Schema({
+  number: Number,
+  user: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+});
+
 const assignmentWorkSchema = new Schema(
   {
     content: String,
@@ -70,12 +75,30 @@ const assignmentSchema = new Schema(
     requiredWork: [requiredWorkSchema],
     attachment: fileSchema,
     evaluations: [evaluationSchema],
+    groups: [],
     workshop: { type: Schema.Types.ObjectId, ref: 'Tag' },
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     user: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true },
 );
+
+assignmentSchema.methods.assignUserToGroup = function assignUserToGroup(number, user) {
+  this.groups = this.groups.map(g => ({ ...g, users: g.users.filter(u => !u.equals(user._id)) }));
+  const group = this.groups.find(g => g.number === number);
+  if (group) {
+    group.users.push(user._id);
+  } else {
+    this.groups.push({ number, users: [user._id] });
+  }
+};
+
+assignmentSchema.methods.groupForUser = function groupForUser(user) {
+  if (this.groups) {
+    return this.groups.find(g => g.users.map(u => u.toString()).includes(user._id.toString()));
+  }
+  return null;
+};
 
 assignmentSchema.methods.evaluationForUser = function evaluationForUser(user, targetUser) {
   if (this.evaluations) {

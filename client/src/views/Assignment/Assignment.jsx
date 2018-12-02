@@ -11,6 +11,7 @@ import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
 import Badge from 'components/material-kit-react/Badge/Badge';
 
 import Modal from 'components/Modal/Modal';
+import AssignUserToGroup from 'components/Assignment/AssignUserToGroup';
 
 import Content from 'layouts/Content';
 
@@ -158,6 +159,8 @@ class Assignment extends Component {
             <p>
               <b>Tipo:</b> {{ Group: 'Grupal', Individual: 'Individual' }[assignment.type]}
             </p>
+            {!currentUser.tutoredWorkshops.map(tw => tw.id).includes(assignment.workshop.id) &&
+              assignment.type === 'Group' && <AssignUserToGroup assignmentId={assignment.id} />}
             <p>
               <b>Categorías / Etiquetas:</b>{' '}
               {assignment.tags ? assignment.tags.map(t => t.name).join(', ') : <i>Ninguna</i>}

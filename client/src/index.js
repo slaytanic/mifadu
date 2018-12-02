@@ -7,6 +7,8 @@ import { Provider } from 'react-redux';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import throttle from 'lodash.throttle';
 import { CloudinaryContext } from 'cloudinary-react';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
 
 import 'assets/css/material-dashboard-react.css';
 import 'assets/scss/material-kit-react.scss';
@@ -15,6 +17,8 @@ import 'react-vis/dist/style.css';
 import { loadState, saveState } from 'store/local-storage';
 import rootReducer from 'reducers/index';
 import App from './App';
+
+const client = new ApolloClient();
 
 const history = createBrowserHistory();
 
@@ -36,11 +40,13 @@ store.subscribe(
 
 const render = () => {
   ReactDOM.render(
-    <Provider store={store}>
-      <CloudinaryContext cloudName="mifadu">
-        <App history={history} />
-      </CloudinaryContext>
-    </Provider>,
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <CloudinaryContext cloudName="mifadu">
+          <App history={history} />
+        </CloudinaryContext>
+      </Provider>
+    </ApolloProvider>,
     document.getElementById('root'),
   );
 };

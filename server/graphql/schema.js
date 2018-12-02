@@ -12,6 +12,7 @@ const {
   statusTags,
   assignmentWork,
   selfEvaluation,
+  myGroup,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
@@ -29,6 +30,7 @@ const {
   submitAssignmentWork,
   submitAssignmentSelfEvaluation,
   submitAssignmentEvaluation,
+  assignUserToGroup,
 } = require('./mutations/assignment');
 const { createChair, updateChair, deleteChair } = require('./mutations/chair');
 const { createSubject, updateSubject, deleteSubject } = require('./mutations/subject');
@@ -90,6 +92,11 @@ const typeDefs = `
     assignmentWorks: [AssignmentWork]
   }
 
+  type Group {
+    number: Int
+    users: [User]
+  }
+
   type Assignment {
     id: ID!
     name: String
@@ -113,6 +120,7 @@ const typeDefs = `
     completedBy: [User]
     usersWithEvaluations: [User]
     usersWithoutEvaluations: [User]
+    myGroup: Group
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -299,6 +307,8 @@ const typeDefs = `
     submitAssignmentSelfEvaluation(id: ID!, input: EvaluationInput!): Assignment
     submitAssignmentEvaluation(id: ID!, input: SubmitAssignmentEvaluationInput!): Assignment
 
+    assignUserToGroup(assignmentId: ID!, number: Int!, userId: ID): Assignment
+
     createChair(input: ChairInput!): Chair
     updateChair(id: ID!, input: ChairInput!): Chair
     deleteChair(id: ID!): Chair
@@ -341,6 +351,7 @@ const resolvers = {
     completedBy: usersByRef('completedBy'),
     usersWithEvaluations: usersByRef('usersWithEvaluations'),
     usersWithoutEvaluations: usersByRef('usersWithoutEvaluations'),
+    myGroup,
   },
   AssignmentWork: {
     user,
@@ -399,6 +410,7 @@ const resolvers = {
     submitAssignmentWork,
     submitAssignmentSelfEvaluation,
     submitAssignmentEvaluation,
+    assignUserToGroup,
 
     createChair,
     updateChair,
