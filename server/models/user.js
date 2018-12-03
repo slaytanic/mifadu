@@ -81,6 +81,18 @@ userSchema.statics.recoverPassword = async function recoverPassword(email) {
       `Para recuperar su clave haga click en el siguiente link: ${recoveryLink}`,
       `Para recuperar su clave haga <a href="${recoveryLink}">click aquí</a>`,
     );
+  } else {
+    await sendMail(
+      'no-responder@mifadu.cfapps.io',
+      email,
+      'Recuperar Clave',
+      `Se solicitó un cambio de clave para esta dirección de e-mail en el sitio web de MiFADU pero el usuario no existe en el sistema. Para registrarse ingrese a https://${
+        config.url
+      }`,
+      `Se solicitó un cambio de clave para esta dirección de e-mail en el sitio web de MiFADU pero el usuario no existe en el sistema. Para registrarse ingrese a https://${
+        config.url
+      }`,
+    );
   }
   return true;
 };

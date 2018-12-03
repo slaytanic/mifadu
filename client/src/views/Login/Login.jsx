@@ -63,9 +63,9 @@ class Login extends React.Component {
                     <Button justIcon href="/auth/twitter" color="transparent">
                       <i className="fab fa-twitter" />
                     </Button>
-                    <Button justIcon href="/auth/facebook" color="transparent">
+                    {/* <Button justIcon href="/auth/facebook" color="transparent">
                       <i className="fab fa-facebook" />
-                    </Button>
+                    </Button> */}
                     <Button justIcon href="/auth/google" color="transparent">
                       <i className="fab fa-google-plus-g" />
                     </Button>

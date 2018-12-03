@@ -23,7 +23,7 @@ const upload = multer({
 }).any();
 
 function handleUpload(req, res, next) {
-  findRemoveSync('uploads', { age: { seconds: 1800 } });
+  findRemoveSync(__dirname + '/uploads', { age: { seconds: 600 } });
   return upload(req, res, () => {
     // console.log(req.body);
     // if (!req.files || req.files.length === 0) {
