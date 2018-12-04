@@ -14,26 +14,26 @@ function createAssignment(obj, { input }, { req }) {
       });
       assignment.save((err, doc) => {
         if (err) {
-          fs.unlinkSync(req.files[0].path);
+          console.error(err);
           return reject(err);
         }
-        return cloudinary.v2.uploader.upload(
-          req.files[0].path,
-          {
-            public_id: `${doc.attachment._id}/${stripExt(doc.attachment.name)}`,
-            overwrite: true,
-          },
-          (uploadErr, uploadRes) => {
-            if (uploadErr) {
-              fs.unlinkSync(req.files[0].path);
-              return reject(uploadErr);
-            }
-            console.info('unlink', req.files[0].path);
-            fs.unlinkSync(req.files[0].path);
-            assignment.attachment.set({ url: uploadRes.secure_url });
-            return resolve(assignment.save());
-          },
-        );
+        return cloudinary.v2.uploader
+          .upload_stream(
+            {
+              public_id: `${doc.attachment._id}/${stripExt(doc.attachment.name)}`,
+              overwrite: true,
+            },
+            (uploadErr, uploadRes) => {
+              if (uploadErr) {
+                console.error(uploadErr);
+                return reject(uploadErr);
+              }
+              console.info(uploadRes);
+              assignment.attachment.set({ url: uploadRes.secure_url });
+              return resolve(assignment.save());
+            },
+          )
+          .end(req.files[0].buffer);
       });
     });
   }
@@ -52,26 +52,25 @@ async function updateAssignment(obj, { id, input }, { req }) {
     }
     return assignment.save((err, doc) => {
       if (err) {
-        fs.unlinkSync(req.files[0].path);
+        console.error(err);
         return reject(err);
       }
-      return cloudinary.v2.uploader.upload(
-        req.files[0].path,
-        {
-          public_id: `${doc.attachment._id}/${stripExt(req.files[0].originalname)}`,
-          overwrite: true,
-        },
-        (uploadErr, uploadRes) => {
-          console.info('unlink', req.files[0].path);
-          fs.unlinkSync(req.files[0].path);
-
-          if (uploadErr) {
-            return reject(uploadErr);
-          }
-          assignment.attachment.set({ url: uploadRes.secure_url });
-          return resolve(assignment.save());
-        },
-      );
+      return cloudinary.v2.uploader
+        .upload_stream(
+          {
+            public_id: `${doc.attachment._id}/${stripExt(req.files[0].originalname)}`,
+            overwrite: true,
+          },
+          (uploadErr, uploadRes) => {
+            if (uploadErr) {
+              console.error(uploadErr);
+              return reject(uploadErr);
+            }
+            assignment.attachment.set({ url: uploadRes.secure_url });
+            return resolve(assignment.save());
+          },
+        )
+        .end(req.files[0].buffer);
     });
   });
 }
@@ -115,11 +114,6 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
   }
   return new Promise((resolve, reject) => assignment.save(async (err, doc) => {
     if (err) {
-      if (req.files && req.files.length) {
-        req.files.forEach((f) => {
-          fs.unlinkSync(f.path);
-        });
-      }
       return reject(err);
     }
     if (req.files && req.files.length > 0) {
@@ -128,11 +122,12 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
           const requiredWorkId = f.fieldname;
           const requiredWork = doc.requiredWork.id(requiredWorkId);
           const assignmentWork = requiredWork.assignmentWorks.find(aw => aw.user.equals(req.user._id));
-          const upload = await cloudinary.v2.uploader.upload(f.path, {
-            public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
-            overwrite: true,
-          });
-          fs.unlinkSync(f.path);
+          const upload = await cloudinary.v2.uploader
+            .upload_stream({
+              public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
+              overwrite: true,
+            })
+            .end(f.buffer);
           assignmentWork.attachment.set({ url: upload.secure_url });
         }),
       );

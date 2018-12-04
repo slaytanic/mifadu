@@ -9,8 +9,6 @@ const cookieSession = require('cookie-session');
 // const passport = require('passport');
 const multer = require('multer');
 
-const findRemoveSync = require('find-remove');
-
 const passport = require('./passport');
 
 const config = require('./config');
@@ -18,12 +16,11 @@ const graphqlSchema = require('./graphql/schema');
 const assignmentsRouter = require('./routes/assignments');
 
 const upload = multer({
-  // storage: multer.memoryStorage(),
-  dest: 'uploads/',
+  storage: multer.memoryStorage(),
+  // dest: 'uploads/',
 }).any();
 
 function handleUpload(req, res, next) {
-  findRemoveSync(__dirname + '/uploads', { age: { seconds: 600 } });
   return upload(req, res, () => {
     // console.log(req.body);
     // if (!req.files || req.files.length === 0) {
