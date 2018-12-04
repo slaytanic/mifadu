@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 const stripExt = require('../../lib/stripExt');
 const cloudinary = require('../../cloudinary');
 
@@ -118,17 +116,28 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
     }
     if (req.files && req.files.length > 0) {
       await Promise.all(
-        req.files.map(async (f) => {
+        req.files.map((f) => {
           const requiredWorkId = f.fieldname;
           const requiredWork = doc.requiredWork.id(requiredWorkId);
           const assignmentWork = requiredWork.assignmentWorks.find(aw => aw.user.equals(req.user._id));
-          const upload = await cloudinary.v2.uploader
-            .upload_stream({
-              public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
-              overwrite: true,
-            })
-            .end(f.buffer);
-          assignmentWork.attachment.set({ url: upload.secure_url });
+          return new Promise((uploadResolve, uploadReject) => {
+            cloudinary.v2.uploader
+              .upload_stream(
+                {
+                  public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
+                  overwrite: true,
+                },
+                (uploadErr, uploadRes) => {
+                  if (uploadErr) {
+                    console.error(uploadErr);
+                    return uploadReject(uploadErr);
+                  }
+                  assignmentWork.attachment.set({ url: uploadRes.secure_url });
+                  return uploadResolve(uploadRes);
+                },
+              )
+              .end(f.buffer);
+          });
         }),
       );
       await doc.save();
