@@ -1,11 +1,17 @@
 const Subject = require('../../models/subject');
 
-function subject(obj, args, context) {
-  return Subject.find({ _id: args.id });
+function subject(obj, { id }) {
+  if (obj && obj.subject) {
+    return Subject.findOne({ _id: obj.subject });
+  }
+  return Subject.findOne({ _id: id });
 }
 
-function subjects(obj, args, context) {
-  return Subject.find({});
+function subjects(obj) {
+  if (obj && obj.subjects) {
+    return Subject.find({ _id: { $in: obj.subjects } }).sort({ name: 'asc' });
+  }
+  return Subject.find({}).sort({ name: 'asc' });
 }
 
 module.exports.subject = subject;

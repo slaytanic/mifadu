@@ -1,87 +1,64 @@
+const { AuthenticationError, ForbiddenError } = require('apollo-server');
+
 const User = require('../../models/user');
-
 const { canUpdateUser } = require('../policies/user');
-
 const passport = require('../../passport');
 
-function createUser(obj, { input }, context) {
+function createUser(obj, { input }) {
   return User.create(input);
 }
 
-function createOrUpdateUser(obj, { input }, { req }) {
-  return new Promise((resolve, reject) => {
-    User.findOne({ email: input.email }, (err, doc) => {
-      if (err) {
-        return reject(err);
-      }
-      if (doc) {
-        const authorized = canUpdateUser(req.user, doc);
-        if (authorized === true) {
-          doc.set(input);
-          return doc.save((saveErr) => {
-            if (saveErr) {
-              return reject(saveErr);
-            }
-            return req.login(doc, (loginErr) => {
-              if (loginErr) {
-                return reject(loginErr);
-              }
-
-              return resolve(doc);
-            });
-          });
-        }
-        return reject(authorized);
-      }
-      const user = new User(input);
-      return user.save((saveErr) => {
-        if (saveErr) {
-          return reject(saveErr);
-        }
-        return req.login(user, (loginErr) => {
-          if (loginErr) {
-            return reject(loginErr);
-          }
-
-          return resolve(user);
-        });
-      });
-    });
-  });
+async function createOrUpdateUser(obj, { input }, { req }) {
+  let user = await User.findOne({ email: input.email });
+  if (user) {
+    const authorized = canUpdateUser(req.user, user);
+    if (authorized === true) {
+      user.set(input);
+      await user.save();
+      return new Promise((resolve, reject) => req.login(user, (loginErr) => {
+        if (loginErr) reject(loginErr);
+        resolve(user);
+      }));
+    }
+    throw new ForbiddenError('You are not authorized to change the information for this user');
+  }
+  user = new User(input);
+  await user.save();
+  return new Promise((resolve, reject) => req.login(user, (loginErr) => {
+    if (loginErr) reject(loginErr);
+    resolve(user);
+  }));
 }
 
-function updateUser(obj, { id, input }, context) {
+function updateUser(obj, { id, input }) {
   return User.findOneAndUpdate({ _id: id }, input, { new: true });
 }
 
-function deleteUser(obj, { id }, context) {
+function deleteUser(obj, { id }) {
   return User.findOneAndRemove({ _id: id });
 }
 
-function loginUser(obj, args, { req, res, next }) {
+function loginUser(obj, { email, password }, { req, res, next }) {
   return new Promise((resolve, reject) => {
     passport.authenticate('local', (error, user, info) => {
       if (error) {
-        return reject(error);
+        reject(new AuthenticationError(error));
       }
       if (!user) {
-        return reject(info.message);
+        reject(new AuthenticationError(info.message));
       }
 
-      return req.login(user, (err) => {
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(user);
+      return req.login(user, (loginErr) => {
+        if (loginErr) reject(loginErr);
+        resolve(user);
       });
-    })({ body: { username: args.email, password: args.password } }, res, next);
+    })({ body: { username: email, password } }, res, next);
   });
 }
 
 function logoutUser(obj, args, { req }) {
   req.logout();
-  return true;
+  return req.user;
 }
 
 function recoverPassword(obj, { email }) {

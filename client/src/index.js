@@ -1,54 +1,49 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createBrowserHistory } from 'history';
-import { applyMiddleware, compose, createStore } from 'redux';
-import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
-import throttle from 'lodash.throttle';
-import { CloudinaryContext } from 'cloudinary-react';
-import ApolloClient from 'apollo-boost';
+// import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+import { ApolloClient } from 'apollo-client';
+import { createUploadLink } from 'apollo-upload-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { onError } from 'apollo-link-error';
+import { ApolloLink } from 'apollo-link';
 import { ApolloProvider } from 'react-apollo';
+import { BrowserRouter } from 'react-router-dom';
+import { CloudinaryContext } from 'cloudinary-react';
 
 import 'assets/css/material-dashboard-react.css';
 import 'assets/scss/material-kit-react.scss';
 import 'react-vis/dist/style.css';
 
-import { loadState, saveState } from 'store/local-storage';
-import rootReducer from 'reducers/index';
-import App from './App';
+const client = new ApolloClient({
+  link: ApolloLink.from([
+    onError(({ graphQLErrors, networkError }) => {
+      if (graphQLErrors)
+        graphQLErrors.map(({ message, locations, path }) =>
+          console.log(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+          ),
+        );
+      if (networkError) console.log(`[Network error]: ${networkError}`);
+    }),
+    createUploadLink(),
+  ]),
+  cache: new InMemoryCache(),
+});
 
-const client = new ApolloClient();
-
-const history = createBrowserHistory();
-
-const persistedState = loadState();
-const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
-  connectRouter(history)(rootReducer),
-  persistedState,
-  composeEnhancer(applyMiddleware(routerMiddleware(history), thunk)),
+ReactDOM.render(
+  <ApolloProvider client={client}>
+    <BrowserRouter>
+      <CloudinaryContext cloudName="mifadu">
+        <App />
+      </CloudinaryContext>
+    </BrowserRouter>
+  </ApolloProvider>,
+  document.getElementById('root'),
 );
 
-store.subscribe(
-  throttle(() => {
-    saveState({
-      currentUser: store.getState().currentUser,
-    });
-  }, 5000),
-);
-
-const render = () => {
-  ReactDOM.render(
-    <ApolloProvider client={client}>
-      <Provider store={store}>
-        <CloudinaryContext cloudName="mifadu">
-          <App history={history} />
-        </CloudinaryContext>
-      </Provider>
-    </ApolloProvider>,
-    document.getElementById('root'),
-  );
-};
-
-render();
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();

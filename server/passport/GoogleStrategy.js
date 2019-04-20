@@ -11,7 +11,7 @@ module.exports = new GoogleStrategy(
   },
   (accessToken, refreshToken, profile, done) => {
     const user = {
-      email: profile.emails.find(email => email.type === 'account').value,
+      email: (profile.emails.find(email => email.type === 'account') || profile.emails[0]).value,
       firstName: profile.name.givenName,
       lastName: profile.name.familyName,
       googleId: profile.id,

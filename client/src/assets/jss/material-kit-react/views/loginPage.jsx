@@ -14,7 +14,6 @@ const signupPageStyle = {
   },
   pageHeader: {
     minHeight: "100vh",
-    maxHeight: "1200px",
     height: "auto",
     display: "inherit",
     position: "relative",
@@ -41,7 +40,7 @@ const signupPageStyle = {
     "& footer": {
       position: "absolute",
       bottom: "0",
-      width: "100%",
+      width: "100%"
     }
   },
   form: {

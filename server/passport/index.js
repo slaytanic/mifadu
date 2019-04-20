@@ -5,12 +5,19 @@ const GoogleStrategy = require('./GoogleStrategy');
 const TwitterStrategy = require('./TwitterStrategy');
 const LocalStrategy = require('./LocalStrategy');
 
+const User = require('../models/user');
+
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user._id);
 });
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
+passport.deserializeUser(async (userId, done) => {
+  const user = await User.findOne({ _id: userId });
+  if (user) {
+    done(null, user);
+  } else {
+    done('User not found!');
+  }
 });
 
 passport.use(FacebookStrategy);

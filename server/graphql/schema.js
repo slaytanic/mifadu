@@ -1,4 +1,3 @@
-const { makeExecutableSchema } = require('graphql-tools');
 const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date');
 
 const {
@@ -13,6 +12,7 @@ const {
   assignmentWork,
   selfEvaluation,
   myGroup,
+  workshopAssignments,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
@@ -21,7 +21,10 @@ const { university, universitys } = require('./queries/university');
 const {
   userByRef, usersByRef, user, users, me, myStudents,
 } = require('./queries/user');
-const { workshop, workshops, myWorkshops } = require('./queries/workshop');
+const {
+  workshopsByRef, workshop, workshops, myWorkshops,
+} = require('./queries/workshop');
+const { avatar, avatars } = require('./queries/avatar');
 
 const {
   createAssignment,
@@ -47,15 +50,11 @@ const {
   resetPassword,
 } = require('./mutations/user');
 const { createWorkshop, updateWorkshop, deleteWorkshop } = require('./mutations/workshop');
+const { createAvatar, deleteAvatar } = require('./mutations/avatar');
 
 const typeDefs = `
   scalar Date
   scalar DateTime
-
-  input FileInput {
-    name: String
-    type: String
-  }
 
   type File {
     id: ID!
@@ -66,6 +65,17 @@ const typeDefs = `
     publicId: String
   }
 
+  type Avatar {
+    id: ID!
+    filename: String!
+    filetype: String!
+    encoding: String!
+    publicId: String!
+    url: String!
+    secureUrl: String!
+    format: String!
+  }
+
   input AssignmentInput {
     name: String
     shortDescription: String
@@ -73,7 +83,7 @@ const typeDefs = `
     type: String
     startsAt: Date
     endsAt: Date
-    attachment: FileInput
+    attachment: Upload
     evaluationVariable: String
     tags: [ID]
     requiredWork: [RequiredWorkInput]
@@ -148,7 +158,7 @@ const typeDefs = `
 
   input AssignmentWorkInput {
     requiredWorkId: ID!
-    attachment: FileInput
+    attachment: Upload
     content: String
   }
 
@@ -231,6 +241,7 @@ const typeDefs = `
     previousYearOnThisChair: String
     website: String
     aboutMe: String
+    avatar: ID
   }
 
   type User {
@@ -244,6 +255,7 @@ const typeDefs = `
     idNumber: String
     email: String
     workshop: Workshop
+    workshops: [WorkshopAndYear!]
     subjects: [Subject]
     updatedAt: DateTime
     createdAt: DateTime
@@ -252,7 +264,10 @@ const typeDefs = `
     website: String
     aboutMe: String
     tutoredWorkshops: [Workshop]
-    assignments: [Assignment]
+    assignments: [Assignment]!
+    pendingAssignments: [Assignment]!
+    completedAssignments: [Assignment]!
+    avatar: Avatar
   }
 
   input WorkshopInput {
@@ -261,10 +276,19 @@ const typeDefs = `
 
   type Workshop {
     id: ID!
-    name: String
-    tutors: [User]
-    updatedAt: DateTime
-    createdAt: DateTime
+    name: String!
+    tutors: [User!]
+    members: [User!]
+    memberCount: Int!
+    assignments(status: String, year: Int): [Assignment]!
+    updatedAt: DateTime!
+    createdAt: DateTime!
+  }
+
+  type WorkshopAndYear {
+    id: ID!
+    year: Int!
+    workshop: Workshop!
   }
 
   type Query {
@@ -296,6 +320,9 @@ const typeDefs = `
     workshop(id: ID!): Workshop
     workshops: [Workshop]
     myWorkshops: [Workshop]
+
+    avatar(id: ID!): Avatar
+    avatars(id: ID!): [Avatar]!
   }
 
   type Mutation {
@@ -337,6 +364,9 @@ const typeDefs = `
     createWorkshop(input: WorkshopInput!): Workshop
     updateWorkshop(id: ID!, input: WorkshopInput!): Workshop
     deleteWorkshop(id: ID!): Workshop
+
+    createAvatar(file: Upload!): Avatar
+    deleteAvatar(id: ID!): Avatar
   }
 `;
 
@@ -367,11 +397,21 @@ const resolvers = {
     assignments,
   },
   Workshop: {
-    tutors: users,
+    tutors: usersByRef('tutors'),
+    members: usersByRef('members'),
+    assignments: workshopAssignments,
+  },
+  WorkshopAndYear: {
+    workshop,
   },
   User: {
-    tutoredWorkshops: workshops,
+    tutoredWorkshops: workshopsByRef('tutors'),
     assignments: myAssignments,
+    pendingAssignments,
+    completedAssignments,
+    workshop,
+    subjects,
+    avatar,
   },
   Query: {
     assignment,
@@ -402,6 +442,9 @@ const resolvers = {
     workshop,
     workshops,
     myWorkshops,
+
+    avatar,
+    avatars,
   },
   Mutation: {
     createAssignment,
@@ -440,12 +483,11 @@ const resolvers = {
     createWorkshop,
     updateWorkshop,
     deleteWorkshop,
+
+    createAvatar,
+    deleteAvatar,
   },
 };
 
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-});
-
-module.exports = schema;
+module.exports.typeDefs = typeDefs;
+module.exports.resolvers = resolvers;

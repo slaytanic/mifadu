@@ -10,8 +10,11 @@ function userByRef(ref) {
 }
 
 function usersByRef(ref) {
-  return (obj) => {
+  return async (obj) => {
     if (obj && obj[ref]) {
+      if (typeof obj[ref] === 'function') {
+        return User.find({ _id: { $in: await obj[ref]() } });
+      }
       return User.find({ _id: { $in: obj[ref] } });
     }
     return null;
@@ -26,8 +29,8 @@ function user(obj, args) {
 }
 
 function users(obj) {
-  if (obj && obj.tutors) {
-    return User.find({ _id: { $in: obj.tutors } });
+  if (obj && obj.users) {
+    return User.find({ _id: { $in: obj.users } });
   }
   return User.find({});
 }

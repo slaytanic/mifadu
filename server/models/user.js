@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const uuidv4 = require('uuid/v4');
+
 const config = require('../config');
 
 const { Schema } = mongoose;
@@ -22,18 +23,45 @@ const userSchema = new Schema(
     receiveNews: { type: Boolean, default: false },
     acceptedTerms: { type: Boolean, default: false },
     completedProfile: { type: Boolean, default: false },
-    workshop: { type: Schema.Types.ObjectId, ref: 'Workshop' },
+    workshops: {
+      type: [
+        {
+          workshop: { type: Schema.Types.ObjectId, ref: 'Workshop', required: true },
+          year: { type: Number, required: true },
+        },
+      ],
+    },
     subjects: [{ type: Schema.Types.ObjectId, ref: 'Subject' }],
     previouslyOnThisChair: Boolean,
     previousYearOnThisChair: String,
     website: String,
     aboutMe: String,
     profilePicture: String,
-    admin: { type: Boolean, default: true },
+    admin: { type: Boolean, default: false },
     recoveryToken: String,
+    avatar: { type: Schema.Types.ObjectId, ref: 'Avatar' },
   },
   { timestamps: true },
 );
+
+userSchema
+  .virtual('workshop')
+  .get(function getWorkshop() {
+    if (!this.workshops) return null;
+    const workshop = this.workshops.find(w => w.year === new Date().getFullYear());
+    if (workshop) return workshop.workshop;
+    return null;
+  })
+  .set(function setWorkshop(value) {
+    const year = new Date().getFullYear();
+    if (this.workshops) {
+      this.workshops
+        .pull(this.workshops.find(w => w.year === year))
+        .push({ workshop: value, year });
+    } else {
+      this.set({ workshops: [{ workshop: value, year }] });
+    }
+  });
 
 userSchema.pre('save', function save(next) {
   if (!this.isModified('password')) return next();

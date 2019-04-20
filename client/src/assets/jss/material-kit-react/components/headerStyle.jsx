@@ -58,6 +58,7 @@ const headerStyle = {
     borderRadius: "3px",
     textTransform: "none",
     color: "inherit",
+    padding: "8px 16px",
     "&:hover,&:focus": {
       color: "inherit",
       background: "transparent"
@@ -135,7 +136,6 @@ const headerStyle = {
     display: "block",
     top: "0",
     height: "100vh",
-    maxHeight: "1200px",
     right: "0",
     left: "auto",
     visibility: "visible",

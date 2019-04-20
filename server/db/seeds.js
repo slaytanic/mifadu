@@ -8,53 +8,48 @@ const subjects = require('./subjects');
 const tags = require('./tags');
 
 function seeds() {
-  workshops.forEach((workshop) => {
-    Workshop.findOneAndUpdate(
-      { name: workshop.name },
-      workshop,
-      {
-        upsert: true,
-        setDefaultsOnInsert: true,
-        new: true,
-      },
-      (err, doc) => {
-        User.findOne({ email: workshop.student }, (userErr, user) => {
-          let myUser = user;
-          if (!myUser) {
-            myUser = new User();
-          }
-          myUser.set({
-            email: workshop.student,
-            password: 'Password1',
-            firstName: workshop.name,
-            lastName: 'Estudiante',
-            workshop: doc._id,
-            completedProfile: true,
-            acceptedTerms: true,
-          });
-          myUser.save();
-        });
-        User.findOne({ email: workshop.tutor }, (userErr, user) => {
-          let myUser = user;
-          if (!myUser) {
-            myUser = new User();
-          }
-          myUser.set({
-            email: workshop.tutor,
-            password: 'Password1',
-            firstName: workshop.name,
-            lastName: 'JTP',
-            workshop: doc._id,
-            completedProfile: true,
-            acceptedTerms: true,
-          });
-          myUser.save((saveErr, saveUser) => {
-            doc.set({ tutors: [saveUser._id] });
-            doc.save();
-          });
-        });
-      },
-    );
+  workshops.forEach(async (w) => {
+    let workshop = await Workshop.findOne({ name: w.name });
+
+    if (!workshop) {
+      workshop = new Workshop();
+    }
+
+    workshop.set({ name: w.name });
+    await workshop.save();
+
+    let student = await User.findOne({ email: w.student });
+    if (!student) {
+      student = new User();
+    }
+    student.set({
+      email: w.student,
+      password: 'Password1',
+      firstName: w.name,
+      lastName: 'Estudiante',
+      workshop: workshop._id,
+      completedProfile: true,
+      acceptedTerms: true,
+    });
+    await student.save();
+
+    let tutor = await User.findOne({ email: w.tutor });
+    if (!tutor) {
+      tutor = new User();
+    }
+    tutor.set({
+      email: w.tutor,
+      password: 'Password1',
+      firstName: w.name,
+      lastName: 'JTP',
+      workshop: workshop._id,
+      completedProfile: true,
+      acceptedTerms: true,
+    });
+    await tutor.save();
+
+    workshop.tutors.pull(tutor._id).push(tutor._id);
+    workshop.save();
   });
 
   subjects.forEach(subject => Subject.findOneAndUpdate({ name: subject.name }, subject, {

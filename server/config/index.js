@@ -15,6 +15,7 @@ const config = {
   twitterConsumerKey: process.env.TWITTER_CONSUMER_KEY,
   twitterConsumerSecret: process.env.TWITTER_CONSUMER_SECRET,
   twitterCallbackURL: process.env.TWITTER_CALLBACK_URL,
+  apolloEngineApiKey: process.env.ENGINE_API_KEY,
 };
 
 module.exports = config;

@@ -81,6 +81,10 @@ function myGroup(obj, args, { req }) {
   return obj.groupForUser(req.user);
 }
 
+function workshopAssignments(obj, { status, year }) {
+  return Assignment.find({ workshop: obj._id });
+}
+
 module.exports.assignment = assignment;
 module.exports.assignments = assignments;
 module.exports.myAssignments = myAssignments;
@@ -92,3 +96,4 @@ module.exports.statusTags = statusTags;
 module.exports.assignmentWork = assignmentWork;
 module.exports.selfEvaluation = selfEvaluation;
 module.exports.myGroup = myGroup;
+module.exports.workshopAssignments = workshopAssignments;
