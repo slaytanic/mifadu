@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const config = {
   isLocal: appEnv.isLocal,
+  seedDatabase: process.env.NODE_ENV !== 'test',
   url: appEnv.isLocal ? 'localhost:3000' : 'mifadu.cfapps.io', // appEnv.url,
   appSecret: process.env.APP_SECRET || 'mifadu-secret',
   mongoDbUrl: process.env.MONGODB_URL || 'mongodb://localhost/mifadu',

@@ -4,6 +4,8 @@ const uuidv4 = require('uuid/v4');
 
 const config = require('../config');
 
+const Workshop = require('./workshop');
+
 const { Schema } = mongoose;
 
 const SALT_WORK_FACTOR = 10;
@@ -23,23 +25,17 @@ const userSchema = new Schema(
     receiveNews: { type: Boolean, default: false },
     acceptedTerms: { type: Boolean, default: false },
     completedProfile: { type: Boolean, default: false },
-    workshops: {
-      type: [
-        {
-          workshop: { type: Schema.Types.ObjectId, ref: 'Workshop', required: true },
-          year: { type: Number, required: true },
-        },
-      ],
-    },
+    workshops: [{ type: Schema.Types.ObjectId, ref: 'Workshop' }],
     subjects: [{ type: Schema.Types.ObjectId, ref: 'Subject' }],
     previouslyOnThisChair: Boolean,
-    previousYearOnThisChair: String,
+    previousYearOnThisChair: Number,
     website: String,
     aboutMe: String,
     profilePicture: String,
     admin: { type: Boolean, default: false },
     recoveryToken: String,
     avatar: { type: Schema.Types.ObjectId, ref: 'Avatar' },
+    token: String,
   },
   { timestamps: true },
 );
@@ -48,22 +44,21 @@ userSchema
   .virtual('workshop')
   .get(function getWorkshop() {
     if (!this.workshops) return null;
-    const workshop = this.workshops.find(w => w.year === new Date().getFullYear());
-    if (workshop) return workshop.workshop;
-    return null;
+    return Workshop.findOne({ _id: this.workshops, year: new Date().getFullYear() });
   })
   .set(function setWorkshop(value) {
-    const year = new Date().getFullYear();
     if (this.workshops) {
-      this.workshops
-        .pull(this.workshops.find(w => w.year === year))
-        .push({ workshop: value, year });
+      this.workshops.pull(value).push(value);
     } else {
-      this.set({ workshops: [{ workshop: value, year }] });
+      this.set({ workshops: [value] });
     }
   });
 
 userSchema.pre('save', function save(next) {
+  if (!this.token) {
+    this.token = uuidv4();
+  }
+
   if (!this.isModified('password')) return next();
 
   if (this.password === '') {

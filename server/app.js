@@ -11,6 +11,8 @@ const config = require('./config');
 const graphqlServer = require('./graphql/server');
 const assignmentsRouter = require('./routes/assignments');
 
+const seeds = require('./db/seeds');
+
 mongoose.connect(config.mongoDbUrl);
 
 mongoose.connection.on('connected', () => {
@@ -32,7 +34,9 @@ process.on('SIGINT', () => {
   });
 });
 
-require('./db/seeds')();
+if (config.seedDatabase === true) {
+  seeds();
+}
 
 const app = express();
 
@@ -57,6 +61,15 @@ function redirectToHttps(req, res, next) {
   }
   return res.redirect(`https://${req.headers.host}${req.url}`);
 }
+
+app.use('/graphql', (req, res, next) => {
+  passport.authenticate('bearer', { session: false }, (err, user) => {
+    if (user) {
+      return req.login(user, () => next());
+    }
+    return next();
+  })(req, res, next);
+});
 
 graphqlServer.applyMiddleware({ app });
 

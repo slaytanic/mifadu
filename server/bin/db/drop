@@ -1,0 +1,13 @@
+const mongoose = require('mongoose');
+
+const config = require('../../config');
+
+mongoose.connect(config.mongoDbUrl);
+
+mongoose.connection.on('connected', () => {
+  console.info(`Mongoose default connection open to ${config.mongoDbUrl}`);
+});
+
+mongoose.connection.dropDatabase(() => {
+  mongoose.disconnect();
+});

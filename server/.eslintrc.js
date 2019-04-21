@@ -1,4 +1,7 @@
 module.exports = {
+  env: {
+    mocha: true,
+  },
   extends: 'airbnb-base',
   rules: {
     // Recommend not to leave any console.log in your code
@@ -7,4 +10,12 @@ module.exports = {
     'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
     'no-underscore-dangle': ['error', { allow: ['_id', '_user'] }],
   },
+  overrides: [
+    {
+      files: ['*.test.js', '*.spec.js'],
+      rules: {
+        'no-unused-expressions': 'off',
+      },
+    },
+  ],
 };

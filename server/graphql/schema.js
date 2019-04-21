@@ -17,7 +17,7 @@ const {
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
 const { tag, tags } = require('./queries/tag');
-const { university, universitys } = require('./queries/university');
+const { university, universities } = require('./queries/university');
 const {
   userByRef, usersByRef, user, users, me, myStudents,
 } = require('./queries/user');
@@ -238,7 +238,7 @@ const typeDefs = `
     workshop: ID!
     subjects: [ID!]!
     previouslyOnThisChair: Boolean
-    previousYearOnThisChair: String
+    previousYearOnThisChair: Int
     website: String
     aboutMe: String
     avatar: ID
@@ -255,12 +255,12 @@ const typeDefs = `
     idNumber: String
     email: String
     workshop: Workshop
-    workshops: [WorkshopAndYear!]
+    workshops: [Workshop]
     subjects: [Subject]
     updatedAt: DateTime
     createdAt: DateTime
     previouslyOnThisChair: Boolean
-    previousYearOnThisChair: String
+    previousYearOnThisChair: Int
     website: String
     aboutMe: String
     tutoredWorkshops: [Workshop]
@@ -272,11 +272,13 @@ const typeDefs = `
 
   input WorkshopInput {
     name: String
+    year: Int
   }
 
   type Workshop {
     id: ID!
     name: String!
+    year: Int!
     tutors: [User!]
     members: [User!]
     memberCount: Int!
@@ -310,7 +312,7 @@ const typeDefs = `
     tags: [Tag]
 
     university(id: ID!): University
-    universitys: [University]
+    universities: [University]
 
     user(id: ID!): User
     users: [User]
@@ -330,9 +332,10 @@ const typeDefs = `
     updateAssignment(id: ID!, input: AssignmentInput!): Assignment
     deleteAssignment(id: ID!): Assignment
 
-    submitAssignmentWork(id: ID!, input: SubmitWorkInput!): Assignment
+    submitAssignmentWork(id: ID!, input: AssignmentWorkInput!): Assignment
+    removeAssignmentWork(id: ID!, assignmentWorkId: ID!): Assignment
     submitAssignmentSelfEvaluation(id: ID!, input: EvaluationInput!): Assignment
-    submitAssignmentEvaluation(id: ID!, input: SubmitAssignmentEvaluationInput!): Assignment
+    submitAssignmentEvaluation(id: ID!, targetUser: ID!, input: EvaluationInput!): Assignment
 
     assignUserToGroup(assignmentId: ID!, number: Int!, userId: ID): Assignment
 
@@ -401,15 +404,12 @@ const resolvers = {
     members: usersByRef('members'),
     assignments: workshopAssignments,
   },
-  WorkshopAndYear: {
-    workshop,
-  },
   User: {
     tutoredWorkshops: workshopsByRef('tutors'),
     assignments: myAssignments,
     pendingAssignments,
     completedAssignments,
-    workshop,
+    workshops,
     subjects,
     avatar,
   },
@@ -432,7 +432,7 @@ const resolvers = {
     tags,
 
     university,
-    universitys,
+    universities,
 
     user,
     users,

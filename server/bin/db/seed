@@ -1,0 +1,15 @@
+const mongoose = require('mongoose');
+
+const config = require('../../config');
+const seeds = require('../../db/seeds');
+
+mongoose.connect(config.mongoDbUrl);
+
+mongoose.connection.on('connected', () => {
+  console.info(`Mongoose default connection open to ${config.mongoDbUrl}`);
+});
+
+seeds().then(() => {
+  mongoose.disconnect();
+});
+
