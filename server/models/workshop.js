@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-const User = require('./user');
-
 const { Schema } = mongoose;
 
 const workshopSchema = new Schema(
@@ -14,14 +12,8 @@ const workshopSchema = new Schema(
   { timestamps: true },
 );
 
-workshopSchema.methods.members = function members() {
-  return User.find({
-    workshops: { $elemMatch: { workshop: this._id, year: new Date().getFullYear() } },
-  });
-};
-
-workshopSchema.methods.memberCount = function memberCount() {
-  return this.members().count();
+workshopSchema.methods.isTutor = function isTutor(userId) {
+  return this.tutors.includes(userId);
 };
 
 const Workshop = mongoose.model('Workshop', workshopSchema);

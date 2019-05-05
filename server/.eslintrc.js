@@ -2,7 +2,7 @@ module.exports = {
   env: {
     mocha: true,
   },
-  extends: 'airbnb-base',
+  extends: ['airbnb-base', 'plugin:prettier/recommended'],
   rules: {
     // Recommend not to leave any console.log in your code
     // Use console.error, console.warn and console.info instead

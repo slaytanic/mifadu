@@ -10,7 +10,7 @@ function userByRef(ref) {
 }
 
 function usersByRef(ref) {
-  return async (obj) => {
+  return async obj => {
     if (obj && obj[ref]) {
       if (typeof obj[ref] === 'function') {
         return User.find({ _id: { $in: await obj[ref]() } });
@@ -35,6 +35,14 @@ function users(obj) {
   return User.find({});
 }
 
+function members(obj) {
+  return User.find({ workshops: obj._id });
+}
+
+function memberCount(obj) {
+  return members(obj).count();
+}
+
 function me(obj, args, { req }) {
   if (req.user) {
     return User.findOne({ email: req.user.email });
@@ -42,13 +50,10 @@ function me(obj, args, { req }) {
   return null;
 }
 
-function myStudents(obj, args, { req }) {
-  return User.find({ workshop: req.user.workshop });
-}
-
 module.exports.userByRef = userByRef;
 module.exports.usersByRef = usersByRef;
 module.exports.user = user;
 module.exports.users = users;
+module.exports.members = members;
+module.exports.memberCount = memberCount;
 module.exports.me = me;
-module.exports.myStudents = myStudents;

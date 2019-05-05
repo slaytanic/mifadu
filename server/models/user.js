@@ -4,8 +4,6 @@ const uuidv4 = require('uuid/v4');
 
 const config = require('../config');
 
-const Workshop = require('./workshop');
-
 const { Schema } = mongoose;
 
 const SALT_WORK_FACTOR = 10;
@@ -40,19 +38,13 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-userSchema
-  .virtual('workshop')
-  .get(function getWorkshop() {
-    if (!this.workshops) return null;
-    return Workshop.findOne({ _id: this.workshops, year: new Date().getFullYear() });
-  })
-  .set(function setWorkshop(value) {
-    if (this.workshops) {
-      this.workshops.pull(value).push(value);
-    } else {
-      this.set({ workshops: [value] });
-    }
-  });
+userSchema.virtual('workshop').set(function setWorkshop(value) {
+  if (this.workshops) {
+    this.workshops.pull(value).push(value);
+  } else {
+    this.set({ workshops: [value] });
+  }
+});
 
 userSchema.pre('save', function save(next) {
   if (!this.token) {

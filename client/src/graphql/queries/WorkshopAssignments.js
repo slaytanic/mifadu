@@ -9,7 +9,7 @@ export default gql`
       tutors {
         id
       }
-      assignments(status: $status, year: $year) {
+      assignments {
         ...AssignmentList
       }
     }

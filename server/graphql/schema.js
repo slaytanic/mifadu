@@ -3,27 +3,17 @@ const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date');
 const {
   assignment,
   assignments,
-  myAssignments,
-  pendingAssignments,
-  completedAssignments,
-  pendingEvaluationAssignments,
-  completedEvaluationAssignments,
   statusTags,
   assignmentWork,
   selfEvaluation,
   myGroup,
-  workshopAssignments,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
 const { tag, tags } = require('./queries/tag');
 const { university, universities } = require('./queries/university');
-const {
-  userByRef, usersByRef, user, users, me, myStudents,
-} = require('./queries/user');
-const {
-  workshopsByRef, workshop, workshops, myWorkshops,
-} = require('./queries/workshop');
+const { userByRef, usersByRef, user, users, members, memberCount, me } = require('./queries/user');
+const { workshop, workshops, isTutor } = require('./queries/workshop');
 const { avatar, avatars } = require('./queries/avatar');
 
 const {
@@ -33,7 +23,7 @@ const {
   submitAssignmentWork,
   submitAssignmentSelfEvaluation,
   submitAssignmentEvaluation,
-  assignUserToGroup,
+  // assignUserToGroup,
 } = require('./mutations/assignment');
 const { createChair, updateChair, deleteChair } = require('./mutations/chair');
 const { createSubject, updateSubject, deleteSubject } = require('./mutations/subject');
@@ -162,16 +152,6 @@ const typeDefs = `
     content: String
   }
 
-  input SubmitWorkInput {
-    evaluation: EvaluationInput
-    assignmentWork: [AssignmentWorkInput]
-  }
-
-  input SubmitAssignmentEvaluationInput {
-    targetUser: ID!
-    evaluation: EvaluationInput
-  }
-
   type AssignmentWork {
     id: ID!
     user: User
@@ -264,9 +244,6 @@ const typeDefs = `
     website: String
     aboutMe: String
     tutoredWorkshops: [Workshop]
-    assignments: [Assignment]!
-    pendingAssignments: [Assignment]!
-    completedAssignments: [Assignment]!
     avatar: Avatar
   }
 
@@ -275,32 +252,35 @@ const typeDefs = `
     year: Int
   }
 
+  enum AssignmentStatus {
+    pending
+    completed
+    pending_evaluation
+    completed_evaluation
+  }
+
   type Workshop {
     id: ID!
     name: String!
     year: Int!
-    tutors: [User!]
-    members: [User!]
+    tutors: [User!]!
+    members: [User!]!
+    students: [User!]!
     memberCount: Int!
-    assignments(status: String, year: Int): [Assignment]!
+    assignments(status: AssignmentStatus): [Assignment!]!
+    assignmentCount: Int!
+    pendingAssignmentCount: Int!
+    completedAssignmentsCount: Int!
+    pendingEvaluationAssignments: [Assignment!]!
+    completedEvaluationAssignments: [Assignment!]!
+    isTutor: Boolean!
     updatedAt: DateTime!
     createdAt: DateTime!
-  }
-
-  type WorkshopAndYear {
-    id: ID!
-    year: Int!
-    workshop: Workshop!
   }
 
   type Query {
     assignment(id: ID!): Assignment
     assignments: [Assignment]
-    myAssignments: [Assignment]
-    pendingAssignments: [Assignment]
-    completedAssignments: [Assignment]
-    pendingEvaluationAssignments: [Assignment]
-    completedEvaluationAssignments: [Assignment]
 
     chair(id: ID!): Chair
     chairs: [Chair]
@@ -317,11 +297,9 @@ const typeDefs = `
     user(id: ID!): User
     users: [User]
     me: User
-    myStudents: [User]
 
     workshop(id: ID!): Workshop
     workshops: [Workshop]
-    myWorkshops: [Workshop]
 
     avatar(id: ID!): Avatar
     avatars(id: ID!): [Avatar]!
@@ -336,8 +314,6 @@ const typeDefs = `
     removeAssignmentWork(id: ID!, assignmentWorkId: ID!): Assignment
     submitAssignmentSelfEvaluation(id: ID!, input: EvaluationInput!): Assignment
     submitAssignmentEvaluation(id: ID!, targetUser: ID!, input: EvaluationInput!): Assignment
-
-    assignUserToGroup(assignmentId: ID!, number: Int!, userId: ID): Assignment
 
     createChair(input: ChairInput!): Chair
     updateChair(id: ID!, input: ChairInput!): Chair
@@ -400,15 +376,16 @@ const resolvers = {
     assignments,
   },
   Workshop: {
+    isTutor,
     tutors: usersByRef('tutors'),
-    members: usersByRef('members'),
-    assignments: workshopAssignments,
+    members,
+    memberCount,
+    // assignments: workshopAssignments,
+    // pendingAssignmentCount: workshopPendingAssignmentCount,
+    // completedAssignmentCount: workshopPendingAssignmentCount,
   },
   User: {
-    tutoredWorkshops: workshopsByRef('tutors'),
-    assignments: myAssignments,
-    pendingAssignments,
-    completedAssignments,
+    workshop,
     workshops,
     subjects,
     avatar,
@@ -416,11 +393,6 @@ const resolvers = {
   Query: {
     assignment,
     assignments,
-    myAssignments,
-    pendingAssignments,
-    completedAssignments,
-    pendingEvaluationAssignments,
-    completedEvaluationAssignments,
 
     chair,
     chairs,
@@ -437,11 +409,9 @@ const resolvers = {
     user,
     users,
     me,
-    myStudents,
 
     workshop,
     workshops,
-    myWorkshops,
 
     avatar,
     avatars,
@@ -453,7 +423,6 @@ const resolvers = {
     submitAssignmentWork,
     submitAssignmentSelfEvaluation,
     submitAssignmentEvaluation,
-    assignUserToGroup,
 
     createChair,
     updateChair,
