@@ -10,6 +10,9 @@ function workshopsByRef(ref) {
 }
 
 function workshop(obj, { id }) {
+  if (obj && obj.workshop) {
+    return Workshop.findOne({ _id: obj.workshop });
+  }
   if (obj && obj.workshops) {
     return Workshop.findOne({ _id: obj.workshops, year: new Date().getFullYear() });
   }

@@ -7,8 +7,8 @@ function createAssignment(obj, { input }, { req }) {
   if (req.files && req.files.length > 0) {
     return new Promise((resolve, reject) => {
       const assignment = new Assignment({
+        // workshop: req.user.workshop,
         ...input,
-        workshop: req.user.workshop,
       });
       assignment.save((err, doc) => {
         if (err) {
@@ -35,7 +35,10 @@ function createAssignment(obj, { input }, { req }) {
       });
     });
   }
-  return Assignment.create({ ...input, workshop: req.user.workshop });
+  return Assignment.create({
+    // workshop: req.user.workshop
+    ...input,
+  });
 }
 
 async function updateAssignment(obj, { id, input }, { req }) {
@@ -78,7 +81,7 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
   if (assignment === undefined) {
     return new Error('Assignment not found');
   }
-  assignment.requiredWork.forEach((rw) => {
+  assignment.requiredWork.forEach(rw => {
     if (!input.assignmentWork) {
       return;
     }
@@ -110,41 +113,45 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
         }),
     });
   }
-  return new Promise((resolve, reject) => assignment.save(async (err, doc) => {
-    if (err) {
-      return reject(err);
-    }
-    if (req.files && req.files.length > 0) {
-      await Promise.all(
-        req.files.map((f) => {
-          const requiredWorkId = f.fieldname;
-          const requiredWork = doc.requiredWork.id(requiredWorkId);
-          const assignmentWork = requiredWork.assignmentWorks.find(aw => aw.user.equals(req.user._id));
-          return new Promise((uploadResolve, uploadReject) => {
-            cloudinary.v2.uploader
-              .upload_stream(
-                {
-                  public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
-                  overwrite: true,
-                },
-                (uploadErr, uploadRes) => {
-                  if (uploadErr) {
-                    console.error(uploadErr);
-                    return uploadReject(uploadErr);
-                  }
-                  assignmentWork.attachment.set({ url: uploadRes.secure_url });
-                  return uploadResolve(uploadRes);
-                },
-              )
-              .end(f.buffer);
-          });
-        }),
-      );
-      await doc.save();
-    }
-    // return resolve(newDoc);
-    return resolve(Assignment.findOne({ _id: id }));
-  }));
+  return new Promise((resolve, reject) =>
+    assignment.save(async (err, doc) => {
+      if (err) {
+        return reject(err);
+      }
+      if (req.files && req.files.length > 0) {
+        await Promise.all(
+          req.files.map(f => {
+            const requiredWorkId = f.fieldname;
+            const requiredWork = doc.requiredWork.id(requiredWorkId);
+            const assignmentWork = requiredWork.assignmentWorks.find(aw =>
+              aw.user.equals(req.user._id),
+            );
+            return new Promise((uploadResolve, uploadReject) => {
+              cloudinary.v2.uploader
+                .upload_stream(
+                  {
+                    public_id: `${assignmentWork._id}/${stripExt(f.originalname)}`,
+                    overwrite: true,
+                  },
+                  (uploadErr, uploadRes) => {
+                    if (uploadErr) {
+                      console.error(uploadErr);
+                      return uploadReject(uploadErr);
+                    }
+                    assignmentWork.attachment.set({ url: uploadRes.secure_url });
+                    return uploadResolve(uploadRes);
+                  },
+                )
+                .end(f.buffer);
+            });
+          }),
+        );
+        await doc.save();
+      }
+      // return resolve(newDoc);
+      return resolve(Assignment.findOne({ _id: id }));
+    }),
+  );
 }
 
 async function submitAssignmentSelfEvaluation(obj, { id, input }, { req }) {

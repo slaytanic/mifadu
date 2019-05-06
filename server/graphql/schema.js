@@ -66,21 +66,34 @@ const typeDefs = `
     format: String!
   }
 
+  enum AssignmentType {
+    Group
+    Individual
+  }
+
   input AssignmentInput {
     name: String
     shortDescription: String
     description: String
-    type: String
+    type: AssignmentType
     startsAt: Date
     endsAt: Date
     attachment: Upload
     evaluationVariable: String
     tags: [ID]
     requiredWork: [RequiredWorkInput]
+    workshop: ID
+  }
+
+  enum RequiredWorkType {
+    JPG
+    PDF
+    Video
+    URL
   }
 
   input RequiredWorkInput {
-    type: String
+    type: RequiredWorkType
     description: String
   }
 
