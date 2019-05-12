@@ -5,6 +5,6 @@ applications:
   instances: 1
   buildpacks:
     - https://github.com/cloudfoundry/nodejs-buildpack
-  command: yarn start
+  command: npm install node-pre-gyp -g && npm start
   path: server
   stack: cflinuxfs3
