@@ -10,7 +10,7 @@ cache:
   yarn: true
 script:
 - cd client && yarn && CI=false yarn build && mv build ../server && cd ..
-# - cd server && yarn && cd ..
+- cd server && yarn && cd ..
 deploy:
 - provider: cloudfoundry
   api: https://api.run.pivotal.io
