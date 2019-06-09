@@ -4,6 +4,7 @@ applications:
   memory: 256M
   instances: 1
   buildpacks:
-    - https://github.com/cloudfoundry/nodejs-buildpack
+    - https://github.com/cloudfoundry/nodejs-buildpack#v1.6.45
   command: yarn start
   path: server
+  stack: cflinuxfs3

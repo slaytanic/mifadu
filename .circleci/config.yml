@@ -1,0 +1,67 @@
+version: 2.1
+orbs:
+  cloudfoundry: circleci/cloudfoundry@0.1.46
+jobs:
+  build-client:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: update-yarn
+          command: 'sudo npm install -g yarn'
+      - restore_cache:
+          key: yarn-packages-{{ checksum "client/yarn.lock" }}-client
+      - run:
+          name: install-deps
+          command: cd client && yarn install --frozen-lockfile --production
+      - run:
+          name: build-client
+          command: cd client && yarn build
+      - save_cache:
+          key: yarn-packages-{{ checksum "client/yarn.lock" }}-client
+          paths:
+            - ~/client/node_modules
+            - ~/.cache/yarn
+      - persist_to_workspace:
+          root: client
+          paths:
+            - build
+  build-server:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: update-yarn
+          command: 'sudo npm install -g yarn'
+      - restore_cache:
+          key: yarn-packages-{{ checksum "server/yarn.lock" }}-server
+      - run:
+          name: install-deps
+          command: cd server && yarn install --frozen-lockfile --production
+      - save_cache:
+          key: yarn-packages-{{ checksum "server/yarn.lock" }}-server
+          paths:
+            - ~/server/node_modules
+            - ~/.cache/yarn
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build-client
+      - build-server
+      - cloudfoundry/push:
+          requires:
+            - build-client
+            - build-server
+          endpoint: https://api.ng.bluemix.net
+          appname: mifadu
+          build_steps:
+            - restore_cache:
+                key: yarn-packages-{{ checksum "server/yarn.lock" }}-server
+            - attach_workspace:
+                at: server
+          manifest: manifest.yml
+          org: gfxnstuff
+          space: default
