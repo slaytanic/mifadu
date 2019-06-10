@@ -12,6 +12,7 @@ import Home from 'views/Home/Home';
 import WorkshopMembers from 'views/Workshop/Members/Members';
 import WorkshopAssignments from 'views/Workshop/Assignments/Assignments';
 import Assignment from 'views/Assignment/Assignment';
+import AssignmentNew from 'views/Assignment/AssignmentNew';
 
 import './App.css';
 
@@ -46,7 +47,7 @@ class App extends Component {
                           <Route path="/workshops/:id/members" component={WorkshopMembers} />
                           {/* <Route path="/works" component={Works} /> */}
                           {/* <Route path="/works/:studentId/:assignmentId" component={Works} /> */}
-                          {/* <Route path="/assignments/new" component={AssignmentNew} /> */}
+                          <Route path="/assignments/new" component={AssignmentNew} />
                           {/* <Route path="/assignments/:id/edit" component={AssignmentEdit} /> */}
                           {/* <Route
                           path="/assignments/:id/score/:targetUserId"
@@ -55,7 +56,7 @@ class App extends Component {
                           {/* <Route path="/assignments/:id/self_score" component={AssignmentSelfScore} /> */}
                           <Route
                             exact
-                            path="/workshops/:id/:year?/assignments/:status(pending|completed)?"
+                            path="/workshops/:id/assignments/:status(pending|completed)?"
                             render={() => <WorkshopAssignments me={data.me} />}
                           />
                           <Route

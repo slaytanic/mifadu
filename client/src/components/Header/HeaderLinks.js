@@ -30,7 +30,7 @@ function HeaderLinks({ ...props }) {
       </Button>
     </ListItem>,
   ];
-  if (me.tutoredWorkshops.length > 0) {
+  if (me.workshops.filter(w => w.isTutor).length) {
     links.push(
       <ListItem className={classes.listItem} key="assignments">
         <Button component={Link} to="/assignments" color="transparent" className={classes.navLink}>

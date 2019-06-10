@@ -15,12 +15,11 @@ export default gql`
       id
     }
     workshops {
-      workshop {
-        id
-        name
-        memberCount
-      }
+      id
+      name
+      memberCount
       year
+      isTutor
     }
     subjects {
       id
@@ -31,10 +30,6 @@ export default gql`
     previousYearOnThisChair
     website
     aboutMe
-    tutoredWorkshops {
-      id
-      name
-    }
     avatar {
       publicId
     }

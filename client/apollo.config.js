@@ -1,5 +1,8 @@
 module.exports = {
   client: {
-    service: 'mifadu',
+    service: {
+      name: 'mifadu',
+      url: 'http://localhost:4000',
+    },
   },
 };

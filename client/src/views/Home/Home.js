@@ -25,15 +25,12 @@ const styles = {
 const Home = ({ classes, me }) => {
   return (
     <Dashboard me={me}>
-      {me.workshops.map(workshopAndYear => {
-        const isTutor = me.tutoredWorkshops.map(w => w.id).includes(workshopAndYear.id);
-        const { workshop, year } = workshopAndYear;
-
+      {me.workshops.map(workshop => {
         return (
           <Fragment>
             <div className={classes.description}>
               <h3>
-                {workshop.name} ({year})
+                {workshop.name} ({workshop.year})
               </h3>
             </div>
             <GridContainer justify="center">
@@ -48,11 +45,7 @@ const Home = ({ classes, me }) => {
                   </CardHeader>
                   <CardFooter stats>
                     <div className={classes.stats}>
-                      {isTutor ? (
-                        <Link to="/works">Ver miembros del taller</Link>
-                      ) : (
-                        <Link to={`/workshop/${workshop.id}/members`}>Ver miembros del taller</Link>
-                      )}
+                      <Link to={`/workshop/${workshop.id}/members`}>Ver miembros del taller</Link>
                     </div>
                   </CardFooter>
                 </Card>
@@ -64,7 +57,9 @@ const Home = ({ classes, me }) => {
                       <Icon>content_copy</Icon>
                     </CardIcon>
                     <p className={classes.cardCategory}>
-                      {isTutor ? 'Evaluaciones pendientes' : 'Trabajos prácticos pendientes'}
+                      {workshop.isTutor
+                        ? 'Evaluaciones pendientes'
+                        : 'Trabajos prácticos pendientes'}
                     </p>
                     <h3 className={classes.cardTitle}>
                       {/* {isTutor ? assignments.pendingEvaluationCount : assignments.pendingCount} */}
@@ -73,12 +68,12 @@ const Home = ({ classes, me }) => {
                   </CardHeader>
                   <CardFooter stats>
                     <div className={classes.stats}>
-                      {isTutor ? (
-                        <Link to={`/workshops/${workshop.id}/${year}/evaluations/completed`}>
+                      {workshop.isTutor ? (
+                        <Link to={`/workshops/${workshop.id}/evaluations/pending`}>
                           Ver evaluaciones pendientes
                         </Link>
                       ) : (
-                        <Link to={`/workshops/${workshop.id}/${year}/assignments/pending`}>
+                        <Link to={`/workshops/${workshop.id}/assignments/pending`}>
                           Ver trabajos prácticos pendientes
                         </Link>
                       )}
@@ -93,7 +88,9 @@ const Home = ({ classes, me }) => {
                       <Icon>content_copy</Icon>
                     </CardIcon>
                     <p className={classes.cardCategory}>
-                      {isTutor ? 'Evaluaciones realizadas' : 'Trabajos prácticos entregados'}
+                      {workshop.isTutor
+                        ? 'Evaluaciones realizadas'
+                        : 'Trabajos prácticos entregados'}
                     </p>
                     <h3 className={classes.cardTitle}>
                       {/* {isTutor ? assignments.completedEvaluationCount : assignments.completedCount} */}
@@ -102,12 +99,12 @@ const Home = ({ classes, me }) => {
                   </CardHeader>
                   <CardFooter stats>
                     <div className={classes.stats}>
-                      {isTutor ? (
-                        <Link to={`/workshops/${workshop.id}/${year}/evaluations/completed`}>
+                      {workshop.isTutor ? (
+                        <Link to={`/workshops/${workshop.id}/evaluations/completed`}>
                           Ver evaluaciones realizadas
                         </Link>
                       ) : (
-                        <Link to={`/workshops/${workshop.id}/${year}/assignments/completed`}>
+                        <Link to={`/workshops/${workshop.id}/assignments/completed`}>
                           Ver trabajos prácticos entregados
                         </Link>
                       )}
@@ -116,7 +113,7 @@ const Home = ({ classes, me }) => {
                 </Card>
               </GridItem>
             </GridContainer>
-            {isTutor && (
+            {workshop.isTutor && (
               <Button color="primary" component={Link} to="/assignments/new">
                 Crear nuevo Trabajo Práctico
               </Button>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import AssignmentForm from './AssignmentForm';
 
-import Content from 'layouts/Content';
+import Content from 'layouts/Content/Content';
 
 const AssignmentNew = ({ me }) => {
   return (
