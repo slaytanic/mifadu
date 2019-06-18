@@ -16,6 +16,11 @@ workshopSchema.methods.isTutor = function isTutor(userId) {
   return this.tutors.includes(userId);
 };
 
+workshopSchema.statics.currentForUser = function currentForUser(userId) {
+  console.log('q', { tutors: userId, year: new Date().getFullYear() });
+  return this.findOne({ tutors: userId, year: new Date().getFullYear() });
+};
+
 const Workshop = mongoose.model('Workshop', workshopSchema);
 
 module.exports = Workshop;

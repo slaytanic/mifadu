@@ -13,6 +13,7 @@ import WorkshopMembers from 'views/Workshop/Members/Members';
 import WorkshopAssignments from 'views/Workshop/Assignments/Assignments';
 import Assignment from 'views/Assignment/Assignment';
 import AssignmentNew from 'views/Assignment/AssignmentNew';
+import AssignmentEdit from 'views/Assignment/AssignmentEdit';
 
 import './App.css';
 
@@ -48,7 +49,7 @@ class App extends Component {
                           {/* <Route path="/works" component={Works} /> */}
                           {/* <Route path="/works/:studentId/:assignmentId" component={Works} /> */}
                           <Route path="/assignments/new" component={AssignmentNew} />
-                          {/* <Route path="/assignments/:id/edit" component={AssignmentEdit} /> */}
+                          <Route path="/assignments/:id/edit" component={AssignmentEdit} />
                           {/* <Route
                           path="/assignments/:id/score/:targetUserId"
                           component={AssignmentScore}

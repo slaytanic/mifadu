@@ -16,7 +16,6 @@ import { emphasize } from '@material-ui/core/styles/colorManipulator';
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    // height: 250,
   },
   input: {
     display: 'flex',
@@ -169,16 +168,15 @@ const components = {
 
 class IntegrationReactSelect extends React.Component {
   handleChange = value => {
-    const { name, handleCreate, onChange } = this.props;
+    const { name, onChange } = this.props;
     onChange({ target: { name, value: value.value } });
   };
 
   handleChangeMulti = async value => {
     const { name, handleCreate, onChange } = this.props;
-    const newValues = await Promise.all(
-      value.map(v => (v.__isNew__ ? handleCreate(v.value) : v.value)),
-    );
-    console.log(newValues);
+    const newValues = value
+      ? await Promise.all(value.map(v => (v.__isNew__ ? handleCreate(v.value) : v.value)))
+      : [];
     onChange({ target: { name, value: newValues } });
   };
 

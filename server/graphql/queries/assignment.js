@@ -1,4 +1,5 @@
 const Assignment = require('../../models/assignment');
+const Workshop = require('../../models/workshop');
 
 function assignment(obj, args, { req }) {
   return Assignment.findOne({ _id: args.id });
@@ -92,6 +93,18 @@ function workshopAssignments(obj, { status, year }) {
   return Assignment.find({ workshop: obj._id });
 }
 
+async function canEdit(obj, args, { req }) {
+  if (!req.user) return false;
+
+  return (await Workshop.findOne({ _id: obj.workshop, tutors: req.user._id }).count()) > 0;
+}
+
+function canSubmit(obj, args, { req }) {
+  if (!req.user) return false;
+
+  return true;
+}
+
 module.exports.assignment = assignment;
 module.exports.assignments = assignments;
 module.exports.myAssignments = myAssignments;
@@ -104,3 +117,5 @@ module.exports.assignmentWork = assignmentWork;
 module.exports.selfEvaluation = selfEvaluation;
 module.exports.myGroup = myGroup;
 module.exports.workshopAssignments = workshopAssignments;
+module.exports.canEdit = canEdit;
+module.exports.canSubmit = canSubmit;

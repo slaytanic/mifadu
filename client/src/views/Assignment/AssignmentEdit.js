@@ -1,17 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Query } from 'react-apollo';
+import { Query, graphql, compose } from 'react-apollo';
 
 import AssignmentForm from './AssignmentForm';
 
 import Content from 'layouts/Content/Content';
 
 import ASSIGNMENT_QUERY from 'graphql/queries/Assignment';
+import UPDATE_ASSIGNMENT from 'graphql/mutations/UpdateAssignment';
 
-const AssignmentNew = (me, match) => {
+function AssignmentEdit({ me, match, history, updateAssignment }) {
   return (
-    <Content title="Trabajos prácticos" subtitle="Nuevo trabajo práctico">
+    <Content title="Trabajos prácticos" subtitle="Editar trabajo práctico">
       <Query
         query={ASSIGNMENT_QUERY}
         variables={{
@@ -22,16 +23,34 @@ const AssignmentNew = (me, match) => {
           if (loading) return null;
           if (error) return null;
 
-          return <AssignmentForm me={me} assignment={assignment} />;
+          return (
+            <AssignmentForm
+              me={me}
+              assignment={assignment}
+              onSubmit={async input => {
+                const response = await updateAssignment({
+                  variables: { id: match.params.id, input },
+                });
+                if (response.data) {
+                  history.push(`/assignments/${response.data.updateAssignment.id}`);
+                }
+              }}
+            />
+          );
         }}
       </Query>
     </Content>
   );
-};
+}
 
-AssignmentNew.propTypes = {
+AssignmentEdit.propTypes = {
   me: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
 };
 
-export default withRouter(AssignmentNew);
+export default compose(
+  graphql(UPDATE_ASSIGNMENT, {
+    name: 'updateAssignment',
+  }),
+  withRouter,
+)(AssignmentEdit);

@@ -75,7 +75,7 @@ const assignmentSchema = new Schema(
     attachment: fileSchema,
     evaluations: [evaluationSchema],
     groups: [groupSchema],
-    workshop: { type: Schema.Types.ObjectId, ref: 'Tag' },
+    workshop: { type: Schema.Types.ObjectId, ref: 'Workshop' },
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     user: { type: Schema.Types.ObjectId, ref: 'User' },
   },
@@ -210,7 +210,7 @@ assignmentSchema.virtual('completedBy').get(function getCompletedBy() {
     ),
   ];
   return usersWithSubmittedWork
-    .map((user) => {
+    .map(user => {
       const submittedWorkCount = this.requiredWork
         .map(rw => rw.assignmentWorks && rw.assignmentWorks.find(aw => aw.user.equals(user)))
         .filter(i => i).length;
@@ -241,7 +241,7 @@ assignmentSchema.virtual('usersWithEvaluations').get(function getUsersWithEvalua
 });
 
 assignmentSchema.methods.linksForUser = function linksForUser(user) {
-  return this.requiredWork.map((rw) => {
+  return this.requiredWork.map(rw => {
     const assignmentWork = rw.assignmentWorks.find(aw => aw.user.equals(user._id));
     if (assignmentWork) {
       if (assignmentWork.content && assignmentWork.content.length) {
@@ -260,7 +260,7 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
   const worksheet = workbook.addWorksheet('Notas');
   const users = {};
   await Promise.all(
-    this.evaluations.map(async (e) => {
+    this.evaluations.map(async e => {
       if (!Object.keys(users).includes(e.targetUser.toString())) {
         users[e.targetUser.toString()] = await User.findOne({ _id: e.targetUser.toString() });
       }
@@ -305,7 +305,7 @@ assignmentSchema.methods.exportEvaluations = async function exportEvaluations() 
     'Observaciones',
     'Links',
   ]);
-  Object.keys(users).forEach((key) => {
+  Object.keys(users).forEach(key => {
     const user = users[key];
     let selfEvaluationForUser = this.selfEvaluationForUser(user);
     if (!selfEvaluationForUser) {

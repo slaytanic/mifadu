@@ -1,82 +1,134 @@
+const { ForbiddenError } = require('apollo-server');
+
 const stripExt = require('../../lib/stripExt');
 const cloudinary = require('../../cloudinary');
 
 const Assignment = require('../../models/assignment');
+const Workshop = require('../../models/workshop');
 
-function createAssignment(obj, { input }, { req }) {
-  if (req.files && req.files.length > 0) {
-    return new Promise((resolve, reject) => {
-      const assignment = new Assignment({
-        // workshop: req.user.workshop,
-        ...input,
-      });
-      assignment.save((err, doc) => {
-        if (err) {
-          console.error(err);
-          return reject(err);
-        }
-        return cloudinary.v2.uploader
-          .upload_stream(
-            {
-              public_id: `${doc.attachment._id}/${stripExt(doc.attachment.name)}`,
-              overwrite: true,
-            },
-            (uploadErr, uploadRes) => {
-              if (uploadErr) {
-                console.error(uploadErr);
-                return reject(uploadErr);
-              }
-              console.info(uploadRes);
-              assignment.attachment.set({ url: uploadRes.secure_url });
-              return resolve(assignment.save());
-            },
-          )
-          .end(req.files[0].buffer);
-      });
-    });
-  }
-  return Assignment.create({
-    // workshop: req.user.workshop
-    ...input,
+async function createAssignment(obj, { input }, { req }) {
+  if (!req.user) throw new ForbiddenError('No permitido');
+
+  const assignment = new Assignment({
+    workshop: await Workshop.currentForUser(req.user._id),
+    ...Object.keys(input).reduce(
+      (acc, key) => (key !== 'attachment' ? { ...acc, [key]: input[key] } : acc),
+      {},
+    ),
   });
+  await assignment.save();
+
+  if (!input.attachment) return assignment;
+
+  const { createReadStream, filename, mimetype, encoding } = await input.attachment;
+  const stream = createReadStream();
+
+  return new Promise((resolve, reject) =>
+    stream.pipe(
+      cloudinary.v2.uploader.upload_stream(
+        {
+          public_id: `${assignment._id}/${stripExt(filename)}`,
+          overwrite: true,
+        },
+        (uploadErr, uploadRes) => {
+          if (uploadErr) {
+            console.error(uploadErr);
+            return reject(uploadErr);
+          }
+          assignment.set({
+            attachment: {
+              filename,
+              mimetype,
+              encoding,
+              publicId: uploadRes.public_id,
+              url: uploadRes.url,
+              secureUrl: uploadRes.secure_url,
+              format: uploadRes.format,
+            },
+          });
+          return resolve(assignment.save());
+        },
+      ),
+    ),
+  );
 }
 
 async function updateAssignment(obj, { id, input }, { req }) {
+  if (!req.user) throw new ForbiddenError('No permitido');
+
   const assignment = await Assignment.findOne({ _id: id });
-  if (assignment === undefined) {
+  if (!assignment) {
     return new Error('Assignment not found');
   }
-  return new Promise((resolve, reject) => {
-    assignment.set({ ...input, workshop: req.user.workshop });
-    if (!req.files || req.files.length < 1) {
-      return resolve(assignment.save());
-    }
-    return assignment.save((err, doc) => {
-      if (err) {
-        console.error(err);
-        return reject(err);
+
+  assignment.set(
+    Object.keys(input).reduce((acc, key) => {
+      if (key === 'attachment') {
+        return acc;
       }
-      return cloudinary.v2.uploader
-        .upload_stream(
-          {
-            public_id: `${doc.attachment._id}/${stripExt(req.files[0].originalname)}`,
-            overwrite: true,
-          },
-          (uploadErr, uploadRes) => {
-            if (uploadErr) {
-              console.error(uploadErr);
-              return reject(uploadErr);
-            }
-            assignment.attachment.set({ url: uploadRes.secure_url });
-            return resolve(assignment.save());
-          },
-        )
-        .end(req.files[0].buffer);
-    });
-  });
+      if (key === 'requiredWork') {
+        if (!input[key] || !input[key].length) {
+          return { ...acc, [key]: [] };
+        }
+        const ids = input[key].map(rwInput => rwInput.id);
+        assignment.requiredWork.forEach(rw => {
+          if (!ids.includes(rw._id.toString())) {
+            rw.remove();
+          }
+        });
+        input[key].forEach(rw => {
+          if (rw.id) {
+            assignment.requiredWork.id(rw.id).set(rw);
+          } else {
+            assignment.requiredWork.push(rw);
+          }
+        });
+        return acc;
+      }
+      return { ...acc, [key]: input[key] };
+    }, {}),
+  );
+
+  await assignment.save();
+
+  if (!input.attachment) return assignment;
+
+  const { createReadStream, filename, mimetype, encoding } = await input.attachment;
+  const stream = createReadStream();
+
+  return new Promise((resolve, reject) =>
+    stream.pipe(
+      cloudinary.v2.uploader.upload_stream(
+        {
+          public_id: `${assignment._id}/${stripExt(filename)}`,
+          overwrite: true,
+        },
+        (uploadErr, uploadRes) => {
+          if (uploadErr) {
+            console.error(uploadErr);
+            return reject(uploadErr);
+          }
+          assignment.set({
+            attachment: {
+              filename,
+              mimetype,
+              encoding,
+              publicId: uploadRes.public_id,
+              url: uploadRes.url,
+              secureUrl: uploadRes.secure_url,
+              format: uploadRes.format,
+            },
+          });
+          return resolve(assignment.save());
+        },
+      ),
+    ),
+  );
 }
 
 async function submitAssignmentWork(obj, { id, input }, { req }) {
+  if (!req.user) throw new ForbiddenError('No permitido');
+
   const assignment = await Assignment.findOne({ _id: id });
   if (assignment === undefined) {
     return new Error('Assignment not found');
@@ -155,6 +207,8 @@ async function submitAssignmentWork(obj, { id, input }, { req }) {
 }
 
 async function submitAssignmentSelfEvaluation(obj, { id, input }, { req }) {
+  if (!req.user) throw new ForbiddenError('No permitido');
+
   const assignment = await Assignment.findOne({ _id: id });
   if (assignment === undefined) {
     return new Error('Assignment not found');
@@ -170,6 +224,8 @@ async function submitAssignmentSelfEvaluation(obj, { id, input }, { req }) {
 }
 
 async function submitAssignmentEvaluation(obj, { id, input }, { req }) {
+  if (!req.user) throw new ForbiddenError('No permitido');
+
   const assignment = await Assignment.findOne({ _id: id });
   if (assignment === undefined) {
     return new Error('Assignment not found');
@@ -184,7 +240,9 @@ async function submitAssignmentEvaluation(obj, { id, input }, { req }) {
   return assignment.save();
 }
 
-function deleteAssignment(obj, { id }) {
+function deleteAssignment(obj, { id }, { req }) {
+  if (!req.user) throw new ForbiddenError('No permitido');
+
   return Assignment.findOneAndRemove({ _id: id });
 }
 

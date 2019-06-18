@@ -7,6 +7,8 @@ const {
   assignmentWork,
   selfEvaluation,
   myGroup,
+  canEdit,
+  canSubmit,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
@@ -48,11 +50,13 @@ const typeDefs = `
 
   type File {
     id: ID!
-    name: String
-    type: String
-    url: String
-    cloudName: String
-    publicId: String
+    filename: String!
+    filetype: String!
+    encoding: String!
+    publicId: String!
+    url: String!
+    secureUrl: String!
+    format: String!
   }
 
   type Avatar {
@@ -93,6 +97,7 @@ const typeDefs = `
   }
 
   input RequiredWorkInput {
+    id: ID
     type: RequiredWorkType
     description: String
   }
@@ -134,6 +139,8 @@ const typeDefs = `
     usersWithEvaluations: [User]
     usersWithoutEvaluations: [User]
     myGroup: Group
+    canEdit: Boolean!
+    canSubmit: Boolean!
     updatedAt: DateTime
     createdAt: DateTime
   }
@@ -268,8 +275,6 @@ const typeDefs = `
   enum AssignmentStatus {
     pending
     completed
-    pending_evaluation
-    completed_evaluation
   }
 
   type Workshop {
@@ -281,7 +286,7 @@ const typeDefs = `
     students: [User!]!
     memberCount: Int!
     assignments(status: AssignmentStatus): [Assignment!]!
-    assignmentCount: Int!
+    assignmentCount(status: AssignmentStatus): Int!
     pendingAssignmentCount: Int!
     completedAssignmentsCount: Int!
     pendingEvaluationAssignments: [Assignment!]!
@@ -374,6 +379,8 @@ const resolvers = {
     usersWithEvaluations: usersByRef('usersWithEvaluations'),
     usersWithoutEvaluations: usersByRef('usersWithoutEvaluations'),
     myGroup,
+    canEdit,
+    canSubmit,
   },
   AssignmentWork: {
     user,

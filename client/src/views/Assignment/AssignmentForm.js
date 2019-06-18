@@ -32,38 +32,36 @@ const styles = {
   },
 };
 
-function AssignmentForm({ classes, initialValues, onSubmit, createTag, tags }) {
-  console.log(tags);
-  // createTag = async name => {
-  // const { dispatchTagCreate } = this.props;
-  // return dispatchTagCreate({ name }).then(action => action.payload.id);
-  // };
+function AssignmentForm({ classes, assignment, onSubmit, createTag, tags }) {
+  const isNew = !assignment;
 
-  // const initialValues = {
-  //   name: '',
-  //   shortDescription: '',
-  //   description: '',
-  //   endsAt: '',
-  //   type: '',
-  //   evaluationVariable: '',
-  //   tags: [],
-  //   attachment: undefined,
-  //   requiredWork: [{ description: '', type: '' }],
-  // };
+  const initialValues = {
+    name: '',
+    shortDescription: '',
+    description: '',
+    endsAt: '',
+    type: '',
+    evaluationVariable: '',
+    tags: [],
+    requiredWork: [{ description: '', type: '' }],
+  };
 
-  // if (assignment) {
-  //   initialValues.name = assignment.name;
-  //   initialValues.shortDescription = assignment.shortDescription;
-  //   initialValues.description = assignment.description;
-  //   initialValues.endsAt = assignment.endsAt;
-  //   initialValues.type = assignment.type;
-  //   initialValues.evaluationVariable = assignment.evaluationVariable;
-  //   initialValues.tags = (assignment.tags || []).map(t => t.id);
-  //   initialValues.attachment = assignment.attachment;
-  //   initialValues.requiredWork = (assignment.requiredWork || [{ description: '', type: '' }]).map(
-  //     rw => filterObjectByKeys(rw, ['id', 'assignmentWorks', 'assignmentWork'], true),
-  //   );
-  // }
+  if (assignment) {
+    initialValues.name = assignment.name;
+    initialValues.shortDescription = assignment.shortDescription;
+    initialValues.description = assignment.description;
+    initialValues.endsAt = assignment.endsAt;
+    initialValues.type = assignment.type;
+    initialValues.evaluationVariable = assignment.evaluationVariable;
+    initialValues.tags = (assignment.tags || []).map(t => t.id);
+    initialValues.requiredWork = assignment.requiredWork
+      ? assignment.requiredWork.map(rw => ({
+          id: rw.id,
+          description: rw.description,
+          type: rw.type,
+        }))
+      : [{ description: '', type: '' }];
+  }
 
   return (
     <Formik
@@ -94,20 +92,9 @@ function AssignmentForm({ classes, initialValues, onSubmit, createTag, tags }) {
         //     ['application/pdf'].includes(value.type),
         //   ),
       })}
-      onSubmit={async (values, actions) => {
-        onSubmit(values);
-        actions.setSubmitting(false);
-        // if (assignment) {
-        //   return dispatchAssignmentUpdate(assignment.id, values).then(action => {
-        //     actions.setSubmitting(false);
-        //     historyPush(`/assignments/${action.payload.id}`);
-        //   });
-        // }
-        // return dispatchAssignmentCreate(values).then(action => {
-        //   actions.setSubmitting(false);
-        //   historyPush(`/assignments/${action.payload.id}`);
-        // });
-        // client.
+      onSubmit={async (values, { setSubmitting }) => {
+        await onSubmit(values);
+        setSubmitting(false);
       }}
       render={({
         values,
@@ -177,10 +164,11 @@ function AssignmentForm({ classes, initialValues, onSubmit, createTag, tags }) {
             <Button component="span">Subir consigna</Button>
           </label>
           <span className={classes.filename}>
-            {values.attachment &&
-              (values.attachment.url ? (
-                <a href={values.attachment.url} target="_blank" rel="noopener noreferrer">
-                  {values.attachment.name}
+            {!values.attachment &&
+              assignment.attachment &&
+              (assignment.attachment.secureUrl ? (
+                <a href={assignment.attachment.secureUrl} target="_blank" rel="noopener noreferrer">
+                  {assignment.attachment.filename}
                 </a>
               ) : (
                 values.attachment.name
@@ -238,7 +226,10 @@ function AssignmentForm({ classes, initialValues, onSubmit, createTag, tags }) {
             name="tags"
             placeholder="Seleccione o escriba"
             labelText="Categorías / Etiquetas"
-            handleCreate={createTag}
+            handleCreate={async name => {
+              const response = await createTag({ variables: { input: { name } } });
+              return response.data.createTag.id;
+            }}
             onChange={handleChange}
             onBlue={handleBlur}
             value={values.tags}
@@ -253,8 +244,7 @@ function AssignmentForm({ classes, initialValues, onSubmit, createTag, tags }) {
               <div>
                 {values.requiredWork && values.requiredWork.length > 0 ? (
                   values.requiredWork.map((rw, index) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <div key={index}>
+                    <div key={rw.id || index}>
                       <h6>Componente de entrega #{index + 1}</h6>
                       <ErrorList
                         errors={
@@ -346,7 +336,7 @@ function AssignmentForm({ classes, initialValues, onSubmit, createTag, tags }) {
             fullWidth
             disabled={!dirty || isSubmitting || !!Object.keys(errors).length}
           >
-            {initialValues.new ? 'Dar de alta' : 'Guardar cambios'}
+            {isNew ? 'Dar de alta' : 'Guardar cambios'}
           </Button>
         </Form>
       )}
@@ -355,29 +345,29 @@ function AssignmentForm({ classes, initialValues, onSubmit, createTag, tags }) {
 }
 
 AssignmentForm.defaultProps = {
-  initialValues: {
-    new: true,
-    name: '',
-    shortDescription: '',
-    description: '',
-    endsAt: '',
-    type: '',
-    evaluationVariable: '',
-    tags: [],
-  },
+  assignment: null,
   tags: [],
 };
 
 AssignmentForm.propTypes = {
   classes: PropTypes.object.isRequired,
-  initialValues: PropTypes.object,
+  assignment: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
   createTag: PropTypes.func.isRequired,
   tags: PropTypes.array,
 };
 
 export default compose(
-  graphql(CREATE_TAG, { name: 'createTag' }),
+  graphql(CREATE_TAG, {
+    name: 'createTag',
+    options: {
+      update: (cache, { data: { createTag } }) => {
+        const data = cache.readQuery({ query: TAGS_QUERY });
+        data.tags.push(createTag);
+        cache.writeQuery({ query: TAGS_QUERY, data });
+      },
+    },
+  }),
   graphql(TAGS_QUERY, {
     props: ({ data }) => ({
       tags: data ? data.tags : [],
