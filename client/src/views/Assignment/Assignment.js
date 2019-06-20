@@ -18,7 +18,6 @@ import Content from 'layouts/Content/Content';
 import ASSIGNMENT_QUERY from 'graphql/queries/Assignment';
 import SUBMIT_ASSIGNMENT_WORK from 'graphql/mutations/SubmitAssignmentWork';
 import DELETE_ASSIGNMENT_WORK from 'graphql/mutations/DeleteAssignmentWork';
-import DeleteAssignmentWork from 'graphql/mutations/DeleteAssignmentWork';
 
 const styles = {
   assignmentWorks: {
