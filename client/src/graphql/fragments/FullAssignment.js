@@ -22,6 +22,14 @@ export default gql`
       id
       type
       description
+      myAssignmentWorks {
+        id
+        content
+        attachment {
+          publicId
+          secureUrl
+        }
+      }
     }
     canEdit
   }

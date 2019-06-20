@@ -159,20 +159,22 @@ function AssignmentForm({ classes, assignment, onSubmit, createTag, tags }) {
               type="file"
               onChange={event => {
                 setFieldValue('attachment', event.currentTarget.files[0]);
+                // console.log('file', event.currentTarget.files[0]);
               }}
             />
             <Button component="span">Subir consigna</Button>
           </label>
           <span className={classes.filename}>
             {!values.attachment &&
-              assignment.attachment &&
-              (assignment.attachment.secureUrl ? (
-                <a href={assignment.attachment.secureUrl} target="_blank" rel="noopener noreferrer">
-                  {assignment.attachment.filename}
-                </a>
-              ) : (
-                values.attachment.name
-              ))}
+            assignment &&
+            assignment.attachment &&
+            assignment.attachment.secureUrl ? (
+              <a href={assignment.attachment.secureUrl} target="_blank" rel="noopener noreferrer">
+                {assignment.attachment.filename}
+              </a>
+            ) : (
+              values.attachment && values.attachment.name
+            )}
           </span>
           <CustomInput
             labelText="Fecha de entrega"

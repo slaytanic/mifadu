@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
+import { Query, compose, graphql } from 'react-apollo';
+import { Image } from 'cloudinary-react';
 
 import withStyles from '@material-ui/core/styles/withStyles';
+import Delete from '@material-ui/icons/Delete';
 
 import Button from 'components/CustomButton/CustomButton';
 import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
@@ -14,8 +16,21 @@ import Modal from 'components/Modal/Modal';
 import Content from 'layouts/Content/Content';
 
 import ASSIGNMENT_QUERY from 'graphql/queries/Assignment';
+import SUBMIT_ASSIGNMENT_WORK from 'graphql/mutations/SubmitAssignmentWork';
+import DELETE_ASSIGNMENT_WORK from 'graphql/mutations/DeleteAssignmentWork';
+import DeleteAssignmentWork from 'graphql/mutations/DeleteAssignmentWork';
 
 const styles = {
+  assignmentWorks: {
+    display: 'flex',
+  },
+  assignmentWork: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0.25rem',
+  },
   input: {
     display: 'none',
   },
@@ -27,23 +42,30 @@ const styles = {
 class Assignment extends Component {
   state = {
     modal: false,
+    deleteModal: false,
     requiredWorkId: '',
+    assignmentWorkId: '',
     content: '',
     submitting: {},
   };
 
-  handleUpload = requiredWorkId => event => {
-    const { match, dispatchAssignmentWorkSubmit } = this.props;
+  handleUpload = requiredWorkId => async event => {
+    const { match, submitAssignmentWork } = this.props;
     this.setState(prevState => ({
       submitting: { ...prevState.submitting, [requiredWorkId]: true },
     }));
-    dispatchAssignmentWorkSubmit(match.params.id, {
-      assignmentWork: [{ requiredWorkId, attachment: event.target.files[0] }],
-    }).then(() => {
-      this.setState(prevState => ({
-        submitting: { ...prevState.submitting, [requiredWorkId]: false },
-      }));
+    await submitAssignmentWork({
+      variables: {
+        id: match.params.id,
+        requiredWorkId,
+        input: {
+          attachment: event.target.files[0],
+        },
+      },
     });
+    this.setState(prevState => ({
+      submitting: { ...prevState.submitting, [requiredWorkId]: false },
+    }));
   };
 
   isSubmitting = requiredWorkId => {
@@ -63,17 +85,23 @@ class Assignment extends Component {
   };
 
   handleOk = () => {
-    const { match, dispatchAssignmentWorkSubmit } = this.props;
+    const { match, submitAssignmentWork } = this.props;
     const { requiredWorkId, content } = this.state;
-    dispatchAssignmentWorkSubmit(match.params.id, {
-      assignmentWork: [{ requiredWorkId, content }],
+    submitAssignmentWork({
+      variables: {
+        id: match.params.id,
+        requiredWorkId,
+        input: {
+          content,
+        },
+      },
     });
     this.setState({ modal: false });
   };
 
   render() {
-    const { match, classes } = this.props;
-    const { modal, content } = this.state;
+    const { match, classes, deleteAssignmentWork } = this.props;
+    const { modal, content, deleteModal, requiredWorkId, assignmentWorkId } = this.state;
 
     return (
       <Content title="Trabajos prácticos" subtitle="Ver trabajo práctico">
@@ -97,6 +125,25 @@ class Assignment extends Component {
             }}
           />
         </Modal>
+        <Modal
+          color="danger"
+          open={deleteModal}
+          titleText="Eliminar componente"
+          bodyText="Está seguro que desea borrar el componente de entrega?"
+          okText="Borrar"
+          cancelText="Cancelar"
+          handleOk={async () => {
+            await deleteAssignmentWork({
+              variables: {
+                id: match.params.id,
+                requiredWorkId: requiredWorkId,
+                assignmentWorkId: assignmentWorkId,
+              },
+            });
+            this.setState({ deleteModal: false });
+          }}
+          handleCancel={() => this.setState({ deleteModal: false })}
+        ></Modal>
         <Query
           query={ASSIGNMENT_QUERY}
           variables={{
@@ -158,33 +205,57 @@ class Assignment extends Component {
                   {assignment.tags ? assignment.tags.map(t => t.name).join(', ') : <i>Ninguna</i>}
                 </p>
                 {(assignment.requiredWork || []).map((rw, index) => (
-                  <div key={rw.id}>
+                  <div key={rw.id} className={classes.requiredWork}>
                     <h6>Componente de entrega #{index + 1}</h6>
                     <p>
                       {!assignment.canEdit &&
-                        (rw.assignmentWork ? (
+                        (rw.myAssignmentWorks.length ? (
                           <Badge color="success">Entregado</Badge>
                         ) : (
                           <Badge color="warning">Pendiente</Badge>
                         ))}
                     </p>
                     <p>
-                      {rw.assignmentWork ? (
-                        <a
-                          href={
-                            rw.assignmentWork.content
-                              ? rw.assignmentWork.content
-                              : rw.assignmentWork.attachment && rw.assignmentWork.attachment.url
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {rw.description} ({rw.type})
-                        </a>
-                      ) : (
-                        `${rw.description} (${rw.type})`
-                      )}
+                      {rw.description} ({rw.type})
                     </p>
+                    <div className={classes.assignmentWorks}>
+                      {rw.myAssignmentWorks.map((assignmentWork, i) => (
+                        <div className={classes.assignmentWork}>
+                          <a
+                            href={
+                              assignmentWork.attachment
+                                ? assignmentWork.attachment.secureUrl
+                                : assignmentWork.content
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {assignmentWork.attachment ? (
+                              <Image
+                                publicId={assignmentWork.attachment.publicId}
+                                width="200"
+                              ></Image>
+                            ) : (
+                              `Link #${i + 1}`
+                            )}
+                          </a>
+
+                          <Button justIcon round color="danger">
+                            <Delete
+                              style={{ color: '#FFFFFF' }}
+                              onClick={() => {
+                                this.setState({
+                                  deleteModal: true,
+                                  requiredWorkId: rw.id,
+                                  assignmentWorkId: assignmentWork.id,
+                                });
+                              }}
+                            />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+
                     {!assignment.canEdit &&
                       (['PDF', 'JPG'].includes(rw.type) ? (
                         <label htmlFor={`attachment.${rw.id}`}>
@@ -240,4 +311,13 @@ Assignment.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styles)(Assignment));
+export default compose(
+  graphql(SUBMIT_ASSIGNMENT_WORK, {
+    name: 'submitAssignmentWork',
+  }),
+  graphql(DELETE_ASSIGNMENT_WORK, {
+    name: 'deleteAssignmentWork',
+  }),
+  withRouter,
+  withStyles(styles),
+)(Assignment);

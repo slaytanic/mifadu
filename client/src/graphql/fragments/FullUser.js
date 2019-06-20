@@ -20,6 +20,8 @@ export default gql`
       memberCount
       year
       isTutor
+      pendingAssignmentCount
+      completedAssignmentCount
     }
     subjects {
       id

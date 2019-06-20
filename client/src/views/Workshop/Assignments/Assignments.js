@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
-import { Query, withApollo } from 'react-apollo';
+import { Query, graphql, compose } from 'react-apollo';
 
 import CloudDownload from '@material-ui/icons/CloudDownload';
 import Info from '@material-ui/icons/Info';
@@ -26,45 +26,6 @@ class Assignments extends React.Component {
     subtitle: '',
   };
 
-  filterAssignments = () => {
-    const { assignments, match } = this.props;
-    switch (match.params.filter) {
-      case 'pending':
-        this.setState({
-          subtitle: 'Pendientes de entrega',
-          filteredAssignments: assignments.all.filter(a => a.statusTags.includes('pending_work')),
-        });
-        break;
-      case 'completed':
-        this.setState({
-          subtitle: 'Entregados',
-          filteredAssignments: assignments.all.filter(a => a.statusTags.includes('completed_work')),
-        });
-        break;
-      case 'pending_evaluation':
-        this.setState({
-          subtitle: 'Pendientes de evaluación',
-          filteredAssignments: assignments.all.filter(a =>
-            a.statusTags.includes('pending_evaluation'),
-          ),
-        });
-        break;
-      case 'completed_evaluation':
-        this.setState({
-          subtitle: 'Pendientes de evaluación',
-          filteredAssignments: assignments.all.filter(a =>
-            a.statusTags.includes('completed_evaluation'),
-          ),
-        });
-        break;
-      default:
-        this.setState({
-          subtitle: 'Todos los trabajos prácticos',
-          filteredAssignments: [...assignments.all],
-        });
-    }
-  };
-
   handleDelete = key => () => {
     this.setState({ modal: true, selectedAssignmentId: key });
   };
@@ -86,7 +47,7 @@ class Assignments extends React.Component {
   };
 
   render() {
-    const { me, match } = this.props;
+    const { match } = this.props;
     const { modal } = this.state;
 
     let subtitle = 'Todos los trabajos prácticos';
@@ -97,26 +58,20 @@ class Assignments extends React.Component {
       case 'completed':
         subtitle = 'Entregados';
         break;
-      case 'pending_evaluation':
-        subtitle = 'Pendientes de evaluación';
-        break;
-      case 'completed_evaluation':
-        subtitle = 'Pendientes de evaluación';
-        break;
       default:
         break;
     }
 
-    const isTutor = me.tutoredWorkshops.length > 0;
+    // const isTutor = me.tutoredWorkshops.length > 0;
     const tableHead = [
       { label: 'Nombre', key: 'name' },
       { label: 'Fecha de entrega', key: 'endsAt' },
     ];
-    if (isTutor) {
-      tableHead.push({ label: 'Entregados', key: 'completedWorksCount' });
-      tableHead.push({ label: 'Sin evaluar', key: 'pendingEvaluationWorksCount' });
-      tableHead.push({ label: 'Evaluados', key: 'evaluatedWorksCount' });
-    }
+    // if (isTutor) {
+    //   tableHead.push({ label: 'Entregados', key: 'completedWorksCount' });
+    //   tableHead.push({ label: 'Sin evaluar', key: 'pendingEvaluationWorksCount' });
+    //   tableHead.push({ label: 'Evaluados', key: 'evaluatedWorksCount' });
+    // }
 
     return (
       <Content title="Trabajos prácticos" subtitle={subtitle}>
@@ -134,7 +89,6 @@ class Assignments extends React.Component {
             variables={{
               id: match.params.id,
               status: match.params.status,
-              year: match.params.year && parseInt(match.params.year, 10),
             }}
           >
             {({ data: { workshop }, loading, error }) => {
@@ -152,7 +106,7 @@ class Assignments extends React.Component {
                           return { ...obj, [key]: a[key] };
                       }
                     }, {}),
-                    actions: workshop.tutors.map(t => t.id).includes(me.id)
+                    actions: workshop.isTutor
                       ? [
                           key => (
                             <Button color="transparent" component={Link} to={`/assignments/${key}`}>
@@ -198,9 +152,27 @@ class Assignments extends React.Component {
 }
 
 Assignments.propTypes = {
-  me: PropTypes.object.isRequired,
+  // me: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
+  deleteAssignment: PropTypes.func.isRequired,
 };
 
-export default withRouter(withApollo(Assignments));
+export default compose(
+  graphql(DELETE_ASSIGNMENT, {
+    name: 'deleteAssignment',
+    // options: {
+    //   update: (cache, { data: { createTag } }) => {
+    //     const data = cache.readQuery({ query: TAGS_QUERY });
+    //     data.tags.push(createTag);
+    //     cache.writeQuery({ query: TAGS_QUERY, data });
+    //   },
+    // },
+  }),
+  // graphql(TAGS_QUERY, {
+  //   props: ({ data }) => ({
+  //     tags: data ? data.tags : [],
+  //   }),
+  // }),
+  // withStyles(styles),
+  withRouter,
+)(Assignments);

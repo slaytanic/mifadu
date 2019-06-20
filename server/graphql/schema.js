@@ -4,18 +4,25 @@ const {
   assignment,
   assignments,
   statusTags,
-  assignmentWork,
+  myAssignmentWorks,
   selfEvaluation,
   myGroup,
   canEdit,
   canSubmit,
+  workshopAssignments,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
 const { tag, tags } = require('./queries/tag');
 const { university, universities } = require('./queries/university');
 const { userByRef, usersByRef, user, users, members, memberCount, me } = require('./queries/user');
-const { workshop, workshops, isTutor } = require('./queries/workshop');
+const {
+  workshop,
+  workshops,
+  isTutor,
+  completedAssignmentCount,
+  pendingAssignmentCount,
+} = require('./queries/workshop');
 const { avatar, avatars } = require('./queries/avatar');
 
 const {
@@ -25,6 +32,7 @@ const {
   submitAssignmentWork,
   submitAssignmentSelfEvaluation,
   submitAssignmentEvaluation,
+  deleteAssignmentWork,
   // assignUserToGroup,
 } = require('./mutations/assignment');
 const { createChair, updateChair, deleteChair } = require('./mutations/chair');
@@ -106,7 +114,7 @@ const typeDefs = `
     id: ID!
     type: String
     description: String
-    assignmentWork: AssignmentWork
+    myAssignmentWorks: [AssignmentWork]
     assignmentWorks: [AssignmentWork]
   }
 
@@ -167,7 +175,6 @@ const typeDefs = `
   }
 
   input AssignmentWorkInput {
-    requiredWorkId: ID!
     attachment: Upload
     content: String
   }
@@ -288,9 +295,7 @@ const typeDefs = `
     assignments(status: AssignmentStatus): [Assignment!]!
     assignmentCount(status: AssignmentStatus): Int!
     pendingAssignmentCount: Int!
-    completedAssignmentsCount: Int!
-    pendingEvaluationAssignments: [Assignment!]!
-    completedEvaluationAssignments: [Assignment!]!
+    completedAssignmentCount: Int!
     isTutor: Boolean!
     updatedAt: DateTime!
     createdAt: DateTime!
@@ -328,8 +333,8 @@ const typeDefs = `
     updateAssignment(id: ID!, input: AssignmentInput!): Assignment
     deleteAssignment(id: ID!): Assignment
 
-    submitAssignmentWork(id: ID!, input: AssignmentWorkInput!): Assignment
-    removeAssignmentWork(id: ID!, assignmentWorkId: ID!): Assignment
+    submitAssignmentWork(id: ID!, requiredWorkId: ID!, input: AssignmentWorkInput!): Assignment
+    deleteAssignmentWork(id: ID!, requiredWorkId: ID!, assignmentWorkId: ID!): Assignment
     submitAssignmentSelfEvaluation(id: ID!, input: EvaluationInput!): Assignment
     submitAssignmentEvaluation(id: ID!, targetUser: ID!, input: EvaluationInput!): Assignment
 
@@ -386,7 +391,7 @@ const resolvers = {
     user,
   },
   RequiredWork: {
-    assignmentWork,
+    myAssignmentWorks,
   },
   Evaluation: {
     user,
@@ -400,8 +405,10 @@ const resolvers = {
     tutors: usersByRef('tutors'),
     members,
     memberCount,
-    // assignments: workshopAssignments,
+    assignments: workshopAssignments,
+    pendingAssignmentCount,
     // pendingAssignmentCount: workshopPendingAssignmentCount,
+    completedAssignmentCount,
     // completedAssignmentCount: workshopPendingAssignmentCount,
   },
   User: {
@@ -441,6 +448,7 @@ const resolvers = {
     updateAssignment,
     deleteAssignment,
     submitAssignmentWork,
+    deleteAssignmentWork,
     submitAssignmentSelfEvaluation,
     submitAssignmentEvaluation,
 

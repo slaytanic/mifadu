@@ -31,6 +31,7 @@ class Modal extends React.Component {
       titleText,
       open,
       children,
+      color,
     } = this.props;
 
     return (
@@ -69,7 +70,7 @@ class Modal extends React.Component {
           </DialogContent>
           <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
             <Button onClick={handleCancel}>{cancelText || 'Cancel'}</Button>
-            <Button onClick={handleOk} color="success">
+            <Button onClick={handleOk} color={color}>
               {okText || 'Ok'}
             </Button>
           </DialogActions>
@@ -84,6 +85,7 @@ Modal.defaultProps = {
   cancelText: undefined,
   bodyText: undefined,
   children: undefined,
+  color: 'success',
 };
 
 Modal.propTypes = {

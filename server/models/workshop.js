@@ -12,13 +12,12 @@ const workshopSchema = new Schema(
   { timestamps: true },
 );
 
-workshopSchema.methods.isTutor = function isTutor(userId) {
-  return this.tutors.includes(userId);
+workshopSchema.methods.isTutor = function isTutor(user) {
+  return this.tutors.includes(user._id);
 };
 
-workshopSchema.statics.currentForUser = function currentForUser(userId) {
-  console.log('q', { tutors: userId, year: new Date().getFullYear() });
-  return this.findOne({ tutors: userId, year: new Date().getFullYear() });
+workshopSchema.statics.currentForUser = function currentForUser(user) {
+  return this.findOne({ tutors: user, year: new Date().getFullYear() });
 };
 
 const Workshop = mongoose.model('Workshop', workshopSchema);

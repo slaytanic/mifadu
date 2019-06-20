@@ -45,7 +45,7 @@ const Home = ({ classes, me }) => {
                   </CardHeader>
                   <CardFooter stats>
                     <div className={classes.stats}>
-                      <Link to={`/workshop/${workshop.id}/members`}>Ver miembros del taller</Link>
+                      <Link to={`/workshops/${workshop.id}/members`}>Ver miembros del taller</Link>
                     </div>
                   </CardFooter>
                 </Card>
@@ -61,10 +61,7 @@ const Home = ({ classes, me }) => {
                         ? 'Evaluaciones pendientes'
                         : 'Trabajos prácticos pendientes'}
                     </p>
-                    <h3 className={classes.cardTitle}>
-                      {/* {isTutor ? assignments.pendingEvaluationCount : assignments.pendingCount} */}
-                      0
-                    </h3>
+                    <h3 className={classes.cardTitle}>{workshop.pendingAssignmentCount}</h3>
                   </CardHeader>
                   <CardFooter stats>
                     <div className={classes.stats}>
@@ -92,10 +89,7 @@ const Home = ({ classes, me }) => {
                         ? 'Evaluaciones realizadas'
                         : 'Trabajos prácticos entregados'}
                     </p>
-                    <h3 className={classes.cardTitle}>
-                      {/* {isTutor ? assignments.completedEvaluationCount : assignments.completedCount} */}
-                      0
-                    </h3>
+                    <h3 className={classes.cardTitle}>{workshop.completedAssignmentCount}</h3>
                   </CardHeader>
                   <CardFooter stats>
                     <div className={classes.stats}>

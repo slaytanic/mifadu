@@ -3,15 +3,13 @@ import gql from 'graphql-tag';
 import AssignmentList from 'graphql/fragments/AssignmentList';
 
 export default gql`
-  query WorkshopAssignments($id: ID!, $status: String, $year: Int) {
+  query WorkshopAssignments($id: ID!, $status: AssignmentStatus) {
     workshop(id: $id) {
       id
-      tutors {
-        id
-      }
-      assignments {
+      assignments(status: $status) {
         ...AssignmentList
       }
+      isTutor
     }
   }
   ${AssignmentList}

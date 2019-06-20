@@ -81,6 +81,10 @@ function assignmentWork(obj, args, { req }) {
   return obj.assignmentWorkForUser(req.user);
 }
 
+function myAssignmentWorks(obj, args, { req }) {
+  return obj.assignmentWorksForUser(req.user);
+}
+
 function selfEvaluation(obj, args, { req }) {
   return obj.selfEvaluationForUser(req.user);
 }
@@ -89,7 +93,26 @@ function myGroup(obj, args, { req }) {
   return obj.groupForUser(req.user);
 }
 
-function workshopAssignments(obj, { status, year }) {
+async function workshopAssignments(obj, { status }, { req }) {
+  if (status) {
+    const assignments = await Assignment.find({ workshop: obj._id });
+    if (obj.isTutor(req.user)) {
+      if (status === 'pending') {
+      } else if (status === 'completed') {
+      }
+    } else {
+      if (status === 'pending') {
+        return assignments.filter(async a =>
+          (await a.statusTagsForUser(req.user)).includes('pending_work'),
+        );
+      }
+      if (status === 'completed') {
+        return assignments.filter(async a =>
+          (await a.statusTagsForUser(req.user)).includes('completed_work'),
+        );
+      }
+    }
+  }
   return Assignment.find({ workshop: obj._id });
 }
 
@@ -114,6 +137,7 @@ module.exports.pendingEvaluationAssignments = pendingEvaluationAssignments;
 module.exports.completedEvaluationAssignments = completedEvaluationAssignments;
 module.exports.statusTags = statusTags;
 module.exports.assignmentWork = assignmentWork;
+module.exports.myAssignmentWorks = myAssignmentWorks;
 module.exports.selfEvaluation = selfEvaluation;
 module.exports.myGroup = myGroup;
 module.exports.workshopAssignments = workshopAssignments;
