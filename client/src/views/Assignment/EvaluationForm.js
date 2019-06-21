@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import { CircularGridLines } from 'react-vis';
 import Nouislider from 'react-nouislider';
-import { push } from 'connected-react-router';
+// import { push } from 'connected-react-router';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
@@ -16,11 +16,11 @@ import GridItem from 'components/material-kit-react/Grid/GridItem';
 
 import RadarChart from 'components/RadarChart/RadarChart';
 
-import {
-  assignmentFetch,
-  assignmentEvaluationSubmit,
-  assignmentSelfEvaluationSubmit,
-} from 'actions/assignment';
+// import {
+//   assignmentFetch,
+//   assignmentEvaluationSubmit,
+//   assignmentSelfEvaluationSubmit,
+// } from 'actions/assignment';
 
 const styles = {
   slider: {
@@ -292,22 +292,19 @@ EvaluationForm.propTypes = {
   inPlace: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({
-  assignments: state.assignments,
-});
+// const mapStateToProps = state => ({
+//   assignments: state.assignments,
+// });
 
-const mapDispatchToProps = dispatch => ({
-  dispatchAssignmentFetch: id => dispatch(assignmentFetch(id)),
-  dispatchAssignmentEvaluationSubmit: (id, input) =>
-    dispatch(assignmentEvaluationSubmit(id, input)),
-  dispatchAssignmentSelfEvaluationSubmit: (id, input) =>
-    dispatch(assignmentSelfEvaluationSubmit(id, input)),
-  historyPush: path => {
-    dispatch(push(path));
-  },
-});
+// const mapDispatchToProps = dispatch => ({
+//   dispatchAssignmentFetch: id => dispatch(assignmentFetch(id)),
+//   dispatchAssignmentEvaluationSubmit: (id, input) =>
+//     dispatch(assignmentEvaluationSubmit(id, input)),
+//   dispatchAssignmentSelfEvaluationSubmit: (id, input) =>
+//     dispatch(assignmentSelfEvaluationSubmit(id, input)),
+//   historyPush: path => {
+//     dispatch(push(path));
+//   },
+// });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withStyles(styles)(EvaluationForm));
+export default withStyles(styles)(EvaluationForm);
