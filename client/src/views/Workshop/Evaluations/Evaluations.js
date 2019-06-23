@@ -2,14 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { Image } from 'cloudinary-react';
-import { Query, graphql, compose } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import Button from 'components/material-kit-react/CustomButtons/Button';
 import GridContainer from 'components/material-kit-react/Grid/GridContainer';
 import GridItem from 'components/material-kit-react/Grid/GridItem';
-import Badge from 'components/material-kit-react/Badge/Badge';
 
 import EvaluationForm from 'views/Assignment/EvaluationForm';
 
@@ -131,16 +129,6 @@ Evaluations.propTypes = {
 };
 
 export default compose(
-  // graphql(DELETE_ASSIGNMENT, {
-  //   name: 'deleteAssignment',
-  //   // options: {
-  //   //   update: (cache, { data: { createTag } }) => {
-  //   //     const data = cache.readQuery({ query: TAGS_QUERY });
-  //   //     data.tags.push(createTag);
-  //   //     cache.writeQuery({ query: TAGS_QUERY, data });
-  //   //   },
-  //   // },
-  // }),
   graphql(WORKSHOP_ASSIGNMENT_QUERY, {
     options: ({ match }) => ({
       variables: { id: match.params.assignmentId, userId: match.params.studentId },
