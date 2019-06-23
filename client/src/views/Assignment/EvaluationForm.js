@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-// import { connect } from 'react-redux';
 import { CircularGridLines } from 'react-vis';
-import Nouislider from 'react-nouislider';
-// import { push } from 'connected-react-router';
+import Slider from '@material-ui/lab/Slider';
+import { graphql, compose } from 'react-apollo';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
-// import Button from 'components/material-kit-react/CustomButtons/Button';
 import CustomButton from 'components/CustomButton/CustomButton';
 import CustomInput from 'components/material-kit-react/CustomInput/CustomInput';
 import GridContainer from 'components/material-kit-react/Grid/GridContainer';
@@ -16,15 +14,15 @@ import GridItem from 'components/material-kit-react/Grid/GridItem';
 
 import RadarChart from 'components/RadarChart/RadarChart';
 
-// import {
-//   assignmentFetch,
-//   assignmentEvaluationSubmit,
-//   assignmentSelfEvaluationSubmit,
-// } from 'actions/assignment';
+import withAssignment from './withAssignment';
+
+import SUBMIT_ASSIGNMENT_EVALUATION from 'graphql/mutations/SubmitAssignmentEvaluation';
+import SUBMIT_ASSIGNMENT_SELF_EVALUATION from 'graphql/mutations/SubmitAssignmentSelfEvaluation';
 
 const styles = {
   slider: {
-    marginBottom: '3em',
+    marginTop: '1rem',
+    marginBottom: '3rem',
   },
 };
 
@@ -88,27 +86,27 @@ class EvaluationForm extends Component {
     }
   }
 
-  handleChange = name => event => {
-    if (event.target) {
-      const { value } = event.target;
-      this.setState(prevState => ({
-        dirty: true,
-        evaluation: { ...prevState.evaluation, [name]: value },
-      }));
-    } else {
-      this.setState(prevState => ({
-        dirty: true,
-        evaluation: { ...prevState.evaluation, [name]: parseFloat(event[0]) },
-      }));
-    }
+  handleChange = name => (event, value) => {
+    this.setState(prevState => ({
+      dirty: true,
+      evaluation: { ...prevState.evaluation, [name]: value },
+    }));
   };
 
-  handleSubmit = () => {
+  handleChangeObservations = event => {
+    event.persist();
+    this.setState(prevState => ({
+      dirty: true,
+      evaluation: { ...prevState.evaluation, observations: event.target.value },
+    }));
+  };
+
+  handleSubmit = async () => {
     const {
+      submitAssignmentEvaluation,
+      submitAssignmentSelfEvaluation,
       assignment,
-      historyPush,
-      dispatchAssignmentEvaluationSubmit,
-      dispatchAssignmentSelfEvaluationSubmit,
+      history,
       self,
       targetUserId,
       inPlace,
@@ -117,18 +115,15 @@ class EvaluationForm extends Component {
 
     this.setState({ submitting: true });
     if (self) {
-      dispatchAssignmentSelfEvaluationSubmit(assignment.id, evaluation).then(() => {
-        if (!inPlace) historyPush(`/assignments/${assignment.id}`);
-        this.setState({ submitting: false, dirty: false });
-      });
+      await submitAssignmentSelfEvaluation({ variables: { id: assignment.id, input: evaluation } });
+      if (!inPlace) history.push(`/assignments/${assignment.id}`);
+      this.setState({ submitting: false, dirty: false });
     } else {
-      dispatchAssignmentEvaluationSubmit(assignment.id, {
-        evaluation,
-        targetUser: targetUserId,
-      }).then(() => {
-        if (!inPlace) historyPush(`/evaluations/completed`);
-        this.setState({ submitting: false, dirty: false });
+      await submitAssignmentEvaluation({
+        variables: { id: assignment.id, targetUser: targetUserId, input: evaluation },
       });
+      if (!inPlace) history.push(`/evaluations/completed`);
+      this.setState({ submitting: false, dirty: false });
     }
   };
 
@@ -146,57 +141,25 @@ class EvaluationForm extends Component {
       <div>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
-            <p className={classes.slider}>
-              1. Propuesta Conceptual
-              <Nouislider
-                name="score1"
-                start={[evaluation.score1]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('score1')}
-              />
-            </p>
-            <p className={classes.slider}>
-              2. Proceso
-              <Nouislider
-                start={[evaluation.score2]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('score2')}
-              />
-            </p>
-            <p className={classes.slider}>
-              3. {assignment.evaluationVariable || 'Variable'}
-              <Nouislider
-                start={[evaluation.score3]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('score3')}
-              />
-            </p>
-            <p className={classes.slider}>
-              4. Producto
-              <Nouislider
-                start={[evaluation.score4]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('score4')}
-              />
-            </p>
-            <p className={classes.slider}>
-              5. Comunicación
-              <Nouislider
-                start={[evaluation.score5]}
-                connect={[true, false]}
-                step={0.5}
-                range={{ min: 0, max: 2 }}
-                onChange={this.handleChange('score5')}
-              />
-            </p>
+            {[
+              'Propuesta Conceptual',
+              'Proceso',
+              assignment.evaluationVariable || 'Variable',
+              'Producto',
+              'Comunicación',
+            ].map((title, i) => (
+              <p>
+                {i + 1}. {title} ({evaluation[`score${i + 1}`]})
+                <Slider
+                  className={classes.slider}
+                  value={evaluation[`score${i + 1}`]}
+                  onChange={this.handleChange(`score${i + 1}`)}
+                  step={0.5}
+                  min={0}
+                  max={2}
+                />
+              </p>
+            ))}
           </GridItem>
           <GridItem xs={12} sm={12} md={6}>
             <RadarChart
@@ -235,7 +198,7 @@ class EvaluationForm extends Component {
             multiline: true,
             rows: 4,
             value: evaluation.observations,
-            onChange: this.handleChange('observations'),
+            onChange: this.handleChangeObservations,
           }}
         />
         {inPlace ? (
@@ -275,36 +238,27 @@ class EvaluationForm extends Component {
 
 EvaluationForm.defaultProps = {
   self: false,
-  currentUser: undefined,
   targetUserId: undefined,
   inPlace: false,
 };
 
 EvaluationForm.propTypes = {
   classes: PropTypes.object.isRequired,
-  dispatchAssignmentEvaluationSubmit: PropTypes.func.isRequired,
-  dispatchAssignmentSelfEvaluationSubmit: PropTypes.func.isRequired,
-  historyPush: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   assignment: PropTypes.object.isRequired,
-  currentUser: PropTypes.object,
   targetUserId: PropTypes.string,
   self: PropTypes.bool,
   inPlace: PropTypes.bool,
 };
 
-// const mapStateToProps = state => ({
-//   assignments: state.assignments,
-// });
-
-// const mapDispatchToProps = dispatch => ({
-//   dispatchAssignmentFetch: id => dispatch(assignmentFetch(id)),
-//   dispatchAssignmentEvaluationSubmit: (id, input) =>
-//     dispatch(assignmentEvaluationSubmit(id, input)),
-//   dispatchAssignmentSelfEvaluationSubmit: (id, input) =>
-//     dispatch(assignmentSelfEvaluationSubmit(id, input)),
-//   historyPush: path => {
-//     dispatch(push(path));
-//   },
-// });
-
-export default withStyles(styles)(EvaluationForm);
+export default compose(
+  graphql(SUBMIT_ASSIGNMENT_EVALUATION, {
+    name: 'submitAssignmentEvaluation',
+  }),
+  graphql(SUBMIT_ASSIGNMENT_SELF_EVALUATION, {
+    name: 'submitAssignmentSelfEvaluation',
+  }),
+  withStyles(styles),
+  withRouter,
+  withAssignment,
+)(EvaluationForm);

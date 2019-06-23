@@ -96,22 +96,28 @@ function myGroup(obj, args, { req }) {
 async function workshopAssignments(obj, { status }, { req }) {
   if (status) {
     const assignments = await Assignment.find({ workshop: obj._id });
+    const result = [];
     if (obj.isTutor(req.user)) {
       if (status === 'pending') {
       } else if (status === 'completed') {
       }
     } else {
       if (status === 'pending') {
-        return assignments.filter(async a =>
-          (await a.statusTagsForUser(req.user)).includes('pending_work'),
+        await Promise.all(
+          assignments.map(async a => {
+            if ((await a.statusTagsForUser(req.user)).includes('pending_work')) result.push(a);
+          }),
         );
       }
       if (status === 'completed') {
-        return assignments.filter(async a =>
-          (await a.statusTagsForUser(req.user)).includes('completed_work'),
+        await Promise.all(
+          assignments.map(async a => {
+            if ((await a.statusTagsForUser(req.user)).includes('completed_work')) result.push(a);
+          }),
         );
       }
     }
+    return result;
   }
   return Assignment.find({ workshop: obj._id });
 }

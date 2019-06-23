@@ -231,8 +231,9 @@ class Assignment extends Component {
                           >
                             {assignmentWork.attachment ? (
                               <Image
-                                publicId={assignmentWork.attachment.publicId}
+                                publicId={`${assignmentWork.attachment.publicId}.png`}
                                 width="200"
+                                crop="fill"
                               ></Image>
                             ) : (
                               `Link #${i + 1}`

@@ -90,6 +90,7 @@ class Assignments extends React.Component {
               id: match.params.id,
               status: match.params.status,
             }}
+            fetchPolicy="cache-and-network"
           >
             {({ data: { workshop }, loading, error }) => {
               if (loading) return null;
