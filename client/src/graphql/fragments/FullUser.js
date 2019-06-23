@@ -20,6 +20,7 @@ export default gql`
       memberCount
       year
       isTutor
+      assignmentCount
       pendingAssignmentCount
       completedAssignmentCount
     }

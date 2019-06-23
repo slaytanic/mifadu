@@ -77,16 +77,24 @@ function statusTags(obj, args, { req }) {
   return obj.statusTagsForUser(req.user);
 }
 
-function assignmentWork(obj, args, { req }) {
-  return obj.assignmentWorkForUser(req.user);
+function assignmentWorks(obj, { userId }, { req }) {
+  if (userId) {
+    return obj.assignmentWorksForUser({ _id: userId });
+  }
+  return obj.assignmentWorks;
 }
 
 function myAssignmentWorks(obj, args, { req }) {
   return obj.assignmentWorksForUser(req.user);
 }
 
-function selfEvaluation(obj, args, { req }) {
-  return obj.selfEvaluationForUser(req.user);
+function evaluation(obj, { userId }, { req }) {
+  // return obj.evaluations.find(e => e.user.equals(userId));
+  return obj.tutorEvaluationForUser(userId ? { _id: userId } : req.user);
+}
+
+function selfEvaluation(obj, { userId }, { req }) {
+  return obj.selfEvaluationForUser(userId ? { _id: userId } : req.user);
 }
 
 function myGroup(obj, args, { req }) {
@@ -122,6 +130,35 @@ async function workshopAssignments(obj, { status }, { req }) {
   return Assignment.find({ workshop: obj._id });
 }
 
+async function workshopAssignmentCount(obj, { status }, { req }) {
+  if (status) {
+    const assignments = await Assignment.find({ workshop: obj._id });
+    const result = [];
+    if (obj.isTutor(req.user)) {
+      if (status === 'pending') {
+      } else if (status === 'completed') {
+      }
+    } else {
+      if (status === 'pending') {
+        await Promise.all(
+          assignments.map(async a => {
+            if ((await a.statusTagsForUser(req.user)).includes('pending_work')) result.push(a);
+          }),
+        );
+      }
+      if (status === 'completed') {
+        await Promise.all(
+          assignments.map(async a => {
+            if ((await a.statusTagsForUser(req.user)).includes('completed_work')) result.push(a);
+          }),
+        );
+      }
+    }
+    return result.length;
+  }
+  return Assignment.find({ workshop: obj._id }).count();
+}
+
 async function canEdit(obj, args, { req }) {
   if (!req.user) return false;
 
@@ -142,10 +179,12 @@ module.exports.completedAssignments = completedAssignments;
 module.exports.pendingEvaluationAssignments = pendingEvaluationAssignments;
 module.exports.completedEvaluationAssignments = completedEvaluationAssignments;
 module.exports.statusTags = statusTags;
-module.exports.assignmentWork = assignmentWork;
+module.exports.assignmentWorks = assignmentWorks;
 module.exports.myAssignmentWorks = myAssignmentWorks;
+module.exports.evaluation = evaluation;
 module.exports.selfEvaluation = selfEvaluation;
 module.exports.myGroup = myGroup;
 module.exports.workshopAssignments = workshopAssignments;
+module.exports.workshopAssignmentCount = workshopAssignmentCount;
 module.exports.canEdit = canEdit;
 module.exports.canSubmit = canSubmit;

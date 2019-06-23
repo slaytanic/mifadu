@@ -8,6 +8,7 @@ export default gql`
         id
         firstName
         lastName
+        fullName
         email
         avatar {
           publicId

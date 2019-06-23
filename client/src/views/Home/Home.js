@@ -50,62 +50,105 @@ const Home = ({ classes, me }) => {
                   </CardFooter>
                 </Card>
               </GridItem>
-              <GridItem xs={12} sm={12} md={4}>
-                <Card className={classes.card}>
-                  <CardHeader color="warning" stats icon>
-                    <CardIcon color="warning">
-                      <Icon>content_copy</Icon>
-                    </CardIcon>
-                    <p className={classes.cardCategory}>
-                      {workshop.isTutor
-                        ? 'Evaluaciones pendientes'
-                        : 'Trabajos prácticos pendientes'}
-                    </p>
-                    <h3 className={classes.cardTitle}>{workshop.pendingAssignmentCount}</h3>
-                  </CardHeader>
-                  <CardFooter stats>
-                    <div className={classes.stats}>
-                      {workshop.isTutor ? (
-                        <Link to={`/workshops/${workshop.id}/evaluations/pending`}>
-                          Ver evaluaciones pendientes
-                        </Link>
-                      ) : (
-                        <Link to={`/workshops/${workshop.id}/assignments/pending`}>
-                          Ver trabajos prácticos pendientes
-                        </Link>
-                      )}
-                    </div>
-                  </CardFooter>
-                </Card>
-              </GridItem>
-              <GridItem xs={12} sm={12} md={4}>
-                <Card className={classes.card}>
-                  <CardHeader color="success" stats icon>
-                    <CardIcon color="success">
-                      <Icon>content_copy</Icon>
-                    </CardIcon>
-                    <p className={classes.cardCategory}>
-                      {workshop.isTutor
-                        ? 'Evaluaciones realizadas'
-                        : 'Trabajos prácticos entregados'}
-                    </p>
-                    <h3 className={classes.cardTitle}>{workshop.completedAssignmentCount}</h3>
-                  </CardHeader>
-                  <CardFooter stats>
-                    <div className={classes.stats}>
-                      {workshop.isTutor ? (
-                        <Link to={`/workshops/${workshop.id}/evaluations/completed`}>
-                          Ver evaluaciones realizadas
-                        </Link>
-                      ) : (
-                        <Link to={`/workshops/${workshop.id}/assignments/completed`}>
-                          Ver trabajos prácticos entregados
-                        </Link>
-                      )}
-                    </div>
-                  </CardFooter>
-                </Card>
-              </GridItem>
+              {workshop.isTutor ? (
+                <>
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="warning" stats icon>
+                        <CardIcon color="warning">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>Trabajos prácticos</p>
+                        <h3 className={classes.cardTitle}>{workshop.assignmentCount}</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          <Link to={`/workshops/${workshop.id}/assignments`}>
+                            Ver trabajos prácticos
+                          </Link>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="success" stats icon>
+                        <CardIcon color="success">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>Evaluaciones completadas</p>
+                        <h3 className={classes.cardTitle}>0</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          <Link to={`/workshops/${workshop.id}/evaluations`}>
+                            Evaluar trabajos prácticos
+                          </Link>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                </>
+              ) : (
+                <>
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="warning" stats icon>
+                        <CardIcon color="warning">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>
+                          {workshop.isTutor
+                            ? 'Evaluaciones pendientes'
+                            : 'Trabajos prácticos pendientes'}
+                        </p>
+                        <h3 className={classes.cardTitle}>{workshop.pendingAssignmentCount}</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          {workshop.isTutor ? (
+                            <Link to={`/workshops/${workshop.id}/evaluations/pending`}>
+                              Ver evaluaciones pendientes
+                            </Link>
+                          ) : (
+                            <Link to={`/workshops/${workshop.id}/assignments/pending`}>
+                              Ver trabajos prácticos pendientes
+                            </Link>
+                          )}
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={4}>
+                    <Card className={classes.card}>
+                      <CardHeader color="success" stats icon>
+                        <CardIcon color="success">
+                          <Icon>content_copy</Icon>
+                        </CardIcon>
+                        <p className={classes.cardCategory}>
+                          {workshop.isTutor
+                            ? 'Evaluaciones realizadas'
+                            : 'Trabajos prácticos entregados'}
+                        </p>
+                        <h3 className={classes.cardTitle}>{workshop.completedAssignmentCount}</h3>
+                      </CardHeader>
+                      <CardFooter stats>
+                        <div className={classes.stats}>
+                          {workshop.isTutor ? (
+                            <Link to={`/workshops/${workshop.id}/evaluations/completed`}>
+                              Ver evaluaciones realizadas
+                            </Link>
+                          ) : (
+                            <Link to={`/workshops/${workshop.id}/assignments/completed`}>
+                              Ver trabajos prácticos entregados
+                            </Link>
+                          )}
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </GridItem>
+                </>
+              )}
             </GridContainer>
             {workshop.isTutor && (
               <Button color="primary" component={Link} to="/assignments/new">

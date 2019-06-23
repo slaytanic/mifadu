@@ -33,35 +33,53 @@ function HeaderLinks({ ...props }) {
   if (me.workshops.filter(w => w.isTutor).length) {
     links.push(
       <ListItem className={classes.listItem} key="assignments">
-        <Button component={Link} to="/assignments" color="transparent" className={classes.navLink}>
+        <Button
+          component={Link}
+          to={`/workshops/${me.workshop.id}/assignments`}
+          color="transparent"
+          className={classes.navLink}
+        >
           Trabajos prácticos
         </Button>
       </ListItem>,
     );
     links.push(
-      <ListItem className={classes.listItem} key="pending-evaluation">
+      <ListItem className={classes.listItem} key="assignments">
         <Button
           component={Link}
-          to={`/workshops/${me.workshop.id}/evaluations/pending`}
+          to={`/workshops/${me.workshop.id}/evaluations`}
           color="transparent"
           className={classes.navLink}
         >
-          Pendientes
+          Evaluaciones
         </Button>
       </ListItem>,
     );
-    links.push(
-      <ListItem className={classes.listItem} key="completed-evaluation">
-        <Button
-          component={Link}
-          to={`/workshops/${me.workshop.id}/evaluations/completed`}
-          color="transparent"
-          className={classes.navLink}
-        >
-          Evaluados
-        </Button>
-      </ListItem>,
-    );
+
+    // links.push(
+    //   <ListItem className={classes.listItem} key="pending-evaluation">
+    //     <Button
+    //       component={Link}
+    //       to={`/workshops/${me.workshop.id}/evaluations/pending`}
+    //       color="transparent"
+    //       className={classes.navLink}
+    //     >
+    //       Pendientes
+    //     </Button>
+    //   </ListItem>,
+    // );
+    // links.push(
+    //   <ListItem className={classes.listItem} key="completed-evaluation">
+    //     <Button
+    //       component={Link}
+    //       to={`/workshops/${me.workshop.id}/evaluations/completed`}
+    //       color="transparent"
+    //       className={classes.navLink}
+    //     >
+    //       Evaluados
+    //     </Button>
+    //   </ListItem>,
+    // );
   } else {
     links.push(
       <ListItem className={classes.listItem} key="pending">

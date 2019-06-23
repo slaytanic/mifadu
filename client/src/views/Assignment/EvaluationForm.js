@@ -29,8 +29,8 @@ const styles = {
 class EvaluationForm extends Component {
   constructor(props) {
     super(props);
-    const { assignment, currentUser, targetUserId, self } = props;
-    const { selfEvaluation, evaluations } = assignment;
+    const { assignment, self } = props;
+    const { selfEvaluation, evaluation } = assignment;
     if (selfEvaluation && self === true) {
       this.state = {
         submitting: false,
@@ -44,13 +44,7 @@ class EvaluationForm extends Component {
           observations: selfEvaluation.observations || '',
         },
       };
-    } else if (self !== true && evaluations) {
-      const evaluation = assignment.evaluations.find(
-        e => e.targetUser.id === targetUserId && e.user.id === currentUser.id,
-      );
-      const targetUserEvaluation = assignment.evaluations.find(
-        e => e.targetUser.id === targetUserId && e.user.id === targetUserId,
-      );
+    } else if (self !== true && evaluation) {
       this.state = {
         submitting: false,
         dirty: false,
@@ -61,13 +55,6 @@ class EvaluationForm extends Component {
           score4: (evaluation && evaluation.score4) || 0,
           score5: (evaluation && evaluation.score5) || 0,
           observations: (evaluation && evaluation.observations) || '',
-        },
-        selfEvaluation: {
-          score1: (targetUserEvaluation && targetUserEvaluation.score1) || 0,
-          score2: (targetUserEvaluation && targetUserEvaluation.score2) || 0,
-          score3: (targetUserEvaluation && targetUserEvaluation.score3) || 0,
-          score4: (targetUserEvaluation && targetUserEvaluation.score4) || 0,
-          score5: (targetUserEvaluation && targetUserEvaluation.score5) || 0,
         },
       };
     } else {
@@ -133,9 +120,11 @@ class EvaluationForm extends Component {
 
     const chartData = [evaluation];
     if (self !== true) {
-      const { selfEvaluation } = this.state;
-      chartData.push(selfEvaluation);
+      const { selfEvaluation } = assignment;
+      if (selfEvaluation) chartData.push(selfEvaluation);
     }
+
+    console.log('chartData', chartData);
 
     return (
       <div>

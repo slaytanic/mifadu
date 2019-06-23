@@ -207,20 +207,23 @@ async function submitAssignmentSelfEvaluation(obj, { id, input }, { req }) {
   return assignment.save();
 }
 
-async function submitAssignmentEvaluation(obj, { id, input }, { req }) {
+async function submitAssignmentEvaluation(obj, { id, targetUser, input }, { req }) {
   if (!req.user) throw new ForbiddenError('No permitido');
 
   const assignment = await Assignment.findOne({ _id: id });
   if (assignment === undefined) {
     return new Error('Assignment not found');
   }
-  const evaluations = (assignment.evaluations || []).filter(e => !e.user.equals(req.user._id));
-  evaluations.push({
-    ...input.evaluation,
-    user: req.user._id,
-    targetUser: input.targetUser,
+
+  assignment.evaluations.forEach(e => {
+    if (e.user.equals(req.user._id)) e.remove();
   });
-  assignment.set({ evaluations });
+
+  assignment.evaluations.push({
+    ...input,
+    user: req.user._id,
+    targetUser,
+  });
   return assignment.save();
 }
 

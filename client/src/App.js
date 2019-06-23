@@ -11,6 +11,7 @@ import ResetPassword from 'views/ResetPassword/ResetPassword';
 import Home from 'views/Home/Home';
 import WorkshopMembers from 'views/Workshop/Members/Members';
 import WorkshopAssignments from 'views/Workshop/Assignments/Assignments';
+import WorkshopEvaluations from 'views/Workshop/Evaluations/Evaluations';
 import Assignment from 'views/Assignment/Assignment';
 import AssignmentNew from 'views/Assignment/AssignmentNew';
 import AssignmentEdit from 'views/Assignment/AssignmentEdit';
@@ -48,8 +49,11 @@ class App extends Component {
                         <Switch>
                           {/* <Route path="/profile" component={Profile} /> */}
                           <Route path="/workshops/:id/members" component={WorkshopMembers} />
-                          {/* <Route path="/works" component={Works} /> */}
-                          {/* <Route path="/works/:studentId/:assignmentId" component={Works} /> */}
+                          <Route
+                            path="/workshops/:id/evaluations/:studentId?/:assignmentId?"
+                            component={WorkshopEvaluations}
+                          />
+
                           <Route path="/assignments/new" component={AssignmentNew} />
                           <Route path="/assignments/:id/edit" component={AssignmentEdit} />
                           <Route

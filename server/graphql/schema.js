@@ -4,12 +4,15 @@ const {
   assignment,
   assignments,
   statusTags,
+  assignmentWorks,
   myAssignmentWorks,
+  evaluation,
   selfEvaluation,
   myGroup,
   canEdit,
   canSubmit,
   workshopAssignments,
+  workshopAssignmentCount,
 } = require('./queries/assignment');
 const { chair, chairs } = require('./queries/chair');
 const { subject, subjects } = require('./queries/subject');
@@ -115,7 +118,7 @@ const typeDefs = `
     type: String
     description: String
     myAssignmentWorks: [AssignmentWork]
-    assignmentWorks: [AssignmentWork]
+    assignmentWorks(userId: ID): [AssignmentWork]
   }
 
   type Group {
@@ -135,8 +138,8 @@ const typeDefs = `
     evaluationVariable: String
     tags: [Tag]
     requiredWork: [RequiredWork]
-    evaluation: Evaluation
-    selfEvaluation: Evaluation
+    evaluation(userId: ID): Evaluation
+    selfEvaluation(userId: ID): Evaluation
     evaluations: [Evaluation]
     workshop: Workshop
     statusTags: [String]
@@ -379,6 +382,7 @@ const resolvers = {
     tags,
     workshop,
     statusTags,
+    evaluation,
     selfEvaluation,
     completedBy: usersByRef('completedBy'),
     usersWithEvaluations: usersByRef('usersWithEvaluations'),
@@ -392,6 +396,7 @@ const resolvers = {
   },
   RequiredWork: {
     myAssignmentWorks,
+    assignmentWorks,
   },
   Evaluation: {
     user,
@@ -406,6 +411,7 @@ const resolvers = {
     members,
     memberCount,
     assignments: workshopAssignments,
+    assignmentCount: workshopAssignmentCount,
     pendingAssignmentCount,
     // pendingAssignmentCount: workshopPendingAssignmentCount,
     completedAssignmentCount,
