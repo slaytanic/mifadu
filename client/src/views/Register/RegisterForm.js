@@ -119,7 +119,10 @@ const RegisterForm = ({ classes, history, me, logoutUser }) => {
                       try {
                         await createOrUpdateUser({
                           variables: {
-                            input: filterObjectByKeys(values, ['passwordConfirm'], true),
+                            input: {
+                              ...filterObjectByKeys(values, ['passwordConfirm'], true),
+                              previousYearOnThisChair: parseInt(values.previousYearOnThisChair, 10),
+                            },
                           },
                         });
                         history.push('/');
@@ -418,9 +421,7 @@ const RegisterForm = ({ classes, history, me, logoutUser }) => {
                             error={!!errors.aboutMe && touched.aboutMe}
                           />
                           <div
-                            className={`${classes.checkboxAndRadio} ${
-                              classes.checkboxAndRadioHorizontal
-                            }`}
+                            className={`${classes.checkboxAndRadio} ${classes.checkboxAndRadioHorizontal}`}
                           >
                             <FormControlLabel
                               control={
@@ -439,9 +440,7 @@ const RegisterForm = ({ classes, history, me, logoutUser }) => {
                             />
                           </div>
                           <div
-                            className={`${classes.checkboxAndRadio} ${
-                              classes.checkboxAndRadioHorizontal
-                            }`}
+                            className={`${classes.checkboxAndRadio} ${classes.checkboxAndRadioHorizontal}`}
                           >
                             <FormControlLabel
                               control={
